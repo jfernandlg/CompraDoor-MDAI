@@ -12,13 +12,11 @@ public class Inmueble {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID idInmueble;
-<<<<<<< HEAD
     private String Localidad;
     private Float Precio;
     private String Direccion;
     private List<String> PathFotos;
     
-=======
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_venta")
@@ -29,8 +27,7 @@ public class Inmueble {
     private List<String> pathFotos;
 
     public Inmueble() {
->>>>>>> origin/main
-
+      
     }
 
     public void setLocalidad(String localidad) {
