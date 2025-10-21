@@ -1,0 +1,115 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+skinparam {
+  shadowing false
+  arrowColor #003366
+  borderColor #003366
+  classBackgroundColor #f9f9f9
+  classBorderColor #003366
+  classFontSize 12
+  classFontStyle normal
+  defaultFontSize 12
+}
+
+title "Diagrama E/R - Sistema Inmobiliario"
+
+entity Cliente {
+  * IdCliente: uuid <<generated>>
+  --
+  DNI: String
+  Nombre: String
+  Apellidos: String
+  Email: String
+  Teléfono: Int
+}
+
+entity ClaseTarjeta {
+  * CodigoTarjeta: String
+  --
+  TarjetaValida: Boolean
+  IdCliente: uuid
+}
+
+entity Inmueble {
+  * IdInmueble: uuid
+  --
+  Localidad: String
+  Precio: Float
+  Dirección: String
+  PathFotos: List<String>
+}
+
+entity Compra {
+  * IdCompra: Integer <<generated>>
+  --
+  IdInmueble: uuid
+  IdClienteComprador: uuid
+  FechaCompra: Date
+  PrecioCompra: Float
+}
+
+entity Venta {
+  * IdVenta: Integer <<generated>>
+  --
+  IdInmueble: uuid
+  IdClienteVendedor: uuid
+  FechaVenta: Date
+  PrecioVenta: Float
+}
+
+entity Servicios {
+  * IdServicio: Int
+  --
+  TipoServicio: ENUM
+  Descripción: String
+}
+
+enum TipoServicio {
+  LIMPIEZA
+  MANTENIMIENTO
+  REPARACION
+  OTROS
+}
+
+entity ServiciosAplicados {
+  * IdVenta: Integer
+  * IdServicio: Int
+  --
+  Coste: Float
+  FechaAplicacion: Date
+}
+
+' ========== RELACIONES ==========
+Cliente ||--o{ ClaseTarjeta : "posee (1:N)"
+
+Cliente ||--o{ Compra : "realiza como\ncomprador (1:N)"
+Cliente ||--o{ Venta : "realiza como\nvendedor (1:N)"
+
+Inmueble }|--|| Compra : "comprado en (1:1)"
+Inmueble }|--|| Venta : "vendido en (1:1)"
+
+Venta ||--o{ ServiciosAplicados : "incluye (1:N)"
+ServiciosAplicados }--|| Servicios : "de tipo (N:1)"
+
+note left of Cliente
+  <b>UUID como clave primaria</b>
+  • Identificador único global
+  • Mayor seguridad y privacidad
+  • Fácil replicación de datos
+end note
+
+note right of Compra
+  <b>Relación con Cliente</b>
+  Cada compra está asociada
+  a un único cliente comprador
+end note
+
+note left of Venta
+  <b>Relación con Cliente</b>
+  Cada venta está asociada
+  a un único cliente vendedor
+end note
+
+\
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ClaseTarjeta {
+  - CodigoTarjeta: String
+  - TarjetaValida: Boolean
+}
+
+class Cliente {
+  - DNI: String
+  - Nombre: String
+  - Apellidos: String
+  - Email: String
+  - Teléfono: Int
+  - ListaTarjeta: List<Tarjeta>
+}
+
+class Inmueble {
+  - Id: uuid
+  - Localidad: String
+  - Precio: Float
+  - Dirección: String
+  - PathFotos: List<String>
+}
+
+class Compra {
+  - IdInmueble: uuid
+  - NombreComprador: String
+  - DNIComprador: String
+  - FechaCompra: Date
+  - PrecioCompra: Float
+}
+
+class Venta {
+  - NombreVendedor: String
+  - DNIVendedor: String
+  - FechaVenta: Date
+  - PrecioVenta: Float
+  - IdInmueble: uuid
+  - ServiciosAplicados: List<Pair<TipoServicio, Int>>
+}
+
+class Servicios {
+  - Id: Int
+  - TipoServicio: ENUM
+  - IdInmueble: Int
+}
+
+enum TipoServicio {
+  LIMPIEZA
+  MANTENIMIENTO
+  REPARACION
+  OTROS
+}
+
+' Relaciones corregidas
+Cliente "1" --> "*" ClaseTarjeta : tiene
+
+Inmueble "1" --> "1" Compra : es objeto de
+Inmueble "1" --> "1" Venta : es objeto de
+
+Venta "1" --> "0..*" Servicios : incluye
+
+' Nota: Un inmueble puede estar en una compra O en una venta, pero no en ambas simultáneamente
+@enduml
