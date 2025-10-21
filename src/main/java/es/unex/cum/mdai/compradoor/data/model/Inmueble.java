@@ -16,7 +16,7 @@ public class Inmueble {
     private Float Precio;
     private String Direccion;
     private List<String> PathFotos;
-
+    
 
     public void setUuid(UUID uuid) {
         this.idInmueble = uuid;
