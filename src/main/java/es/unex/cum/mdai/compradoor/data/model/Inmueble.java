@@ -11,12 +11,7 @@ public class Inmueble {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID idInmueble;
-    private String Localidad;
-    private Float Precio;
-    private String Direccion;
-    private List<String> PathFotos;
-    
+    private UUID idInmueble;    
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_venta")
