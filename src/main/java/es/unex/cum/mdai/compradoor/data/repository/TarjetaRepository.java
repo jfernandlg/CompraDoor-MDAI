@@ -1,11 +1,11 @@
 package es.unex.cum.mdai.compradoor.data.repository;
 
-import es.unex.cum.mdai.compradoor.data.model.Cliente;
+import es.unex.cum.mdai.compradoor.data.model.Tarjeta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
+public interface TarjetaRepository extends JpaRepository<Tarjeta, UUID> {
 }
