@@ -1,68 +1,91 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "inmueble")
 public class Inmueble {
-    @OneToOne(mappedBy = "Inmueble", cascade = {CascadeType.ALL})
-    private UUID idVenta;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID idInmueble;
+<<<<<<< HEAD
     private String Localidad;
     private Float Precio;
     private String Direccion;
     private List<String> PathFotos;
     
+=======
 
-    public void setUuid(UUID uuid) {
-        this.idInmueble = uuid;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_venta")
+    Venta venta;
+    private String localidad;
+    private Float precio;
+    private String direccion;
+    private List<String> pathFotos;
+
+    public Inmueble() {
+>>>>>>> origin/main
+
     }
 
     public void setLocalidad(String localidad) {
-        Localidad = localidad;
+        this.localidad = localidad;
     }
 
     public void setPrecio(Float precio) {
-        Precio = precio;
+        this.precio = precio;
     }
 
     public void setDireccion(String direccion) {
-        Direccion = direccion;
+        this.direccion = direccion;
     }
 
     public void setPathFotos(List<String> pathFotos) {
-        PathFotos = pathFotos;
+        this.pathFotos = pathFotos;
     }
 
     public String getLocalidad() {
-        return Localidad;
-    }
-
-    public UUID getUuid() {
-        return idInmueble;
+        return localidad;
     }
 
     public Float getPrecio() {
-        return Precio;
+        return precio;
     }
 
     public String getDireccion() {
-        return Direccion;
+        return direccion;
     }
 
     public List<String> getPathFotos() {
-        return PathFotos;
+        return pathFotos;
+    }
+
+    public UUID getIdInmueble() {
+        return idInmueble;
+    }
+
+    public Venta getVenta() {
+        return venta;
+    }
+
+    public void setIdInmueble(UUID idInmueble) {
+        this.idInmueble = idInmueble;
+    }
+
+    public void setVenta(Venta venta) {
+        this.venta = venta;
     }
 
     public Inmueble(UUID uuid, List<String> pathFotos, String localidad, Float precio, String direccion) {
         this.idInmueble = uuid;
-        PathFotos = pathFotos;
-        Localidad = localidad;
-        Precio = precio;
-        Direccion = direccion;
+        this.pathFotos = pathFotos;
+        this.localidad = localidad;
+        this.precio = precio;
+        this.direccion = direccion;
     }
 }
