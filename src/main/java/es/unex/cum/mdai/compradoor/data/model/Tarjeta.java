@@ -2,6 +2,7 @@ package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -58,5 +59,27 @@ public class Tarjeta {
         this.codigoTarjeta = codigoTarjeta;
         this.valida = valida;
         this.cliente = cliente;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Tarjeta tarjeta = (Tarjeta) o;
+        return valida == tarjeta.valida && Objects.equals(id, tarjeta.id) && Objects.equals(codigoTarjeta, tarjeta.codigoTarjeta) && Objects.equals(cliente, tarjeta.cliente);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, codigoTarjeta, valida, cliente);
+    }
+
+    @Override
+    public String toString() {
+        return "Tarjeta{" +
+                "id=" + id +
+                ", codigoTarjeta='" + codigoTarjeta + '\'' +
+                ", valida=" + valida +
+                ", cliente=" + cliente +
+                '}';
     }
 }

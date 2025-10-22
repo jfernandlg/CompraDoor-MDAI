@@ -3,6 +3,7 @@ package es.unex.cum.mdai.compradoor.data.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -13,9 +14,8 @@ public class Inmueble {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID idInmueble;    
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_venta")
-    Venta venta;
+    @OneToOne(mappedBy = "inmueble")
+    private Venta venta;
     private String localidad;
     private Float precio;
     private String direccion;
@@ -79,5 +79,29 @@ public class Inmueble {
         this.localidad = localidad;
         this.precio = precio;
         this.direccion = direccion;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Inmueble inmueble = (Inmueble) o;
+        return Objects.equals(idInmueble, inmueble.idInmueble) && Objects.equals(venta, inmueble.venta) && Objects.equals(localidad, inmueble.localidad) && Objects.equals(precio, inmueble.precio) && Objects.equals(direccion, inmueble.direccion) && Objects.equals(pathFotos, inmueble.pathFotos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idInmueble, venta, localidad, precio, direccion, pathFotos);
+    }
+
+    @Override
+    public String toString() {
+        return "Inmueble{" +
+                "idInmueble=" + idInmueble +
+                ", venta=" + venta +
+                ", localidad='" + localidad + '\'' +
+                ", precio=" + precio +
+                ", direccion='" + direccion + '\'' +
+                ", pathFotos=" + pathFotos +
+                '}';
     }
 }

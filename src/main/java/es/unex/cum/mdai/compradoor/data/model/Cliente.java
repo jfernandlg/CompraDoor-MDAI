@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -17,8 +18,11 @@ public class Cliente {
     private String email;
     private int telefono;
 
+    @OneToMany(mappedBy = "cliente")
+    private List<Venta> ventas =  new ArrayList<>();
+
     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<Tarjeta> tarjetas = new ArrayList<Tarjeta>();
+    private List<Tarjeta> tarjetas = new ArrayList<>();
 
     public Cliente(String dni, String nombre) {
         this.dni = dni;
@@ -77,5 +81,36 @@ public class Cliente {
         this.tarjetas = tarjetas;
     }
 
+    public List<Venta> getVentas() {
+        return ventas;
+    }
 
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Cliente cliente = (Cliente) o;
+        return telefono == cliente.telefono && Objects.equals(id, cliente.id) && Objects.equals(dni, cliente.dni) && Objects.equals(nombre, cliente.nombre) && Objects.equals(email, cliente.email) && Objects.equals(ventas, cliente.ventas) && Objects.equals(tarjetas, cliente.tarjetas);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, dni, nombre, email, telefono, ventas, tarjetas);
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "id=" + id +
+                ", dni='" + dni + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", email='" + email + '\'' +
+                ", telefono=" + telefono +
+                ", ventas=" + ventas +
+                ", tarjetas=" + tarjetas +
+                '}';
+    }
 }
