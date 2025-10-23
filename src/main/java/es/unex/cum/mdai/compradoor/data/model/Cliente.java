@@ -24,9 +24,15 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Tarjeta> tarjetas = new ArrayList<>();
 
+    @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL})
+    private List<Compra> compras = new ArrayList<>();
+
     public Cliente(String dni, String nombre) {
         this.dni = dni;
         this.nombre = nombre;
+        this.compras = new ArrayList<>();
+        this.tarjetas = new ArrayList<>();
+        this.ventas = new ArrayList<>();
     }
 
     public Cliente() {
@@ -61,6 +67,10 @@ public class Cliente {
         return tarjetas;
     }
 
+    public List<Compra> getCompras() {
+        return compras;
+    }
+
     public void setDni(String dni) {
         this.dni = dni;
     }
@@ -89,16 +99,20 @@ public class Cliente {
         this.ventas = ventas;
     }
 
+    public void setCompras(List<Compra> compras) {
+        this.compras = compras;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Cliente cliente = (Cliente) o;
-        return telefono == cliente.telefono && Objects.equals(id, cliente.id) && Objects.equals(dni, cliente.dni) && Objects.equals(nombre, cliente.nombre) && Objects.equals(email, cliente.email) && Objects.equals(ventas, cliente.ventas) && Objects.equals(tarjetas, cliente.tarjetas);
+        return telefono == cliente.telefono && Objects.equals(id, cliente.id) && Objects.equals(dni, cliente.dni) && Objects.equals(nombre, cliente.nombre) && Objects.equals(email, cliente.email) && Objects.equals(ventas, cliente.ventas) && Objects.equals(tarjetas, cliente.tarjetas) && Objects.equals(compras, cliente.compras);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dni, nombre, email, telefono, ventas, tarjetas);
+        return Objects.hash(id, dni, nombre, email, telefono, ventas, tarjetas, compras);
     }
 
     @Override
@@ -111,6 +125,7 @@ public class Cliente {
                 ", telefono=" + telefono +
                 ", ventas=" + ventas +
                 ", tarjetas=" + tarjetas +
+                ", compras=" + compras +
                 '}';
     }
 }

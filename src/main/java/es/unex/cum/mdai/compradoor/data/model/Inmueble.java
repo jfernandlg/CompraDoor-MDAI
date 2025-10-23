@@ -2,6 +2,7 @@ package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,6 +21,9 @@ public class Inmueble {
     private Float precio;
     private String direccion;
     private List<String> pathFotos;
+
+    @OneToMany(mappedBy = "inmueble", cascade = {CascadeType.ALL})
+    private List<Inmueble> inmuebles = new ArrayList<>();
 
     public Inmueble() {
       
