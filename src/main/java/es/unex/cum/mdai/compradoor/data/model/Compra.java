@@ -11,6 +11,10 @@ public class Compra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID idCompra;
 
+    public Compra() {
+
+    }
+
     public void setId(UUID id) {
         this.idCompra = id;
     }

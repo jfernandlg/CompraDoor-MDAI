@@ -2,9 +2,7 @@ package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "venta")
@@ -19,6 +17,10 @@ public class Venta {
 
     private Date fechaVenta;
     private float precioVenta;
+
+    @OneToMany(mappedBy = "venta", cascade = {CascadeType.ALL})
+    private List<ServiciosAplicados> serviciosAplicados = new ArrayList<>();
+
 
     @ManyToOne
     @JoinColumn(name = "idCliente")
