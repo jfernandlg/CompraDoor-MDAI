@@ -24,7 +24,7 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Tarjeta> tarjetas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "cliente")
     private List<Compra> compras = new ArrayList<>();
 
     public Cliente(String dni, String nombre) {
@@ -103,29 +103,5 @@ public class Cliente {
         this.compras = compras;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Cliente cliente = (Cliente) o;
-        return telefono == cliente.telefono && Objects.equals(id, cliente.id) && Objects.equals(dni, cliente.dni) && Objects.equals(nombre, cliente.nombre) && Objects.equals(email, cliente.email) && Objects.equals(ventas, cliente.ventas) && Objects.equals(tarjetas, cliente.tarjetas) && Objects.equals(compras, cliente.compras);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dni, nombre, email, telefono, ventas, tarjetas, compras);
-    }
-
-    @Override
-    public String toString() {
-        return "Cliente{" +
-                "id=" + id +
-                ", dni='" + dni + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", email='" + email + '\'' +
-                ", telefono=" + telefono +
-                ", ventas=" + ventas +
-                ", tarjetas=" + tarjetas +
-                ", compras=" + compras +
-                '}';
-    }
 }
