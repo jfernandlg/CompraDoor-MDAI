@@ -39,7 +39,7 @@ services:
       - postgres
     environment:
       # Aquí sobreescribimos los valores de application.properties
-      DB_HOST: postgres                   # <--- ¡La magia! Apunta al servicio "db"
+      DB_HOST: postgres
       DB_NAME: mi_base_de_datos
       DB_USER: root
       DB_PASS: password
