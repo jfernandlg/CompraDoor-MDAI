@@ -12,7 +12,7 @@ import java.util.UUID;
 public class Inmueble {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idInmueble;    
 
     @OneToOne(mappedBy = "inmueble")

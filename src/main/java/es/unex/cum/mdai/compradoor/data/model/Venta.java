@@ -8,7 +8,7 @@ import java.util.*;
 @Table(name = "venta")
 public class Venta {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idVenta;
 
     @OneToOne

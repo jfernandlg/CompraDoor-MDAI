@@ -9,7 +9,7 @@ import java.util.UUID;
 @Table(name = "tarjeta")
 public class Tarjeta {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String codigoTarjeta;
     private boolean valida;
