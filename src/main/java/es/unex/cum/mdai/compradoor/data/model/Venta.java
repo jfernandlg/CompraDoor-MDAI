@@ -85,12 +85,12 @@ public class Venta {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Venta venta = (Venta) o;
-        return Float.compare(precioVenta, venta.precioVenta) == 0 && Objects.equals(idVenta, venta.idVenta) && Objects.equals(inmueble, venta.inmueble) && Objects.equals(fechaVenta, venta.fechaVenta) && Objects.equals(cliente, venta.cliente);
+        return Float.compare(precioVenta, venta.precioVenta) == 0 && Objects.equals(idVenta, venta.idVenta) && Objects.equals(inmueble, venta.inmueble) && Objects.equals(fechaVenta, venta.fechaVenta) && Objects.equals(serviciosAplicados, venta.serviciosAplicados) && Objects.equals(cliente, venta.cliente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idVenta, inmueble, fechaVenta, precioVenta, cliente);
+        return Objects.hash(idVenta, inmueble, fechaVenta, precioVenta, serviciosAplicados, cliente);
     }
 
     @Override
@@ -100,6 +100,7 @@ public class Venta {
                 ", inmueble=" + inmueble +
                 ", fechaVenta=" + fechaVenta +
                 ", precioVenta=" + precioVenta +
+                ", serviciosAplicados=" + serviciosAplicados +
                 ", cliente=" + cliente +
                 '}';
     }
