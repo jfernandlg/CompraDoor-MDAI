@@ -2,10 +2,7 @@ package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "servicios_aplicados")
@@ -62,5 +59,28 @@ public class ServiciosAplicados {
 
     public void setServicios(List<Servicios> servicios) {
         this.servicios = servicios;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ServiciosAplicados that = (ServiciosAplicados) o;
+        return Float.compare(coste, that.coste) == 0 && Objects.equals(idServicioAplicado, that.idServicioAplicado) && Objects.equals(venta, that.venta) && Objects.equals(fechaAplicacion, that.fechaAplicacion) && Objects.equals(servicios, that.servicios);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idServicioAplicado, venta, coste, fechaAplicacion, servicios);
+    }
+
+    @Override
+    public String toString() {
+        return "ServiciosAplicados{" +
+                "idServicioAplicado=" + idServicioAplicado +
+                ", venta=" + venta +
+                ", coste=" + coste +
+                ", fechaAplicacion=" + fechaAplicacion +
+                ", servicios=" + servicios +
+                '}';
     }
 }

@@ -97,12 +97,12 @@ public class Inmueble {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Inmueble inmueble = (Inmueble) o;
-        return Objects.equals(idInmueble, inmueble.idInmueble) && Objects.equals(venta, inmueble.venta) && Objects.equals(localidad, inmueble.localidad) && Objects.equals(precio, inmueble.precio) && Objects.equals(direccion, inmueble.direccion) && Objects.equals(pathFotos, inmueble.pathFotos);
+        return Objects.equals(idInmueble, inmueble.idInmueble) && Objects.equals(venta, inmueble.venta) && Objects.equals(localidad, inmueble.localidad) && Objects.equals(precio, inmueble.precio) && Objects.equals(direccion, inmueble.direccion) && Objects.equals(pathFotos, inmueble.pathFotos) && Objects.equals(compras, inmueble.compras);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idInmueble, venta, localidad, precio, direccion, pathFotos);
+        return Objects.hash(idInmueble, venta, localidad, precio, direccion, pathFotos, compras);
     }
 
     @Override
@@ -114,6 +114,7 @@ public class Inmueble {
                 ", precio=" + precio +
                 ", direccion='" + direccion + '\'' +
                 ", pathFotos=" + pathFotos +
+                ", compras=" + compras +
                 '}';
     }
 }
