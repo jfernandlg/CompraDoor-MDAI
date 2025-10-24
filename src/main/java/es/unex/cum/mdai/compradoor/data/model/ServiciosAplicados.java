@@ -32,13 +32,35 @@ public class ServiciosAplicados {
         this.venta = venta;
     }
 
-    public void setId(UUID id) {
-        this.idServicioAplicado = id;
-    }
-
-    public UUID getId() {
+    public UUID getIdServicioAplicado() {
         return idServicioAplicado;
     }
 
+    public float getCoste() {
+        return coste;
+    }
 
+    public Date getFechaAplicacion() {
+        return fechaAplicacion;
+    }
+
+    public List<Servicios> getServicios() {
+        return servicios;
+    }
+
+    public void setIdServicioAplicado(UUID idServicioAplicado) {
+        this.idServicioAplicado = idServicioAplicado;
+    }
+
+    public void setCoste(float coste) {
+        this.coste = coste;
+    }
+
+    public void setFechaAplicacion(Date fechaAplicacion) {
+        this.fechaAplicacion = fechaAplicacion;
+    }
+
+    public void setServicios(List<Servicios> servicios) {
+        this.servicios = servicios;
+    }
 }

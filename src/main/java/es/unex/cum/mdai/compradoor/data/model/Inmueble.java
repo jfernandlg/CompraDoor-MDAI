@@ -23,7 +23,7 @@ public class Inmueble {
     private List<String> pathFotos;
 
     @OneToMany(mappedBy = "inmueble", cascade = {CascadeType.ALL})
-    private List<Inmueble> inmuebles = new ArrayList<>();
+    private List<Compra> compras = new ArrayList<>();
 
     public Inmueble() {
       
@@ -75,6 +75,14 @@ public class Inmueble {
 
     public void setVenta(Venta venta) {
         this.venta = venta;
+    }
+
+    public List<Compra> getCompras() {
+        return compras;
+    }
+
+    public void setCompras(List<Compra> compras) {
+        this.compras = compras;
     }
 
     public Inmueble(UUID uuid, List<String> pathFotos, String localidad, Float precio, String direccion) {

@@ -16,7 +16,7 @@ public class Servicios {
 
 
     @ManyToOne
-    @JoinColumn(name = "servicios_aplicado_id")
+    @JoinColumn(name = "servicios_aplicados_id")
     private ServiciosAplicados serviciosAplicado;
 
     public ServiciosAplicados getServiciosAplicado() {
