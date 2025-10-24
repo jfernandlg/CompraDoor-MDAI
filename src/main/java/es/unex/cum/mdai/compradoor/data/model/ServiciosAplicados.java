@@ -21,7 +21,7 @@ public class ServiciosAplicados {
     private float coste;
     private Date fechaAplicacion;
 
-    @OneToMany(mappedBy = "servicios_aplicados", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "serviciosAplicados", cascade = {CascadeType.ALL})
     private List<Servicios> servicios = new ArrayList<>();
 
     public Venta getVenta() {

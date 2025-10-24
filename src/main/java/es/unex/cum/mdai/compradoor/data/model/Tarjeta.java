@@ -16,7 +16,7 @@ public class Tarjeta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
-    Cliente cliente;
+    private Cliente cliente;
 
     public Tarjeta() {
 

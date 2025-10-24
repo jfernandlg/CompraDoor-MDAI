@@ -17,18 +17,14 @@ public class Servicios {
 
     @ManyToOne
     @JoinColumn(name = "servicios_aplicados_id")
-    private ServiciosAplicados serviciosAplicado;
+    private ServiciosAplicados serviciosAplicados;
 
     public ServiciosAplicados getServiciosAplicado() {
-        return serviciosAplicado;
+        return serviciosAplicados;
     }
 
-    public void setServiciosAplicado(ServiciosAplicados serviciosAplicado) {
-        this.serviciosAplicado = serviciosAplicado;
-    }
-
-    public void setId(UUID id) {
-        this.idServicio = id;
+    public void setServiciosAplicado(ServiciosAplicados serviciosAplicados) {
+        this.serviciosAplicados = serviciosAplicados;
     }
 
     public UUID getIdServicio() {
@@ -54,5 +50,7 @@ public class Servicios {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+
 
 }
