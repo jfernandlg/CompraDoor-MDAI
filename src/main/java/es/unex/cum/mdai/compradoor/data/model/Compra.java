@@ -15,15 +15,7 @@ public class Compra {
 
     }
 
-    public void setId(UUID id) {
-        this.idCompra = id;
-    }
-
-    public UUID getId() {
-        return idCompra;
-    }
-
-    public Compra(Cliente cliente, float precioCompra, Inmueble inmueble, Date fechaCompra) {
+    public Compra(Cliente cliente, float precioCompra, Inmueble inmueble) {
         this.cliente = cliente;
         this.precioCompra = precioCompra;
         this.inmueble = inmueble;

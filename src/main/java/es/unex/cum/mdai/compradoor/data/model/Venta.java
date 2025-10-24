@@ -26,7 +26,7 @@ public class Venta {
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
 
-    public Venta(Inmueble inmueble, Date fechaVenta, float precioVenta, Cliente cliente) {
+    public Venta(Inmueble inmueble, float precioVenta, Cliente cliente) {
         this.inmueble = inmueble;
         this.fechaVenta = new Date();
         this.precioVenta = precioVenta;
