@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mi_base_de_datos
+    ports:
+      - "5432:5432" # Expone el puerto de Postgres al exterior
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dominio.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80" # Expone pgAdmin en el puerto 5050
+    depends_on:
+      - postgres # Se asegura de iniciar después de la base de datos
+
+# --- SERVICIO DE SPRING BOOT AÑADIDO ---
+  app:
+    # Construye la imagen usando el Dockerfile en el directorio actual (.)
+    build: .
+    container_name: compradoor
+    restart: always
+    ports:
+      # Expone el puerto 8080 de Spring al puerto 8080 de tu máquina
+      - "8080:8080"
+    depends_on:
+      # MUY IMPORTANTE: Le dice a Docker que no inicie "app"
+      # hasta que el servicio "db" esté listo.
+      - postgres
+    environment:
+      # Aquí sobreescribimos los valores de application.properties
+      DB_HOST: postgres                   # <--- ¡La magia! Apunta al servicio "db"
+      DB_NAME: mi_base_de_datos
+      DB_USER: root
+      DB_PASS: password
+
+volumes:
+  postgres-data:

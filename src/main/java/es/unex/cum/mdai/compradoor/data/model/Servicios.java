@@ -31,10 +31,6 @@ public class Servicios {
         this.idServicio = id;
     }
 
-    public UUID getId() {
-        return idServicio;
-    }
-
     public UUID getIdServicio() {
         return idServicio;
     }
