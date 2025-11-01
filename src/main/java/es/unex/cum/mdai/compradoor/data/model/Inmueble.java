@@ -93,6 +93,19 @@ public class Inmueble {
         this.direccion = direccion;
     }
 
+    public Inmueble(Venta venta, String localidad, Float precio, String direccion) {
+        this.venta = venta;
+        this.localidad = localidad;
+        this.precio = precio;
+        this.direccion = direccion;
+    }
+
+    public Inmueble(String localidad, Float precio, String direccion) {
+        this.localidad = localidad;
+        this.precio = precio;
+        this.direccion = direccion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
