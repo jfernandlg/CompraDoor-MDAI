@@ -1,5 +1,6 @@
 # Usamos una imagen base de Java 17 (puedes cambiar la versión si usas otra)
-FROM openjdk:21-slim
+FROM openjdk:23-ea-jdk
+#FROM openjdk:21-slim
 
 # Definimos un argumento para el nombre del JAR (lo estándar de Spring Boot)
 ARG JAR_FILE=target/*.jar
