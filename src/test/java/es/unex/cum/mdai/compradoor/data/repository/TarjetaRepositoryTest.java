@@ -52,7 +52,6 @@ class TarjetaRepositoryTest {
         List<Tarjeta> byCliente = tarjetaRepository.findByCliente(c);
         assertThat(byCliente).hasSize(2);
         assertThat(byCliente).extracting("id").containsExactlyInAnyOrder(t.getId(), t2.getId());
-
     }
 
 }
