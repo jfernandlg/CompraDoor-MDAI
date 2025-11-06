@@ -17,6 +17,8 @@ public class Servicio {
     private TipoServicio tipoServicio;
     private String descripcion;
     private float coste;
+
+    @Temporal(TemporalType.DATE)
     private Date fecha;
 
 

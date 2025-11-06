@@ -14,18 +14,11 @@ import java.util.UUID;
 
 @Repository
 public interface ServicioRepository extends JpaRepository<Servicio, UUID> {
-
-    List<Servicio> findByTipoServicio(TipoServicio tipo);
-
-    List<Servicio> findByDescripcionContainingIgnoreCase(String texto);
-
+    List<Servicio> findByTipoServicio(TipoServicio tipoServicio);
+    List<Servicio> findByDescripcionContainingIgnoreCase(String descripcion);
     List<Servicio> findByVenta(Venta venta);
-
     long countByVenta(Venta venta);
-
     boolean existsByVenta(Venta venta);
-
-    List<Servicio> findByCosteBetween(float coste1, float coste2);
-
-    List<Servicio> findByFechaAplicacionBetween(Date fechaInicio, Date fechaFin);
+    List<Servicio> findByCosteBetween(Float minCoste, Float maxCoste);
+    List<Servicio> findByFechaAplicacionBetween(Date startDate, Date endDate);
 }
