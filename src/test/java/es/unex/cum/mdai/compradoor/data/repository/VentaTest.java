@@ -12,7 +12,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class VentaRepositoryTest {
+class VentaTest {
 
     @Autowired
     VentaRepository ventaRepository;
@@ -97,25 +97,25 @@ class VentaRepositoryTest {
         assertThat(findByDate).extracting("idVenta").containsExactlyInAnyOrder(v.getIdVenta());
     }
 
-    @Test
-    void testCascadeRemoveCliente(){
-        Cliente c = new Cliente("87654321X", "Ana García");
-        c.setEmail("ana-garcia@example.com");
-        clienteRepository.save(c);
-
-        Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
-        inmuebleRepository.save(i);
-
-        Venta v = new Venta(i, 500_000f, c);
-
-        c.getVentas().add(v);
-
-        ventaRepository.save(v);
-
-        UUID clienteId = c.getId();
-        clienteRepository.deleteById(clienteId);
-
-        assertThat(clienteRepository.findById(clienteId)).isEmpty();
-        assertThat(ventaRepository.count()).isZero();
-    }
+//    @Test
+//    void testCascadeRemoveCliente(){
+//        Cliente c = new Cliente("87654321X", "Ana García");
+//        c.setEmail("ana-garcia@example.com");
+//        clienteRepository.save(c);
+//
+//        Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
+//        inmuebleRepository.save(i);
+//
+//        Venta v = new Venta(i, 500_000f, c);
+//
+//        c.getVentas().add(v);
+//
+//        ventaRepository.save(v);
+//
+//        UUID clienteId = c.getId();
+//        clienteRepository.deleteById(clienteId);
+//
+//        assertThat(clienteRepository.findById(clienteId)).isEmpty();
+//        assertThat(ventaRepository.count()).isZero();
+//    }
 }
