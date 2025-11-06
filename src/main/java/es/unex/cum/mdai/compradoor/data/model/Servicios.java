@@ -17,15 +17,15 @@ public class Servicios {
 
 
     @ManyToOne
-    @JoinColumn(name = "servicios_aplicados_id")
-    private ServiciosAplicados serviciosAplicados;
+    @JoinColumn(name = "servicios")
+    private Venta venta;
 
-    public ServiciosAplicados getServiciosAplicado() {
-        return serviciosAplicados;
+    public Venta getVenta() {
+        return venta;
     }
 
-    public void setServiciosAplicado(ServiciosAplicados serviciosAplicados) {
-        this.serviciosAplicados = serviciosAplicados;
+    public void setVenta(Venta venta) {
+        this.venta = venta;
     }
 
     public UUID getIdServicio() {
@@ -56,12 +56,12 @@ public class Servicios {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Servicios servicios = (Servicios) o;
-        return Objects.equals(idServicio, servicios.idServicio) && tipoServicio == servicios.tipoServicio && Objects.equals(descripcion, servicios.descripcion) && Objects.equals(serviciosAplicados, servicios.serviciosAplicados);
+        return Objects.equals(idServicio, servicios.idServicio) && tipoServicio == servicios.tipoServicio && Objects.equals(descripcion, servicios.descripcion) && Objects.equals(venta, servicios.venta);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idServicio, tipoServicio, descripcion, serviciosAplicados);
+        return Objects.hash(idServicio, tipoServicio, descripcion, venta);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class Servicios {
                 "idServicio=" + idServicio +
                 ", tipoServicio=" + tipoServicio +
                 ", descripcion='" + descripcion + '\'' +
-                ", serviciosAplicados=" + serviciosAplicados +
+                ", venta=" + venta +
                 '}';
     }
 }
