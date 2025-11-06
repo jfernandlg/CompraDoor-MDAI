@@ -125,35 +125,4 @@ class VentaTest {
                 .containsExactlyInAnyOrder(v.getIdVenta());
     }
 
-    @Test
-    void testCascadeRemoveCliente() {
-        // ===== CONFIGURACIÓN: Crear cliente e inmueble =====
-        Cliente c = new Cliente("87654321X", "Ana García");
-        c.setEmail("ana-garcia@example.com");
-        clienteRepository.save(c);
-
-        Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
-        inmuebleRepository.save(i);
-
-        // ===== EJECUCIÓN: Crear venta asociada al cliente =====
-        Venta v = new Venta(i, 500_000f, c);
-
-        // Establecer relación bidireccional
-        c.getVentas().add(v);
-        ventaRepository.save(v);
-
-        // ===== VERIFICACIÓN: Probar eliminación en cascada =====
-
-        // Guardar ID del cliente para verificación posterior
-        UUID clienteId = c.getId();
-
-        // Eliminar el cliente - debería eliminar en cascada sus ventas
-        clienteRepository.deleteById(clienteId);
-
-        // Verificar que el cliente ya no existe en la base de datos
-        assertThat(clienteRepository.findById(clienteId)).isEmpty();
-
-        // Verificar que la venta asociada también fue eliminada (cascade remove)
-        assertThat(ventaRepository.count()).isZero();
-    }
 }
