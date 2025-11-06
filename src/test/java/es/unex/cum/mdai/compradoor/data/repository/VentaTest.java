@@ -25,6 +25,7 @@ class VentaTest {
 
     @Test
     void testFindByCliente() {
+        // ===== CONFIGURACIÓN: Crear cliente y inmuebles =====
         Cliente c = new Cliente("12345678A", "Juan Perez");
         c.setEmail("juan@example.com");
         clienteRepository.save(c);
@@ -34,19 +35,26 @@ class VentaTest {
         inmuebleRepository.save(i);
         inmuebleRepository.save(i2);
 
+        // ===== EJECUCIÓN: Crear ventas para el mismo cliente =====
         Venta v = new Venta(i, 285_000f, c);
         Venta v2 = new Venta(i2, 500_000f, c);
         ventaRepository.save(v);
         ventaRepository.save(v2);
 
+        // ===== VERIFICACIÓN: Buscar ventas por cliente =====
         List<Venta> findByCliente = ventaRepository.findByCliente(c);
-        assertThat(findByCliente).hasSize(2);
-        assertThat(findByCliente).extracting("idVenta").containsExactlyInAnyOrder(v.getIdVenta(), v2.getIdVenta());
 
+        // Verificar que se encuentran exactamente 2 ventas para este cliente
+        assertThat(findByCliente).hasSize(2);
+
+        // Verificar que las ventas encontradas son las correctas (en cualquier orden)
+        assertThat(findByCliente).extracting("idVenta")
+                .containsExactlyInAnyOrder(v.getIdVenta(), v2.getIdVenta());
     }
 
     @Test
     void testFindByInmueble() {
+        // ===== CONFIGURACIÓN: Crear múltiples inmuebles y cliente =====
         Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
         Inmueble i2 = new Inmueble("Mérida", 340_000f, "Avenida Reina Sofía, 12");
         Inmueble i3 = new Inmueble("Villanueva de la Serena", 125_000f, "Calle San Pedro de Alcántara, 12");
@@ -58,17 +66,26 @@ class VentaTest {
         c.setEmail("ana-garcia@example.com");
         clienteRepository.save(c);
 
-        Venta v = new Venta(i, 500_000f, c);
-        Venta v2 = new Venta(i2, 375_000f, c);
+        // ===== EJECUCIÓN: Crear ventas para algunos inmuebles =====
+        Venta v = new Venta(i, 500_000f, c);   // Venta para inmueble i
+        Venta v2 = new Venta(i2, 375_000f, c); // Venta para inmueble i2
         ventaRepository.save(v);
         ventaRepository.save(v2);
 
+        // ===== VERIFICACIÓN: Buscar ventas por inmueble específico =====
         List<Venta> findByInmueble = ventaRepository.findByInmueble(i);
-        assertThat(findByInmueble).extracting("idVenta").containsExactlyInAnyOrder(v.getIdVenta());
+
+        // Verificar que solo se encuentra 1 venta para el inmueble i
+        assertThat(findByInmueble).hasSize(1);
+
+        // Verificar que la venta encontrada es exactamente v
+        assertThat(findByInmueble).extracting("idVenta")
+                .containsExactlyInAnyOrder(v.getIdVenta());
     }
 
     @Test
     void testByFechaVentaBetween() {
+        // ===== CONFIGURACIÓN: Crear inmuebles y cliente =====
         Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
         Inmueble i2 = new Inmueble("Mérida", 340_000f, "Avenida Reina Sofía, 12");
         inmuebleRepository.save(i);
@@ -78,8 +95,11 @@ class VentaTest {
         c.setEmail("ana-garcia@example.com");
         clienteRepository.save(c);
 
+        // ===== EJECUCIÓN: Crear ventas con fechas específicas =====
         Venta v = new Venta(i, 500_000f, c);
         Venta v2 = new Venta(i2, 375_000f, c);
+
+        // Establecer fechas de venta específicas
         Date fechaVenta1 = new GregorianCalendar(2018, Calendar.DECEMBER, 12).getTime();
         v.setFechaVenta(fechaVenta1);
 
@@ -89,33 +109,51 @@ class VentaTest {
         ventaRepository.save(v);
         ventaRepository.save(v2);
 
+        // ===== VERIFICACIÓN: Buscar ventas en rango de fechas =====
+
+        // Definir rango de búsqueda (solo año 2018)
         Date fechaInicial = new GregorianCalendar(2018, Calendar.JANUARY, 1).getTime();
         Date fechaFinal = new GregorianCalendar(2018, Calendar.DECEMBER, 31).getTime();
 
-
         List<Venta> findByDate = ventaRepository.findByFechaVentaBetween(fechaInicial, fechaFinal);
-        assertThat(findByDate).extracting("idVenta").containsExactlyInAnyOrder(v.getIdVenta());
+
+        // Verificar que solo se encuentra 1 venta en el rango (v del 12/12/2018)
+        assertThat(findByDate).hasSize(1);
+
+        // Verificar que la venta encontrada es exactamente v
+        assertThat(findByDate).extracting("idVenta")
+                .containsExactlyInAnyOrder(v.getIdVenta());
     }
 
-//    @Test
-//    void testCascadeRemoveCliente(){
-//        Cliente c = new Cliente("87654321X", "Ana García");
-//        c.setEmail("ana-garcia@example.com");
-//        clienteRepository.save(c);
-//
-//        Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
-//        inmuebleRepository.save(i);
-//
-//        Venta v = new Venta(i, 500_000f, c);
-//
-//        c.getVentas().add(v);
-//
-//        ventaRepository.save(v);
-//
-//        UUID clienteId = c.getId();
-//        clienteRepository.deleteById(clienteId);
-//
-//        assertThat(clienteRepository.findById(clienteId)).isEmpty();
-//        assertThat(ventaRepository.count()).isZero();
-//    }
+    @Test
+    void testCascadeRemoveCliente() {
+        // ===== CONFIGURACIÓN: Crear cliente e inmueble =====
+        Cliente c = new Cliente("87654321X", "Ana García");
+        c.setEmail("ana-garcia@example.com");
+        clienteRepository.save(c);
+
+        Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
+        inmuebleRepository.save(i);
+
+        // ===== EJECUCIÓN: Crear venta asociada al cliente =====
+        Venta v = new Venta(i, 500_000f, c);
+
+        // Establecer relación bidireccional
+        c.getVentas().add(v);
+        ventaRepository.save(v);
+
+        // ===== VERIFICACIÓN: Probar eliminación en cascada =====
+
+        // Guardar ID del cliente para verificación posterior
+        UUID clienteId = c.getId();
+
+        // Eliminar el cliente - debería eliminar en cascada sus ventas
+        clienteRepository.deleteById(clienteId);
+
+        // Verificar que el cliente ya no existe en la base de datos
+        assertThat(clienteRepository.findById(clienteId)).isEmpty();
+
+        // Verificar que la venta asociada también fue eliminada (cascade remove)
+        assertThat(ventaRepository.count()).isZero();
+    }
 }
