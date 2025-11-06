@@ -15,100 +15,110 @@ skinparam {
 title "Diagrama E/R - Sistema Inmobiliario"
 
 entity Cliente {
-  * IdCliente: uuid <<generated>>
+  * id: UUID <<generated>>
   --
-  DNI: String
-  Nombre: String
-  Apellidos: String
-  Email: String
-  Teléfono: Int
+  dni: String
+  nombre: String
+  email: String
+  telefono: int
 }
 
-entity ClaseTarjeta {
-  * CodigoTarjeta: String
+entity Tarjeta {
+  * id: UUID <<generated>>
   --
-  TarjetaValida: Boolean
-  IdCliente: uuid
+  codigoTarjeta: String <<unique>>
+  valida: boolean
+  id_cliente: UUID <<FK>>
 }
 
 entity Inmueble {
-  * IdInmueble: uuid
+  * idInmueble: UUID <<generated>>
   --
-  Localidad: String
-  Precio: Float
-  Dirección: String
-  PathFotos: List<String>
+  localidad: String
+  precio: Float
+  direccion: String
+  pathFotos: List<String>
 }
 
 entity Compra {
-  * IdCompra: Integer <<generated>>
+  * idCompra: UUID <<generated>>
   --
-  IdInmueble: uuid
-  IdClienteComprador: uuid
-  FechaCompra: Date
-  PrecioCompra: Float
+  fechaCompra: Date
+  precioCompra: float
+  inmueble_id: UUID <<FK>>
+  cliente_id: UUID <<FK>>
 }
 
 entity Venta {
-  * IdVenta: Integer <<generated>>
+  * idVenta: UUID <<generated>>
   --
-  IdInmueble: uuid
-  IdClienteVendedor: uuid
-  FechaVenta: Date
-  PrecioVenta: Float
+  fechaVenta: Date
+  precioVenta: float
+  idInmueble: UUID <<FK>>
+  idCliente: UUID <<FK>>
 }
 
-entity Servicios {
-  * IdServicio: Int
+entity Servicio {
+  * idServicio: UUID <<generated>>
   --
-  TipoServicio: ENUM
-  Descripción: String
+  tipoServicio: TipoServicio
+  descripcion: String
+  coste: float
+  fechaAplicacion: Date
+  venta_id: UUID <<FK>>
 }
+
 
 enum TipoServicio {
   LIMPIEZA
   MANTENIMIENTO
   REPARACION
+  PINTURA
+  FONTANERIA
   OTROS
 }
 
-entity ServiciosAplicados {
-  * IdVenta: Integer
-  * IdServicio: Int
-  --
-  Coste: Float
-  FechaAplicacion: Date
-}
-
 ' ========== RELACIONES ==========
-Cliente ||--o{ ClaseTarjeta : "posee (1:N)"
+Cliente ||--o{ Tarjeta : "posee (1:N)\n@OneToMany"
 
-Cliente ||--o{ Compra : "realiza como\ncomprador (1:N)"
-Cliente ||--o{ Venta : "realiza como\nvendedor (1:N)"
+Cliente ||--o{ Compra : "realiza (1:N)\n@OneToMany"
+Compra }o--|| Cliente : "comprador\n@ManyToOne"
 
-Inmueble }|--|| Compra : "comprado en (1:1)"
-Inmueble }|--|| Venta : "vendido en (1:1)"
+Cliente ||--o{ Venta : "vende (1:N)\n@OneToMany"
+Venta }o--|| Cliente : "vendedor\n@ManyToOne"
 
-Venta ||--o{ ServiciosAplicados : "incluye (1:N)"
-ServiciosAplicados }--|| Servicios : "de tipo (N:1)"
+Inmueble ||--o{ Compra : "tiene (1:N)\n@OneToMany"
+Compra }o--|| Inmueble : "comprado\n@ManyToOne"
+
+Inmueble ||--|| Venta : "vendido en (1:1)\n@OneToOne"
+
+Venta ||--o{ Servicio : "incluye (1:N)\n@OneToMany"
+Servicio }o--|| Venta : "aplicado a\n@ManyToOne"
 
 note left of Cliente
   <b>UUID como clave primaria</b>
   • Identificador único global
-  • Mayor seguridad y privacidad
-  • Fácil replicación de datos
+  • Generación automática
+  • Relaciones bidireccionales
 end note
 
-note right of Compra
+note right of Tarjeta
   <b>Relación con Cliente</b>
-  Cada compra está asociada
-  a un único cliente comprador
+  @ManyToOne con el cliente
+  Cascade ALL y orphanRemoval
+  en el lado Cliente
 end note
 
-note left of Venta
-  <b>Relación con Cliente</b>
-  Cada venta está asociada
-  a un único cliente vendedor
+note bottom of Venta
+  <b>Relación OneToOne</b>
+  Con Inmueble mediante
+  @OneToOne y @JoinColumn
+end note
+
+note top of Servicio
+  <b>Enum TipoServicio</b>
+  Almacenado como STRING
+  mediante @Enumerated
 end note
 
 \
