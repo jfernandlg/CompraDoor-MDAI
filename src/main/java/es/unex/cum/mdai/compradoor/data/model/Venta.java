@@ -37,6 +37,14 @@ public class Venta {
 
     }
 
+    public List<Servicios> getServicios() {
+        return servicios;
+    }
+
+    public void setServicios(List<Servicios> servicios) {
+        this.servicios = servicios;
+    }
+
     public void setId(UUID id) {
         this.idVenta = id;
     }

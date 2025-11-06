@@ -12,12 +12,13 @@ public class Servicios {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idServicio;
 
+    @Enumerated(EnumType.STRING)
     private TipoServicio tipoServicio;
     private String descripcion;
 
 
     @ManyToOne
-    @JoinColumn(name = "servicios")
+    @JoinColumn(name = "venta_id")
     private Venta venta;
 
     public Venta getVenta() {
