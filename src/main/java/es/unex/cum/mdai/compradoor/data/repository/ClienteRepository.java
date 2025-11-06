@@ -19,4 +19,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
     // Buscar por nombre (contiene, case-insensitive)
     List<Cliente> findByNombreContainingIgnoreCase(String nombreParte);
+
+    // Buscar clientes por el código de una de sus tarjetas (join implícito mediante convenciones de nombres)
+    List<Cliente> findByTarjetasCodigoTarjeta(String codigoTarjeta);
 }
