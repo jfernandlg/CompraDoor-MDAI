@@ -18,7 +18,7 @@ public class Cliente {
     private String email;
     private int telefono;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente")
     private List<Venta> ventas =  new ArrayList<>();
 
     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL}, orphanRemoval = true)

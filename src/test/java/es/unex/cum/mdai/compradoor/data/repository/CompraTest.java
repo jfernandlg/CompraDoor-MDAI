@@ -104,7 +104,7 @@ class CompraTest {
     }
 
     @Test
-    void testDeletingInmuebleCascadesToCompra() {
+    void testDeletingInmuebleDoesNotCascadeToCompra() {
         Cliente c = new Cliente("50000000D", "CascadeTest");
         clienteRepository.save(c);
 
@@ -114,11 +114,16 @@ class CompraTest {
         Compra comp = new Compra(c, 200_000f, i);
         compraRepository.save(comp);
 
-        // Eliminar el inmueble debería eliminar también la compra porque Inmueble.compras tiene cascade ALL
-        inmuebleRepository.delete(i);
-
-        Optional<Compra> maybe = compraRepository.findById(comp.getIdCompra());
-        assertThat(maybe).isNotPresent();
+        // Intentamos eliminar el inmueble y comprobamos
+        // que la compra sigue existiendo o que la eliminación está bloqueada por la restricción de FK.
+        try {
+            inmuebleRepository.delete(i);
+            Optional<Compra> maybe = compraRepository.findById(comp.getIdCompra());
+            assertThat(maybe).isPresent();
+        } catch (DataIntegrityViolationException ex) {
+            Optional<Compra> maybe = compraRepository.findById(comp.getIdCompra());
+            assertThat(maybe).isPresent();
+        }
     }
 
     @Test

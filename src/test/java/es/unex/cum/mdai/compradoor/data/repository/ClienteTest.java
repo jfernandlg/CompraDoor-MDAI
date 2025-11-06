@@ -98,7 +98,8 @@ class ClienteTest {
         clienteRepository.delete(a);
         List<Cliente> afterDelete = clienteRepository.findAll();
         assertThat(afterDelete).hasSize(1);
-        assertThat(afterDelete.get(0).getDni()).isEqualTo("55555555E");
+        // usar AssertJ para evitar get(0) warning
+        assertThat(afterDelete).first().extracting(Cliente::getDni).isEqualTo("55555555E");
     }
 
     // Nuevo: buscar clientes por el código de una tarjeta
@@ -113,7 +114,8 @@ class ClienteTest {
 
         List<Cliente> found = clienteRepository.findByTarjetasCodigoTarjeta("CARD-ABC-123");
         assertThat(found).hasSize(1);
-        assertThat(found.get(0).getDni()).isEqualTo("66666666F");
+        // usar AssertJ first() para evitar get(0) warning
+        assertThat(found).first().extracting(Cliente::getDni).isEqualTo("66666666F");
     }
 
     // Nuevo: demostrar efecto de cascade + orphanRemoval en Cliente -> Tarjeta
