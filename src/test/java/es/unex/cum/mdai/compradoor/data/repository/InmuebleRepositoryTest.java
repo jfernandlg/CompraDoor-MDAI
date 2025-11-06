@@ -7,9 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-
-import javax.swing.*;
 import java.util.List;
+import java.util.UUID;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +38,8 @@ class InmuebleRepositoryTest {
 
         List<Inmueble> findByLocalidad = inmuebleRepository.findByLocalidadIgnoreCase("Badajoz");
         assertThat(findByLocalidad).hasSize(3);
+
+
     }
 
     @Test
@@ -72,17 +73,35 @@ class InmuebleRepositoryTest {
         Venta v = new Venta(i, 270_000f, c);
         ventaRepository.save(v);
 
+        c.getVentas().add(v);
+
         List<Inmueble> byVenta = inmuebleRepository.findByVentaIsNull();
         assertThat(byVenta).hasSize(2);
         assertThat(byVenta).extracting("idInmueble").containsExactlyInAnyOrder(i2.getIdInmueble(), i3.getIdInmueble());
 
-
-
-
-
-
-
-
     }
+
+//    @Test
+//    void testCascadeRemoveInmueble(){
+//        Cliente c = new Cliente("12345678A", "Juan Perez");
+//        c.setEmail("juan@example.com");
+//        clienteRepository.save(c);
+//
+//        Inmueble i = new Inmueble("Badajoz", 250_000f, "Avenida de América, 25");
+//        inmuebleRepository.save(i);
+//
+//        Venta v = new Venta(i, 270_000f, c);
+//        ventaRepository.save(v);
+//
+//        c.getVentas().add(v);
+//
+//        UUID idInmueble = i.getIdInmueble();
+//        inmuebleRepository.deleteById(idInmueble);
+//
+//        assertThat(inmuebleRepository.findById(idInmueble)).isEmpty();
+//        assertThat(ventaRepository.count()).isZero();
+//
+//    }
+
 
 }

@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,5 +95,27 @@ class VentaRepositoryTest {
 
         List<Venta> findByDate = ventaRepository.findByFechaVentaBetween(fechaInicial, fechaFinal);
         assertThat(findByDate).extracting("idVenta").containsExactlyInAnyOrder(v.getIdVenta());
+    }
+
+    @Test
+    void testCascadeRemoveCliente(){
+        Cliente c = new Cliente("87654321X", "Ana García");
+        c.setEmail("ana-garcia@example.com");
+        clienteRepository.save(c);
+
+        Inmueble i = new Inmueble("Don Benito", 470_000f, "Calle Colón, 3");
+        inmuebleRepository.save(i);
+
+        Venta v = new Venta(i, 500_000f, c);
+
+        c.getVentas().add(v);
+
+        ventaRepository.save(v);
+
+        UUID clienteId = c.getId();
+        clienteRepository.deleteById(clienteId);
+
+        assertThat(clienteRepository.findById(clienteId)).isEmpty();
+        assertThat(ventaRepository.count()).isZero();
     }
 }

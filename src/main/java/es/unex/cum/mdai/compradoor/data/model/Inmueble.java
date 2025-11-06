@@ -15,14 +15,14 @@ public class Inmueble {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idInmueble;    
 
-    @OneToOne(mappedBy = "inmueble")
+    @OneToOne(mappedBy = "inmueble", cascade = CascadeType.ALL)
     private Venta venta;
     private String localidad;
     private Float precio;
     private String direccion;
     private List<String> pathFotos;
 
-    @OneToMany(mappedBy = "inmueble", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "inmueble", cascade = CascadeType.ALL)
     private List<Compra> compras = new ArrayList<>();
 
     public Inmueble() {

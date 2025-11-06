@@ -1,7 +1,6 @@
 package es.unex.cum.mdai.compradoor.data.repository;
 
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
-import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.model.Tarjeta;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
