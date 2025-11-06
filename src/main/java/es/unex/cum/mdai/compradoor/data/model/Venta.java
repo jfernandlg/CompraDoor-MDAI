@@ -37,11 +37,11 @@ public class Venta {
 
     }
 
-    public List<Servicios> getServicios() {
+    public List<Servicio> getServicios() {
         return servicios;
     }
 
-    public void setServicios(List<Servicios> servicios) {
+    public void setServicios(List<Servicio> servicios) {
         this.servicios = servicios;
     }
 
