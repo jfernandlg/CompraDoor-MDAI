@@ -1,7 +1,6 @@
 package es.unex.cum.mdai.compradoor.data.repository;
 
 import es.unex.cum.mdai.compradoor.data.model.Servicios;
-import es.unex.cum.mdai.compradoor.data.model.ServiciosAplicados;
 import es.unex.cum.mdai.compradoor.data.model.TipoServicio;
 import es.unex.cum.mdai.compradoor.data.model.Venta;
 import org.springframework.data.jpa.repository.JpaRepository;
