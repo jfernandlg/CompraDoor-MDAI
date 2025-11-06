@@ -19,7 +19,7 @@ public class Servicio {
     private float coste;
 
     @Temporal(TemporalType.DATE)
-    private Date fecha;
+    private Date fechaAplicacion;
 
 
     @ManyToOne
@@ -89,6 +89,6 @@ public class Servicio {
     }
 
     public void setFechaAplicacion(Date fecha) {
-        this.fecha = fecha;
+        this.fechaAplicacion = fecha;
     }
 }
