@@ -15,7 +15,7 @@ public class Tarjeta {
     private String codigoTarjeta;
     private boolean valida;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 

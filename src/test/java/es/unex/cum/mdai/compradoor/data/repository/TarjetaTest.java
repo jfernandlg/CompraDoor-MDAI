@@ -59,7 +59,7 @@ class TarjetaTest {
         c.setEmail("juan@example.com");
         clienteRepository.save(c);
 
-        Tarjeta t = new Tarjeta("8126449987442222",  true, c);
+        Tarjeta t = new Tarjeta("8126449987442222", true, c);
         tarjetaRepository.save(t);
 
         boolean exist = tarjetaRepository.existsByCodigoTarjeta("8126449987442222");
@@ -94,7 +94,7 @@ class TarjetaTest {
     }
 
     @Test
-    void testCodigoTarjetaUnico(){
+    void testCodigoTarjetaUnico() {
         Cliente c = new Cliente("12345678A", "Juan Perez");
         c.setEmail("juan@example.com");
         clienteRepository.save(c);
@@ -106,6 +106,41 @@ class TarjetaTest {
 
         assertThat(tarjetaRepository.existsByCodigoTarjeta("8126449987442222")).isTrue();
     }
+
+    @Test
+    void testTarjetaValidasEInvalidas() {
+        Cliente c = new Cliente("12345678A", "Juan Perez");
+        c.setEmail("juan@example.com");
+        clienteRepository.save(c);
+
+        Tarjeta t1 = new Tarjeta("8126449987442222", true, c);
+        Tarjeta t2 = new Tarjeta("123456787654321", false, c);
+        tarjetaRepository.saveAll(List.of(t1, t2));
+
+        List<Tarjeta> tarjetas = tarjetaRepository.findByCliente(c);
+        assertThat(tarjetas).hasSize(2);
+
+        assertThat(tarjetas).extracting("valida").containsExactlyInAnyOrder(true, false);
+
+    }
+
+    @Test
+    void testUpdateTarjeta(){
+        Cliente c = new Cliente("12345678A", "Juan Perez");
+        c.setEmail("juan@example.com");
+        clienteRepository.save(c);
+
+        Tarjeta t1 = new Tarjeta("8126449987442222", true, c);
+        Tarjeta t1_save = tarjetaRepository.save(t1);
+
+        t1_save.setValida(false);
+        tarjetaRepository.save(t1_save);
+
+        Tarjeta update  = tarjetaRepository.findById(t1_save.getId()).orElse(null);
+        assertThat(update).isNotNull();
+        assertThat(update.isValida()).isFalse();
+    }
+
 
 
 
