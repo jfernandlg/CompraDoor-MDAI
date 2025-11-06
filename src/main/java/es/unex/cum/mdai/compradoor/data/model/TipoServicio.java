@@ -4,5 +4,5 @@ public enum TipoServicio {
     LIMPIEZA,
     MANTENIMIENTO,
     REPARACION,
-    OTROS
+    PINTURA, FONTANERIA, OTROS
 }

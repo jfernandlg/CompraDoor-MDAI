@@ -18,8 +18,8 @@ public class Venta {
     private Date fechaVenta;
     private float precioVenta;
 
-    @OneToMany(mappedBy = "venta", cascade = {CascadeType.ALL})
-    private List<Servicios> servicios = new ArrayList<>();
+    @OneToMany(mappedBy = "venta")
+    private List<Servicio> servicios = new ArrayList<>();
 
 
     @ManyToOne

@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class ClienteTest {
+class ServicioTest {
 
     @Autowired
     private ClienteRepository clienteRepository;

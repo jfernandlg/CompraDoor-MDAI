@@ -2,12 +2,13 @@ package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "servicios")
-public class Servicios {
+public class Servicio {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idServicio;
@@ -15,6 +16,8 @@ public class Servicios {
     @Enumerated(EnumType.STRING)
     private TipoServicio tipoServicio;
     private String descripcion;
+    private float coste;
+    private Date fecha;
 
 
     @ManyToOne
@@ -56,7 +59,7 @@ public class Servicios {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Servicios servicios = (Servicios) o;
+        Servicio servicios = (Servicio) o;
         return Objects.equals(idServicio, servicios.idServicio) && tipoServicio == servicios.tipoServicio && Objects.equals(descripcion, servicios.descripcion) && Objects.equals(venta, servicios.venta);
     }
 
@@ -73,5 +76,17 @@ public class Servicios {
                 ", descripcion='" + descripcion + '\'' +
                 ", venta=" + venta +
                 '}';
+    }
+
+    public void setCoste(float coste) {
+        this.coste = coste;
+    }
+
+    public float getCoste() {
+        return this.coste;
+    }
+
+    public void setFechaAplicacion(Date fecha) {
+        this.fecha = fecha;
     }
 }
