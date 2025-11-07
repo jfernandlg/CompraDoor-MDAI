@@ -1,48 +1,52 @@
+# Docker Compose - Configuración de servicios containerizados
 services:
+
+  # Servicio de Base de Datos PostgreSQL
   postgres:
     image: postgres:latest
     container_name: postgres_db
-    restart: always
+    restart: always  # Reinicio automático en caso de fallo
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mi_base_de_datos
+      POSTGRES_USER: root        # Usuario administrador de PostgreSQL
+      POSTGRES_PASSWORD: password # Contraseña del usuario (⚠️ Cambiar en producción)
+      POSTGRES_DB: mi_base_de_datos # Base de datos que se creará al iniciar
     ports:
-      - "5432:5432" # Expone el puerto de Postgres al exterior
+      - "5432:5432" # Mapeo de puertos: HOST:CONTAINER
+      # Permite conexiones externas a PostgreSQL desde tu máquina
     volumes:
       - postgres-data:/var/lib/postgresql
+      # Volumen persistente para guardar datos de la BD (evita pérdida al reiniciar)
 
+  # Interfaz Web de Administración para PostgreSQL
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@dominio.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: admin@dominio.com    # Email para login en pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: admin             # Contraseña para pgAdmin
     ports:
-      - "5050:80" # Expone pgAdmin en el puerto 5050
+      - "5050:80" # Acceso web: http://localhost:5050
     depends_on:
-      - postgres # Se asegura de iniciar después de la base de datos
+      - postgres # Espera a que PostgreSQL esté listo antes de iniciar
 
-# --- SERVICIO DE SPRING BOOT AÑADIDO ---
+  # --- SERVICIO DE SPRING BOOT AÑADIDO ---
   app:
-    # Construye la imagen usando el Dockerfile en el directorio actual (.)
-    build: .
+    build: .  # Construye la imagen desde el Dockerfile en el directorio actual
     container_name: compradoor
     restart: always
     ports:
-      # Expone el puerto 8080 de Spring al puerto 8080 de tu máquina
-      - "8080:8080"
+      - "8080:8080" # Tu aplicación Spring estará en http://localhost:8080
     depends_on:
-      # MUY IMPORTANTE: Le dice a Docker que no inicie "app"
-      # hasta que el servicio "db" esté listo.
-      - postgres
+      - postgres # Espera a que la base de datos esté disponible
     environment:
-      # Aquí sobreescribimos los valores de application.properties
-      DB_HOST: postgres
+      # Variables de entorno que sobreescriben application.properties
+      DB_HOST: postgres        # Usa el nombre del servicio como host
       DB_NAME: mi_base_de_datos
       DB_USER: root
       DB_PASS: password
 
+# Volúmenes Docker para persistencia de datos
 volumes:
   postgres-data:
+  # Volumen con nombre para persistir datos de PostgreSQL entre reinicios
