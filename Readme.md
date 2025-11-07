@@ -1,7 +1,7 @@
 # CompraDoor
 
 ## 🏢 Logo
-![Logo de CompraDoor](https://./img/Logo.jpg)
+![Logo de CompraDoor](./img/Logo.jpg)
 
 ## 👥 Equipo
 - **Ángel Moreno Domínguez** - DNI: 02333991T
