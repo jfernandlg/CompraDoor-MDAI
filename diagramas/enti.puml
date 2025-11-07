@@ -12,7 +12,7 @@ skinparam {
   defaultFontSize 12
 }
 
-title "Diagrama E/R - Sistema Inmobiliario"
+title "Diagrama E/R - CompraDoor"
 
 entity Cliente {
   * id: UUID <<generated>>
