@@ -9,9 +9,13 @@ import java.util.UUID;
 
 public interface InmuebleService {
     List<Inmueble> findAllInmueble();
+
     Optional<Inmueble> findInmuebleById(UUID id);
+
     List<Inmueble> findInmuebleByPrecioBetween(Float min, Float max);
+
     Inmueble saveInmueble(Inmueble inmueble);
+
     void deleteInmueble(UUID id);
 
 }
