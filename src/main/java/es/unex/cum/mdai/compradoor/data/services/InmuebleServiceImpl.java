@@ -51,10 +51,10 @@ public class InmuebleServiceImpl implements InmuebleService {
         if (inmueble.getPrecio() == null || inmueble.getPrecio() <= 0) {
             throw new IllegalArgumentException("Precio de Inmueble no válido");
         }
-        if (inmueble.getDireccion() == null) {
+        if (inmueble.getDireccion() == null || inmueble.getDireccion().trim().isEmpty()) {
             throw new IllegalArgumentException("Direccion de Inmueble no puede ser nula");
         }
-        if (inmueble.getLocalidad() == null) {
+        if (inmueble.getLocalidad() == null || inmueble.getLocalidad().trim().isEmpty()) {
             throw new IllegalArgumentException("Localidad de Inmueble no puede ser nula");
         }
         return inmuebleRepository.save(inmueble);

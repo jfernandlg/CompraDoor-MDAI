@@ -69,6 +69,9 @@ public class TarjetaServiceImpl implements TarjetaService {
         if (!tarjeta.getCodigoTarjeta().matches(codigoTajetaRegex)) {
             throw new IllegalArgumentException("Codigo de tarjeta no valido");
         }
+        if (tarjeta.getCodigoTarjeta().trim().isEmpty()) {
+            throw new IllegalArgumentException("Codigo de tarjeta es obligatorio");
+        }
         return tarjetaRepository.save(tarjeta);
     }
 

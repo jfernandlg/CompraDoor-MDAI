@@ -46,8 +46,14 @@ public class ClienteServicesImpl implements ClienteService {
         if (optionalClienteByDni.isPresent()) {
             throw new IllegalArgumentException("DNI de cliente ya existente:  " + cliente.getDni());
         }
-        if (cliente.getEmail() == null) {
+        if(cliente.getDni().trim().isEmpty()){
+            throw new IllegalArgumentException("DNI de cliente es obligatorio");
+        }
+        if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
             throw new IllegalArgumentException("Email de cliente es obligatorio");
+        }
+        if (!cliente.getEmail().contains("@")){
+            throw new IllegalArgumentException("Email de cliente no valido");
         }
         Optional<Cliente> optionalCliente = clienteRepository.findByEmail(cliente.getEmail());
         if (optionalCliente.isPresent()) {
