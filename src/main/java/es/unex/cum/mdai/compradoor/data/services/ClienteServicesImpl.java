@@ -2,6 +2,7 @@ package es.unex.cum.mdai.compradoor.data.services;
 
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ public class ClienteServicesImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
 
+    @Autowired
     public ClienteServicesImpl(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
     }

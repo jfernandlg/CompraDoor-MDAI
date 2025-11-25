@@ -4,6 +4,7 @@ import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.model.Tarjeta;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.TarjetaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     private final ClienteRepository clienteRepository;
 
+    @Autowired
     public TarjetaServiceImpl(TarjetaRepository tarjetaRepository, ClienteRepository clienteRepository) {
         this.tarjetaRepository = tarjetaRepository;
         this.clienteRepository = clienteRepository;

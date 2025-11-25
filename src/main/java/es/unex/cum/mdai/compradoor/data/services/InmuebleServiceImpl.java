@@ -2,6 +2,7 @@ package es.unex.cum.mdai.compradoor.data.services;
 
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ public class InmuebleServiceImpl implements InmuebleService {
 
     private final InmuebleRepository inmuebleRepository;
 
+    @Autowired
     public InmuebleServiceImpl(InmuebleRepository inmuebleRepository) {
         this.inmuebleRepository = inmuebleRepository;
     }

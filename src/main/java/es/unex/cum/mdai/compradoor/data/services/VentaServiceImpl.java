@@ -6,6 +6,7 @@ import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
 import es.unex.cum.mdai.compradoor.data.repository.VentaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class VentaServiceImpl implements VentaService {
 
     public final InmuebleRepository inmuebleRepository;
 
+    @Autowired
     public VentaServiceImpl(VentaRepository ventaRepository, ClienteRepository clienteRepository, InmuebleRepository inmuebleRepository) {
         this.ventaRepository = ventaRepository;
         this.clienteRepository = clienteRepository;
