@@ -18,4 +18,6 @@ public interface InmuebleService {
 
     void deleteInmueble(UUID id);
 
+    Inmueble updateInmueble(Inmueble inmueble);
+
 }

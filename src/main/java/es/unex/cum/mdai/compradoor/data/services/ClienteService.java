@@ -19,5 +19,5 @@ public interface ClienteService {
 
     Optional<Cliente> findClienteByEmail(String email);
 
-//    Cliente updateCliente(Cliente cliente);
+    Cliente updateCliente(Cliente cliente);
 }

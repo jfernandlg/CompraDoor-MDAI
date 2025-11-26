@@ -31,7 +31,7 @@ public class InmuebleServiceImpl implements InmuebleService {
         if (id == null) {
             throw new IllegalArgumentException("Id de Inmueble no válido");
         }
-        return Optional.empty();
+        return inmuebleRepository.findById(id);
     }
 
     @Override
@@ -71,5 +71,29 @@ public class InmuebleServiceImpl implements InmuebleService {
             throw new IllegalArgumentException("Inmueble no encontrado");
         }
         inmuebleRepository.deleteById(id);
+    }
+
+    @Override
+    public Inmueble updateInmueble(Inmueble inmueble) {
+        if (inmueble.getIdInmueble() == null || !inmuebleRepository.existsById(inmueble.getIdInmueble())) {
+            throw new IllegalArgumentException("Inmueble no encontrado");
+        }
+
+        Inmueble inmuebleUpdate = inmuebleRepository.findById(inmueble.getIdInmueble()).orElseThrow(()
+                -> new IllegalArgumentException("Inmueble no encontrado"));
+
+        if(inmueble.getPrecio() != null && inmueble.getPrecio() > 0) {
+            inmuebleUpdate.setPrecio(inmueble.getPrecio());
+        }
+
+        if (inmueble.getDireccion() != null && inmueble.getDireccion().trim().isEmpty()) {
+            inmuebleUpdate.setDireccion(inmueble.getDireccion());
+        }
+
+        if (inmueble.getLocalidad()!= null && inmueble.getLocalidad().trim().isEmpty()) {
+            inmuebleUpdate.setLocalidad(inmueble.getLocalidad());
+        }
+
+        return inmuebleRepository.save(inmuebleUpdate);
     }
 }

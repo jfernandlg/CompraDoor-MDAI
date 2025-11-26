@@ -1,10 +1,13 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 import java.util.UUID;
 
 @Entity
@@ -13,13 +16,21 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @NotBlank(message = "El DNI es obligatorio")
+    @Pattern(regexp = "^\\d{8}[A-Z]$", message = "El DNI debe tener 8 nÚmeros y 1 letra mayúscula")
     private String dni;
+    @NotBlank(message = "El nombre es obligatorio")
+    @Pattern(regexp = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(?:['\\\\-][a-zA-ZñÑáéíóúÁÉÍÓÚ]+)?(?:\\\\s+[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(?:['\\\\-][a-zA-ZñÑáéíóúÁÉÍÓÚ]+)?)*$",
+            message = "El nombre contiene caracteres no válidos o un formato incorrecto")
     private String nombre;
+    @NotBlank(message = "El email es obligatorio")
+    @Email(regexp = ".+@.+\\..+", message = "El formato del email no es válido")
     private String email;
+    @Pattern(regexp = "^(?:(?:\\\\+|00)?34)?[67]\\\\d{8}$")
     private int telefono;
 
     @OneToMany(mappedBy = "cliente")
-    private List<Venta> ventas =  new ArrayList<>();
+    private List<Venta> ventas = new ArrayList<>();
 
     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Tarjeta> tarjetas = new ArrayList<>();

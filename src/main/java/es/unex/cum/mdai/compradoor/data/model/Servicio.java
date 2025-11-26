@@ -1,6 +1,8 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 import java.util.Objects;

@@ -1,6 +1,8 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,21 +15,28 @@ public class Inmueble {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID idInmueble;    
+    private UUID idInmueble;
 
     @OneToOne(mappedBy = "inmueble")
     private Venta venta;
 
     private String localidad;
     private Float precio;
+    @Size(min = 5, max = 50, message = "La dirección debe tener entre 5 y 50 caracteres")
+    @Pattern(regexp = "^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ][a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ\\s,./ºª\\-()]*+$",
+            message = "La dirección contiene caracteres no válidos")
     private String direccion;
+
+    //    @ElementCollection
+//    @CollectionTable(name = "inmueble_fotos", joinColumns = @JoinColumn(name = "inmueble_id"))
+//    @Column(name = "foto_path")
     private List<String> pathFotos;
 
     @OneToMany(mappedBy = "inmueble")
     private List<Compra> compras = new ArrayList<>();
 
     public Inmueble() {
-      
+
     }
 
     public void setLocalidad(String localidad) {

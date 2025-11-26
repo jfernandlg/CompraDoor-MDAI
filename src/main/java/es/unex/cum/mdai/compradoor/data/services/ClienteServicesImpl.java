@@ -36,26 +36,19 @@ public class ClienteServicesImpl implements ClienteService {
 
     @Override
     public Cliente saveCliente(Cliente cliente) {
-        if (cliente.getNombre() == null || cliente.getNombre().trim().isEmpty()) {
+
+        if (cliente.getNombre() == null) {
             throw new IllegalArgumentException("Nombre de cliente es obligatorio");
         }
-        //? Idea: Poder comprobar el DNI con regex (Expresión regular)
-        String dniRegex = "\\d{8}[A-Z]";
-        if (cliente.getDni() == null || !cliente.getDni().matches(dniRegex)) {
+        if (cliente.getDni() == null) {
             throw new IllegalArgumentException("DNI de cliente no valido");
         }
         Optional<Cliente> optionalClienteByDni = clienteRepository.findByDni(cliente.getDni());
         if (optionalClienteByDni.isPresent()) {
             throw new IllegalArgumentException("DNI de cliente ya existente:  " + cliente.getDni());
         }
-        if(cliente.getDni().trim().isEmpty()){
-            throw new IllegalArgumentException("DNI de cliente es obligatorio");
-        }
-        if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
+        if (cliente.getEmail() == null) {
             throw new IllegalArgumentException("Email de cliente es obligatorio");
-        }
-        if (!cliente.getEmail().contains("@")){
-            throw new IllegalArgumentException("Email de cliente no valido");
         }
         Optional<Cliente> optionalCliente = clienteRepository.findByEmail(cliente.getEmail());
         if (optionalCliente.isPresent()) {
@@ -91,14 +84,36 @@ public class ClienteServicesImpl implements ClienteService {
         return clienteRepository.findByEmail(email);
     }
 
-//    @Override
-//    public Cliente updateCliente(Cliente cliente) {
-//        Optional<Cliente> optionalClienteExist = clienteRepository.findById(cliente.getId());
-//        if (optionalClienteExist.isPresent()) {
-//            throw new IllegalArgumentException("ID de cliente ya existente:  " + cliente.getId());
-//        }
-//        return null;
-//    }
+    @Override
+    public Cliente updateCliente(Cliente cliente) {
+        if (cliente.getId() == null || !clienteRepository.existsById(cliente.getId())) {
+            throw new IllegalArgumentException("ID de cliente no encontrado " + cliente.getId());
+        }
+
+        Cliente clienteUpdate = clienteRepository.findByDni(cliente.getDni()).orElseThrow(()
+                -> new IllegalArgumentException("DNI de cliente no encontrado"));
+
+        if (!clienteUpdate.getDni().equals(cliente.getDni()) && clienteRepository.findByDni(cliente.getDni()).isPresent()) {
+            throw new IllegalArgumentException("DNI de cliente ya existente:  " + cliente.getDni());
+        }
+
+
+        if (!clienteUpdate.getEmail().equals(cliente.getEmail()) && clienteRepository.findByEmail(cliente.getEmail()).isPresent()) {
+                throw new IllegalArgumentException("Email de cliente ya existente:  " + cliente.getEmail());
+            }
+
+
+        if (!clienteUpdate.getNombre().equals(cliente.getNombre())) {
+            clienteUpdate.setNombre(cliente.getNombre());
+        }
+
+        clienteUpdate.setDni(cliente.getDni());
+        clienteUpdate.setEmail(cliente.getEmail());
+        clienteUpdate.setTelefono(cliente.getTelefono());
+        clienteRepository.save(clienteUpdate);
+
+        return clienteRepository.save(clienteUpdate);
+    }
 
 
 }
