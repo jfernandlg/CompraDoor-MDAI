@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${compra.idCompra != null} ? 'Editar Compra' : 'Nueva Compra'">Formulario Compra</title>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .error { color: red; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${compra.idCompra != null} ? 'Editar Compra' : 'Nueva Compra'">Gestión de Compra</h1>
+
+<form th:action="${compra.idCompra != null} ? @{/compras/update/{id}(id=${compra.idCompra})} : @{/compras/}"
+      method="post"
+      th:object="${compra}">
+
+    <input type="hidden" th:field="*{idCompra}" />
+
+    <div class="form-group">
+        <label for="cliente">Cliente:</label>
+        <select id="cliente" th:field="*{cliente}" required>
+            <option value="">-- Seleccionar Cliente --</option>
+            <option th:each="cli : ${clientes}"
+                    th:value="${cli.id}"
+                    th:text="${cli.nombre}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('cliente')}" th:errors="*{cliente}" class="error">Error Cliente</div>
+    </div>
+
+    <div class="form-group">
+        <label for="inmueble">Inmueble:</label>
+        <select id="inmueble" th:field="*{inmueble}" required>
+            <option value="">-- Seleccionar Inmueble --</option>
+            <option th:each="inm : ${inmuebles}"
+                    th:value="${inm.idInmueble}"
+                    th:text="${inm.direccion}"></option>
+        </select>
+        <div th:if="${#fields.hasErrors('inmueble')}" th:errors="*{inmueble}" class="error">Error Inmueble</div>
+    </div>
+
+    <div class="form-group">
+        <label for="precio">Precio:</label>
+        <input type="number" step="0.01" id="precio" th:field="*{precioCompra}" required />
+        <div th:if="${#fields.hasErrors('precioCompra')}" th:errors="*{precioCompra}" class="error">Error Precio</div>
+    </div>
+
+    <div>
+        <button type="submit">Guardar</button>
+        <a th:href="@{/compras/all}">Cancelar</a>
+    </div>
+</form>
+
+</body>
+</html>

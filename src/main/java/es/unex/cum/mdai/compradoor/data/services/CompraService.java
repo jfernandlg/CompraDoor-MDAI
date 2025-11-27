@@ -21,3 +21,4 @@ public interface CompraService {
 
     void deleteCompra(Compra compra);
 }
+
