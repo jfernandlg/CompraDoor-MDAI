@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -61,6 +62,15 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public List<Venta> findAllVentas() {
         return ventaRepository.findAll();
+    }
+
+    @Override
+    public Optional<Venta> findVentaById(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id no es valido");
+        }
+
+        return ventaRepository.findById(id);
     }
 
     @Override

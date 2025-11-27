@@ -6,6 +6,8 @@ import es.unex.cum.mdai.compradoor.data.model.Venta;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface VentaService {
 
@@ -16,6 +18,8 @@ public interface VentaService {
     List<Venta> findVentaByFechaVentaBetween(Date inicio, Date fin);
 
     List<Venta> findAllVentas();
+
+    Optional<Venta> findVentaById(UUID id);
 
     Venta saveVenta(Venta venta);
 
