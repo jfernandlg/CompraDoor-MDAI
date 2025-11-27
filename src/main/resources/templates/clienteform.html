@@ -11,14 +11,14 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header big-primary text-white">
+                <div class="card-header bg-primary text-white">
                     <h3 class="card-title" th:text="${cliente.id == null} ? 'Nuevo Cliente' : 'Editar Cliente'">
                         Título</h3>
                 </div>
 
                 <div class="card-body">
 
-                    <form th:action="${cliente.id != null} ? @{'/clientes/update/' + ${cliente.id}} : @{/clientes/}"
+                    <form th:action="${cliente.id != null} ? @{'/clientes/update/' + ${cliente.id}} : @{/clientes}"
                           th:object="${cliente}"
                           method="post">
                         <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
@@ -63,7 +63,7 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a th:href="@{/clientes/}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <a th:href="@{/clientes}" class="btn btn-secondary me-md-2">Cancelar</a>
                             <button type="submit" class="btn btn-success">Guardar</button>
                         </div>
 

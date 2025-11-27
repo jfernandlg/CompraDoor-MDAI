@@ -24,7 +24,7 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public String listClientes(Model model) {
         model.addAttribute("clientes", clienteService.findAllClientes());
         return "clientes";
@@ -36,7 +36,7 @@ public class ClienteController {
         return "clienteform";
     }
 
-    @PostMapping("/")
+    @PostMapping
     public String createCliente(@Valid @ModelAttribute Cliente cliente, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
@@ -62,7 +62,7 @@ public class ClienteController {
     @PostMapping("/{id}/delete")
     public String deleteCliente(@PathVariable UUID id) {
         clienteService.deleteCliente(id);
-        return "redirect:/clientes/";
+        return "redirect:/clientes";
     }
 
     @GetMapping("/edit/{id}")
@@ -75,8 +75,8 @@ public class ClienteController {
         return "clienteform";
     }
 
-    @PostMapping("update/{id}")
-    public String updateCliente(@PathVariable("id") UUID id, @ModelAttribute Cliente cliente, BindingResult result) {
+    @PostMapping("/update/{id}")
+    public String updateCliente(@PathVariable("id") UUID id, @Valid @ModelAttribute Cliente cliente, BindingResult result) {
 
         if (result.hasErrors()) {
             return "clienteform";
