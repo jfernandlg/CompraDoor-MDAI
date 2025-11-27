@@ -33,14 +33,14 @@ public class ClienteController {
     @GetMapping("/new")
     public String showClienteForm(Model model) {
         model.addAttribute("cliente", new Cliente());
-        return "clienteForm";
+        return "clienteform";
     }
 
     @PostMapping("/")
     public String createCliente(@Valid @ModelAttribute Cliente cliente, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            return "clienteForm";
+            return "clienteform";
         }
 
         try {
@@ -53,7 +53,7 @@ public class ClienteController {
             } else {
                 result.reject("error.global", e.getMessage());
             }
-            return "clienteForm";
+            return "clienteform";
         }
 
         return "redirect:/clientes";
@@ -72,14 +72,14 @@ public class ClienteController {
                 orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado"));
 
         model.addAttribute("cliente", cliente);
-        return "clienteForm";
+        return "clienteform";
     }
 
     @PostMapping("update/{id}")
     public String updateCliente(@PathVariable("id") UUID id, @ModelAttribute Cliente cliente, BindingResult result) {
 
         if (result.hasErrors()) {
-            return "clienteForm";
+            return "clienteform";
         }
 
         try {
@@ -93,7 +93,7 @@ public class ClienteController {
             } else {
                 result.reject("error.global", e.getMessage());
             }
-            return "clienteForm";
+            return "clienteform";
         }
 
         return "redirect:/clientes";
@@ -104,9 +104,9 @@ public class ClienteController {
         Optional<Cliente> optionalCliente = clienteService.findClienteByDni(query);
 
         if (optionalCliente.isPresent()) {
-            model.addAttribute("cliente", List.of(optionalCliente.get()));
+            model.addAttribute("clientes", List.of(optionalCliente.get()));
         } else {
-            model.addAttribute("cliente", List.of());
+            model.addAttribute("clientes", List.of());
             model.addAttribute("error", "cliente no encontrado");
         }
 

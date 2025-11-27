@@ -26,8 +26,9 @@ public class Cliente {
     @NotBlank(message = "El email es obligatorio")
     @Email(regexp = ".+@.+\\..+", message = "El formato del email no es válido")
     private String email;
-    @Pattern(regexp = "^(?:(?:\\\\+|00)?34)?[67]\\\\d{8}$")
-    private int telefono;
+//    "^(?:(?:\\+|00)?34)?+[ . -]*+[6789](?:[ . -]*+[0-9]){8}$"
+    @Pattern(regexp = "^\\+?[0-9\\s\\-]{9,15}$", message = "Formato inválido")
+    private String telefono;
 
     @OneToMany(mappedBy = "cliente")
     private List<Venta> ventas = new ArrayList<>();
@@ -70,7 +71,7 @@ public class Cliente {
         return email;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
@@ -94,7 +95,7 @@ public class Cliente {
         this.email = email;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
