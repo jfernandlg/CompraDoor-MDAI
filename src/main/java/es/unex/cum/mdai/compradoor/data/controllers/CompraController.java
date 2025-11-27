@@ -28,7 +28,14 @@ public class CompraController {
         this.inmuebleService = inmuebleService;
     }
 
-    @GetMapping({"", "/", "/all"})
+    // NUEVO: ventana de inicio / menú para compras
+    @GetMapping({"", "/", "/menu"})
+    public String compraMenu() {
+        return "compras_index"; // plantilla nueva con opciones
+    }
+
+    // LISTA: ahora sólo en /all
+    @GetMapping("/all")
     public String listCompras(Model model) {
         model.addAttribute("compras", compraService.findAllCompras());
         return "compras"; // requiere plantilla compras.html si se desea vista

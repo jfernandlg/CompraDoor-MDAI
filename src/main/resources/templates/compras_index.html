@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Compras - Menú</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .menu { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; }
+        a.button { display:inline-block; padding: 0.6rem 1rem; background:#1976d2; color:#fff; text-decoration:none; border-radius:4px; }
+        a.button.secondary { background:#6c757d; }
+    </style>
+</head>
+<body>
+<h1>Gestión de Compras</h1>
+<p>Seleccione una opción:</p>
+<div class="menu">
+    <a th:href="@{/compras/all}" class="button">Listar Compras</a>
+    <a th:href="@{/compras/new}" class="button">Crear nueva Compra</a>
+    <!-- Si hay un índice general de la app, puedes cambiar la ruta abajo -->
+    <a th:href="@{/}" class="button secondary">Volver al inicio</a>
+</div>
+</body>
+</html>
+

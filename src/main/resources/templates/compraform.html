@@ -1,32 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Crear/Editar Compra</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="${compra.idCompra == null ? 'Crear Compra' : 'Editar Compra'}">Compra</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1 th:text="${compra.idCompra != null} ? 'Editar Compra' : 'Nueva Compra'">Compra</h1>
-<form th:action="${compra.idCompra != null} ? @{/compras/update/{id}(id=${compra.idCompra})} : @{/compras/}" method="post" th:object="${compra}">
-    <div>
-        <label>Cliente:</label>
-        <select th:field="*{cliente.id}">
-            <option th:each="cli : ${clientes}" th:value="${cli.id}" th:text="${cli.nombre}"></option>
-        </select>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 th:text="${compra.idCompra == null ? 'Crear Compra' : 'Editar Compra'}">Compra</h1>
+        <div>
+            <a th:href="@{/compras/menu}" class="btn btn-outline-secondary me-2">Menú Compras</a>
+            <a th:href="@{/compras/all}" class="btn btn-secondary">Volver a la lista</a>
+        </div>
     </div>
-    <div>
-        <label>Inmueble:</label>
-        <select th:field="*{inmueble.idInmueble}">
-            <option th:each="inm : ${inmuebles}" th:value="${inm.idInmueble}" th:text="${inm.direccion}"></option>
-        </select>
-    </div>
-    <div>
-        <label>Precio:</label>
-        <input type="number" step="0.01" th:field="*{precioCompra}"/>
-    </div>
-    <div>
-        <button type="submit">Guardar</button>
-    </div>
-</form>
-<p><a th:href="@{/compras/all}">Volver al listado</a></p>
+
+    <form th:action="${compra.idCompra == null ? @{/compras/} : @{/compras/update/{id}(id=${compra.idCompra})}}" th:object="${compra}" method="post">
+        <div class="mb-3">
+            <label for="cliente" class="form-label">Cliente</label>
+            <select id="cliente" class="form-select" th:field="*{cliente.id}">
+                <option th:each="cli : ${clientes}" th:value="${cli.id}" th:text="${cli.nombre + ' (' + cli.dni + ')'}">Cliente</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="inmueble" class="form-label">Inmueble</label>
+            <select id="inmueble" class="form-select" th:field="*{inmueble.idInmueble}">
+                <option th:each="imm : ${inmuebles}" th:value="${imm.idInmueble}" th:text="${imm.direccion}">Inmueble</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="fechaCompra" class="form-label">Fecha</label>
+            <input type="datetime-local" id="fechaCompra" class="form-control" th:field="*{fechaCompra}" />
+            <div class="form-text">Formato: YYYY-MM-DDThh:mm (ajustado por el navegador)</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="precioCompra" class="form-label">Precio</label>
+            <input type="number" step="0.01" id="precioCompra" class="form-control" th:field="*{precioCompra}" />
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="@{/compras/all}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
 </body>
 </html>
