@@ -27,9 +27,11 @@ public class Inmueble {
             message = "La dirección contiene caracteres no válidos")
     private String direccion;
 
-    //    @ElementCollection
-//    @CollectionTable(name = "inmueble_fotos", joinColumns = @JoinColumn(name = "inmueble_id"))
-//    @Column(name = "foto_path")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "inmueble_fotos",
+            joinColumns = @JoinColumn(name = "inmueble_id"))
+    @Column(name = "url_foto")
     private List<String> pathFotos;
 
     @OneToMany(mappedBy = "inmueble")
