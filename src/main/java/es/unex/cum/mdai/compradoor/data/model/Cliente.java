@@ -26,9 +26,12 @@ public class Cliente {
     @NotBlank(message = "El email es obligatorio")
     @Email(regexp = ".+@.+\\..+", message = "El formato del email no es válido")
     private String email;
-//    "^(?:(?:\\+|00)?34)?+[ . -]*+[6789](?:[ . -]*+[0-9]){8}$"
+    //    "^(?:(?:\\+|00)?34)?+[ . -]*+[6789](?:[ . -]*+[0-9]){8}$"
     @Pattern(regexp = "^\\+?[0-9\\s\\-]{9,15}$", message = "Formato inválido")
     private String telefono;
+
+    @NotBlank(message = "La contraseña es obligatoria")
+    private String password;
 
     @OneToMany(mappedBy = "cliente")
     private List<Venta> ventas = new ArrayList<>();
@@ -115,5 +118,11 @@ public class Cliente {
         this.compras = compras;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

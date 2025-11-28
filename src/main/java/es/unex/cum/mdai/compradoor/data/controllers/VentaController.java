@@ -6,6 +6,7 @@ import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.services.ClienteService;
 import es.unex.cum.mdai.compradoor.data.services.InmuebleService;
 import es.unex.cum.mdai.compradoor.data.services.VentaService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -117,6 +118,20 @@ public class VentaController {
         }
 
         return "ventas";
+    }
+
+    @GetMapping("/mis-ventas")
+    public String misVentas(HttpSession session, Model model) {
+
+        Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
+        if (cliente == null) {
+            return "redirect:/login";
+        }
+
+        List<Venta> misVentas = ventaService.findVentaByCliente(cliente);
+
+        model.addAttribute("ventas", misVentas);
+        return "ventas_cliente";
     }
 
 }

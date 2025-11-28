@@ -1,8 +1,10 @@
 package es.unex.cum.mdai.compradoor.data.controllers;
 
+import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.model.Tarjeta;
 import es.unex.cum.mdai.compradoor.data.services.ClienteService;
 import es.unex.cum.mdai.compradoor.data.services.TarjetaService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -26,10 +27,10 @@ public class TarjetaController {
         this.clienteService = clienteService;
     }
 
-    @GetMapping({"", "/", "/menu"})
-    public String tarjetaMenu() {
-        return "tarjetas_index";
-    }
+//    @GetMapping({"", "/", "/menu"})
+//    public String tarjetaMenu() {
+//        return "tarjetas_index";
+//    }
 
     @GetMapping("/all")
     public String listTarjetas(Model model) {
@@ -66,6 +67,58 @@ public class TarjetaController {
     public String deleteTarjeta(@PathVariable UUID id) {
         tarjetaService.findById(id).ifPresent(tarjetaService::deleteTarjeta);
         return "redirect:/tarjetas/all";
+    }
+
+    @GetMapping("/mis-tarjetas")
+    public String misTarjetas(HttpSession session, Model model) {
+        Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
+        if (cliente == null) return "redirect:/login";
+
+        // Pasamos la lista de tarjetas
+        model.addAttribute("tarjetas", tarjetaService.findAllTarjetasByCliente(cliente));
+
+        // CORRECCIÓN: Devolvemos la vista de LISTA (no la del formulario)
+        return "mis_tarjetas"; // <--- Asegúrate de tener este archivo creado
+    }
+
+    // 2. VER FORMULARIO (Usa tarjetas_cliente.html)
+    @GetMapping("/mis-tarjetas/new")
+    public String createTarjetaForm(Model model, HttpSession session) {
+        if (session.getAttribute("clienteLogueado") == null) return "redirect:/login";
+
+        // Pasamos el objeto vacío para el formulario
+        model.addAttribute("tarjeta", new Tarjeta());
+
+        // Devolvemos la vista del FORMULARIO
+        return "tarjetaform_cliente";
+    }
+
+    @PostMapping("/mis-tarjetas")
+    public String saveTarjetaForm(@Valid @ModelAttribute Tarjeta tarjeta,
+                                  BindingResult result,
+                                  HttpSession session) {
+
+        Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
+        if (cliente == null) {
+            return "redirect:/login";
+        }
+
+        if (result.hasErrors()) {
+            return "tarjetaform_cliente";
+        }
+
+        tarjeta.setCliente(cliente);
+        tarjetaService.saveTarjeta(tarjeta);
+
+        return "redirect:/tarjetas/mis-tarjetas";
+    }
+
+    @PostMapping("/mis-tarjetas/{id}/delete")
+    public String deleteTarjetaCliente(@PathVariable UUID id, HttpSession session) {
+
+        tarjetaService.findById(id).ifPresent(tarjetaService::deleteTarjeta);
+        return "redirect:/tarjetas/mis-tarjetas";
+
     }
 
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil - Compradoor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">Mi Área Personal</span>
+        <a th:href="@{/logout}" class="btn btn-danger btn-sm">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold text-primary">Bienvenido, <span th:text="${cliente.nombre}">Usuario</span></h2>
+            <p class="text-muted">¿Qué deseas gestionar hoy?</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <i class="bi bi-bag-check display-1 text-success mb-3"></i>
+                <h3>Mis Compras</h3>
+                <p>Consulta el historial de inmuebles que has adquirido.</p>
+                <a th:href="@{/ventas/mis-ventas}" class="btn btn-success w-100">Ver Historial</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <i class="bi bi-credit-card display-1 text-warning mb-3"></i>
+                <h3>Mis Tarjetas</h3>
+                <p>Gestiona tus métodos de pago guardados.</p>
+                <a th:href="@{/tarjetas/mis-tarjetas}" class="btn btn-warning text-white w-100">Gestionar Tarjetas</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <i class="bi bi-house-door display-1 text-secondary mb-3"></i>
+                <h3>Volver al Inicio</h3>
+                <p>Regresa al catálogo general de inmuebles.</p>
+                <a th:href="@{/}" class="btn btn-outline-secondary w-100">Ir al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

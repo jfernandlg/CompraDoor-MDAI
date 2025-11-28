@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Galáctico - Inicio</title>
-    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+    <title>Panel Administrador - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Estilos exclusivos para la portada */
-        .hero-section {
-            text-align: center;
-            padding: 3rem 1rem;
-            animation: fadeIn 1.5s ease;
+        /* TUS ESTILOS GALÁCTICOS ORIGINALES */
+        body {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            min-height: 100vh;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        .galaxy-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .hero-section { text-align: center; padding: 3rem 1rem; animation: fadeIn 1.5s ease; }
         .hero-title {
             font-size: 3rem;
             background: -webkit-linear-gradient(45deg, #a29bfe, #74b9ff);
@@ -21,70 +23,37 @@
             margin-bottom: 0.5rem;
             text-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-
-        .hero-subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
+        .hero-subtitle { font-size: 1.1rem; color: #b2bec3; margin-bottom: 2rem; }
         .dashboard-grid {
             display: grid;
-            /* Grid responsive: se adapta a 1, 2 o 3 columnas según la pantalla */
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             padding: 1rem;
         }
-
         .module-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.1);
             padding: 2rem;
             border-radius: 20px;
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
             text-decoration: none;
-            color: var(--text-main);
-            border: 1px solid rgba(255,255,255,0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100%;
+            backdrop-filter: blur(5px);
         }
-
         .module-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.2);
-            background: white;
-            border-color: var(--primary-color);
+            box-shadow: 0 0 25px rgba(116, 185, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
         }
-
-        .module-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            display: block;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-
-        .module-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
-
-        .module-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .module-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+        .module-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 0.5rem; color: #74b9ff; }
+        .module-desc { font-size: 0.95rem; color: #dfe6e9; line-height: 1.5; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -129,7 +98,7 @@
             <p class="module-desc">Gestión de servicios adicionales contratados.</p>
         </a>
 
-        <a th:href="@{/tarjetas/menu}" class="module-card">
+        <a th:href="@{/tarjetas/all}" class="module-card">
             <span class="module-icon">💳</span>
             <div class="module-title">Tarjetas</div>
             <p class="module-desc">Administración de tarjetas VIP y métodos de pago.</p>

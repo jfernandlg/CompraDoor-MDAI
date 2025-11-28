@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Nueva Tarjeta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Añadir Tarjeta</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/tarjetas/mis-tarjetas}" th:object="${tarjeta}" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label">Código de Tarjeta</label>
+                            <input class="form-control" th:field="*{codigoTarjeta}" placeholder="XXXX-XXXX-XXXX-XXXX" />
+                            <div class="text-danger" th:if="${#fields.hasErrors('codigoTarjeta')}" th:errors="*{codigoTarjeta}">Error</div>
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input id="valida" type="checkbox" class="form-check-input" th:field="*{valida}" />
+                            <label for="valida" class="form-check-label">Tarjeta Activa</label>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a th:href="@{/tarjetas/mis-tarjetas}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
