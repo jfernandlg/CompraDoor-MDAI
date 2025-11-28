@@ -33,8 +33,7 @@ public class TarjetaController {
 
     @GetMapping("/all")
     public String listTarjetas(Model model) {
-        // no hay findAll en el servicio, se puede obtener por clientes o por buscar null; aquí no hay método, asumimos que buscar por cliente no es obligatorio
-        model.addAttribute("tarjetas", List.of());
+        model.addAttribute("tarjetas", tarjetaService.findAllTarjetas());
         return "tarjetas";
     }
 
@@ -46,11 +45,20 @@ public class TarjetaController {
     }
 
     @PostMapping("/")
-    public String createTarjeta(@Valid @ModelAttribute Tarjeta tarjeta, BindingResult result) {
+    public String createTarjeta(@Valid @ModelAttribute Tarjeta tarjeta, BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("clientes", clienteService.findAllClientes());
             return "tarjetaform";
         }
-        tarjetaService.saveTarjeta(tarjeta);
+
+        try {
+            tarjetaService.saveTarjeta(tarjeta);
+        } catch (Exception e) {
+            model.addAttribute("clientes", clienteService.findAllClientes());
+            model.addAttribute("error", e.getMessage()); // Muestra error global si quieres
+            return "tarjetaform";
+        }
+
         return "redirect:/tarjetas/all";
     }
 

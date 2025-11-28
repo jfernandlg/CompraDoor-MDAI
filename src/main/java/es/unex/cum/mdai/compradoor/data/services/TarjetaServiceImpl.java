@@ -55,6 +55,11 @@ public class TarjetaServiceImpl implements TarjetaService {
     }
 
     @Override
+    public List<Tarjeta> findAllTarjetas() {
+        return tarjetaRepository.findAll();
+    }
+
+    @Override
     public Tarjeta saveTarjeta(Tarjeta tarjeta) {
         if (tarjeta == null) {
             throw new IllegalArgumentException("Tarjeta no valida");

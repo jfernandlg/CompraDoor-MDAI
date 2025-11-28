@@ -2,13 +2,16 @@ package es.unex.cum.mdai.compradoor.data.controllers;
 
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.services.InmuebleService;
+import es.unex.cum.mdai.compradoor.data.services.StorageService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,10 +20,12 @@ import java.util.UUID;
 public class InmuebleController {
 
     private final InmuebleService inmuebleService;
+    private final StorageService storageService;
 
     @Autowired
-    public InmuebleController(InmuebleService inmuebleService) {
+    public InmuebleController(InmuebleService inmuebleService, StorageService storageService) {
         this.inmuebleService = inmuebleService;
+        this.storageService = storageService;
     }
 
     @GetMapping({"/", ""})
@@ -36,15 +41,32 @@ public class InmuebleController {
     }
 
     @PostMapping("/")
-    public String createInmueble(@Valid @ModelAttribute Inmueble inmueble, BindingResult result) {
+    public String createInmueble(@Valid @ModelAttribute Inmueble inmueble,
+                                 BindingResult result,
+                                 @RequestParam("archivos") MultipartFile[] archivos) {
         if (result.hasErrors()) {
             return "inmuebleform";
         }
 
         try {
+            List<String> rutasFotos = new ArrayList<>();
+
+            String nombreCarpeta = storageService.generarNombreNuevaCarpeta();
+
+            for (MultipartFile archivo : archivos) {
+                if(!archivo.isEmpty()) {
+                    String rutaURL = storageService.store(archivo, nombreCarpeta);
+                    rutasFotos.add(rutaURL);
+                }
+            }
+
+            if (!rutasFotos.isEmpty()) {
+                inmueble.setPathFotos(rutasFotos);
+            }
             inmuebleService.saveInmueble(inmueble);
+
         } catch (IllegalArgumentException e) {
-            result.reject("error.inmueble", e.getMessage());
+            result.reject("error.inmueble", "Error al guardar" + e.getMessage());
             return "inmuebleform";
         }
 
