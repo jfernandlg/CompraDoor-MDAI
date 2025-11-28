@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Compras - Galaxy</title>
+    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+    <style>
+        /* CSS ESPECÍFICO PARA ESTE MENÚ */
+
+        .action-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px; /* Un poco más de separación entre tarjetas */
+            margin-top: 2rem;
+        }
+
+        .menu-card {
+            flex: 1 1 300px;
+            max-width: 380px;
+
+            /* CAMBIO 1: Más altura para que no se vea apretujado */
+            min-height: 260px;
+
+            /* CAMBIO 2: Más espacio interior (arriba/abajo) */
+            padding: 2.5rem 2rem;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Formulario compacto */
+        .compact-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* Un pelín más de espacio entre inputs y botón */
+        }
+
+        .compact-row {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .compact-input {
+            width: 50%;
+            font-size: 0.95rem; /* Letra un poco más legible */
+            padding: 10px; /* Inputs más altos y cómodos */
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+        }
+
+        .compact-btn {
+            width: 100%;
+            padding: 10px; /* Botón más alto */
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .icon-large {
+            font-size: 3rem; /* Iconos un pelín más grandes para llenar el espacio */
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        h3 {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="galaxy-container">
+
+    <header class="galaxy-header" style="padding: 2rem; margin-bottom: 1rem;">
+        <h1>🌌 Portal de Compras</h1>
+        <p style="margin:0; font-size: 1.1rem;">Gestión centralizada de adquisiciones</p>
+    </header>
+
+    <div class="action-container">
+
+        <div class="cosmic-card menu-card">
+            <div style="text-align: center;">
+                <span class="icon-large">📋</span>
+                <h3 style="color: var(--primary-color); font-size: 1.4rem;">Historial</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Ver todas las operaciones</p>
+            </div>
+            <a th:href="@{/compras/all}" class="galaxy-btn compact-btn">Ver Listado</a>
+        </div>
+
+        <div class="cosmic-card menu-card">
+            <div style="text-align: center;">
+                <span class="icon-large">✨</span>
+                <h3 style="color: var(--accent-pink); font-size: 1.4rem;">Nuevo</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Crear nueva transacción</p>
+            </div>
+            <a th:href="@{/compras/new}" class="galaxy-btn compact-btn">Crear Compra</a>
+        </div>
+
+        <div class="cosmic-card menu-card">
+            <div style="text-align: center; width: 100%;">
+                <span class="icon-large">🔍</span>
+                <h3 style="color: var(--secondary-color); font-size: 1.4rem; margin-bottom: 15px;">Buscar</h3>
+
+                <form action="/compras/buscar" method="get" class="compact-form">
+                    <div class="compact-row">
+                        <input type="text" name="clienteId" class="compact-input"
+                               placeholder="👤 ID Cliente" title="Buscar por Cliente">
+
+                        <input type="text" name="inmuebleId" class="compact-input"
+                               placeholder="🏠 ID Inmueble" title="Buscar por Inmueble">
+                    </div>
+
+                    <button type="submit" class="galaxy-btn compact-btn"
+                            style="background: linear-gradient(45deg, var(--secondary-color), #81ecec);">
+                        Filtrar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 4rem;">
+        <a th:href="@{/}" class="galaxy-btn btn-secondary" style="padding: 10px 25px; font-size: 1rem;">🏠 Volver a Inicio</a>
+    </div>
+</div>
+</body>
+</html>

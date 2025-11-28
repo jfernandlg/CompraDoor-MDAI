@@ -18,10 +18,6 @@ public class Venta {
     private Date fechaVenta;
     private float precioVenta;
 
-    @OneToMany(mappedBy = "venta")
-    private List<Servicio> servicios = new ArrayList<>();
-
-
     @ManyToOne
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
@@ -35,14 +31,6 @@ public class Venta {
 
     public Venta() {
 
-    }
-
-    public List<Servicio> getServicios() {
-        return servicios;
-    }
-
-    public void setServicios(List<Servicio> servicios) {
-        this.servicios = servicios;
     }
 
     public void setId(UUID id) {
@@ -93,12 +81,12 @@ public class Venta {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Venta venta = (Venta) o;
-        return Float.compare(precioVenta, venta.precioVenta) == 0 && Objects.equals(idVenta, venta.idVenta) && Objects.equals(inmueble, venta.inmueble) && Objects.equals(fechaVenta, venta.fechaVenta) && Objects.equals(servicios, venta.servicios) && Objects.equals(cliente, venta.cliente);
+        return Float.compare(precioVenta, venta.precioVenta) == 0 && Objects.equals(idVenta, venta.idVenta) && Objects.equals(inmueble, venta.inmueble) && Objects.equals(fechaVenta, venta.fechaVenta) && Objects.equals(cliente, venta.cliente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idVenta, inmueble, fechaVenta, precioVenta, servicios, cliente);
+        return Objects.hash(idVenta, inmueble, fechaVenta, precioVenta, cliente);
     }
 
     @Override

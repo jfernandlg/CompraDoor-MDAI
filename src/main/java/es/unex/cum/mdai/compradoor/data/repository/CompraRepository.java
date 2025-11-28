@@ -18,4 +18,8 @@ public interface CompraRepository extends JpaRepository<Compra, UUID> {
     List<Compra> findByInmueble(Inmueble inmueble);
 
     List<Compra> findByFechaCompraBetween(Date fechaInicio, Date fechaFin);
+
+    List<Compra> findByClienteId(UUID clienteId);
+    List<Compra> findByInmuebleIdInmueble(UUID inmuebleId);
+    boolean existsByInmuebleAndIdCompraNot(Inmueble inmueble, UUID idCompra); // Para validar edición
 }

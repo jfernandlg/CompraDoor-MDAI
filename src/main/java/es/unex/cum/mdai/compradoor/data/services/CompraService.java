@@ -6,12 +6,16 @@ import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface CompraService {
 
-    List<Compra> findAllComprasByCliente(Cliente cliente);
+    Optional<Compra> findCompraById(UUID id);
 
-    List<Compra> findAllComprasByInmueble(Inmueble inmueble);
+    List<Compra> findAllComprasByClienteId(UUID clienteId);
+
+    List<Compra> findAllComprasByInmuebleId(UUID inmuebleId);
 
     List<Compra> findAllComprasByFecha(Date fechaInicio, Date fechaFin);
 

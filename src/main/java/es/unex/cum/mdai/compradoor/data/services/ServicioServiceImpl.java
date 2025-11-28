@@ -1,12 +1,9 @@
 package es.unex.cum.mdai.compradoor.data.services;
 
-import es.unex.cum.mdai.compradoor.data.model.Cliente;
+import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Servicio;
 import es.unex.cum.mdai.compradoor.data.model.TipoServicio;
-import es.unex.cum.mdai.compradoor.data.model.Venta;
-import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.ServicioRepository;
-import es.unex.cum.mdai.compradoor.data.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,22 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
 public class ServicioServiceImpl implements ServicioService {
 
-    public final ServicioRepository servicioRepository;
-
-    public final VentaRepository ventaRepository;
-
-    public final ClienteRepository clienteRepository;
+    private final ServicioRepository servicioRepository;
 
     @Autowired
-    public ServicioServiceImpl(ServicioRepository servicioRepository, VentaRepository ventaRepository, ClienteRepository clienteRepository) {
+    public ServicioServiceImpl(ServicioRepository servicioRepository) {
         this.servicioRepository = servicioRepository;
-        this.ventaRepository = ventaRepository;
-        this.clienteRepository = clienteRepository;
     }
 
     @Override
@@ -38,71 +30,47 @@ public class ServicioServiceImpl implements ServicioService {
     }
 
     @Override
-    public List<Servicio> findServicioByTipoServicio(TipoServicio tipoServicio) {
-        if (tipoServicio == null) {
-            throw new IllegalArgumentException("TipoServicio no valido");
-        }
-        return servicioRepository.findByTipoServicio(tipoServicio);
+    public Optional<Servicio> findServicioById(UUID id) {
+        return servicioRepository.findById(id);
     }
 
     @Override
-    public List<Servicio> findServicioByVenta(Venta venta) {
-        if (venta == null) {
-            throw new IllegalArgumentException("Venta no es valida");
-        }
-        Optional<Venta> optionalVenta = ventaRepository.findById(venta.getIdVenta());
-        if (optionalVenta.isEmpty()) {
-            throw new IllegalArgumentException("Venta no encontrada");
-        }
-        return servicioRepository.findByVenta(venta);
+    public List<Servicio> findServicioByTipoServicio(TipoServicio tipoServicio) {
+        return servicioRepository.findByTipoServicio(tipoServicio);
+    }
+
+    // Método actualizado
+    @Override
+    public List<Servicio> findServicioByCompra(Compra compra) {
+        return servicioRepository.findByCompra(compra);
     }
 
     @Override
     public List<Servicio> findServicioByPrecioCompraBetween(float min, float max) {
-        if (min > max) {
-            throw new IllegalArgumentException("Precio compra no valido");
-        }
-        if (min == 0 || max == 0) {
-            throw new IllegalArgumentException("Precio compra no valido");
-        }
         return servicioRepository.findByCosteBetween(min, max);
     }
 
     @Override
     public List<Servicio> findServicioByFecha(Date fechaInicio, Date fechaFin) {
-        if (fechaInicio == null || fechaFin == null) {
-            throw new IllegalArgumentException("Fecha no valida");
-        }
-        if (fechaInicio.before(fechaFin)) {
-            throw new IllegalArgumentException("Fecha no valida");
+        if (fechaInicio != null && fechaFin != null && fechaInicio.after(fechaFin)) {
+            throw new IllegalArgumentException("Fecha inicio posterior a fecha fin");
         }
         return servicioRepository.findByFechaAplicacionBetween(fechaInicio, fechaFin);
     }
 
     @Override
     public Servicio saveServicio(Servicio servicio) {
-        if (servicio == null) {
-            throw new IllegalArgumentException("Servicio no valido");
-        }
-        if (servicio.getTipoServicio() == null) {
-            throw new IllegalArgumentException("TipoServicio no valido");
-        }
-        if (servicio.getCoste() == 0) {
-            throw new IllegalArgumentException("Coste no valido");
-        }
+        if (servicio.getTipoServicio() == null) throw new IllegalArgumentException("El tipo es obligatorio");
+        if (servicio.getDescripcion() == null || servicio.getDescripcion().isBlank()) throw new IllegalArgumentException("La descripción es obligatoria");
+        // Nota: Ya no exigimos Venta obligatoria aquí porque ahora es Compra,
+        // y se setea desde CompraController.
         return servicioRepository.save(servicio);
     }
 
     @Override
     public void deleteServicio(Servicio servicio) {
-        if (servicio == null) {
-            throw new IllegalArgumentException("Servicio no valido");
+        if (servicio != null) {
+            servicioRepository.delete(servicio);
         }
-        Optional<Servicio> optionalServicio = servicioRepository.findById(servicio.getIdServicio());
-        if (optionalServicio.isEmpty()) {
-            throw new IllegalArgumentException("Servicio no encontrado");
-        }
-        servicioRepository.delete(servicio);
-
     }
 }

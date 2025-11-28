@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -32,36 +33,28 @@ public class CompraServiceImpl implements CompraService {
     }
 
     @Override
-    public List<Compra> findAllComprasByCliente(Cliente cliente) {
-        if (cliente == null) {
-            throw new IllegalArgumentException("Cliente no valido");
-        }
-        Optional<Cliente> optionalCliente = clienteRepository.findById(cliente.getId());
-        if (optionalCliente.isEmpty()) {
-            throw new IllegalArgumentException("Cliente no encontrado");
-        }
-        return compraRepository.findByCliente(cliente);
+    public Optional<Compra> findCompraById(UUID id) {
+        return compraRepository.findById(id);
     }
 
     @Override
-    public List<Compra> findAllComprasByInmueble(Inmueble inmueble) {
-        if (inmueble == null) {
-            throw new IllegalArgumentException("Inmueble no valido");
-        }
-        Optional<Inmueble> optionalInmueble = inmuebleRepository.findById(inmueble.getIdInmueble());
-        if (optionalInmueble.isEmpty()) {
-            throw new IllegalArgumentException("Inmueble no encontrado");
-        }
-        return compraRepository.findByInmueble(inmueble);
+    public List<Compra> findAllComprasByClienteId(UUID clienteId) {
+        return compraRepository.findByClienteId(clienteId);
     }
+
+    @Override
+    public List<Compra> findAllComprasByInmuebleId(UUID inmuebleId) {
+        return compraRepository.findByInmuebleIdInmueble(inmuebleId);
+    }
+
 
     @Override
     public List<Compra> findAllComprasByFecha(Date fechaInicio, Date fechaFin) {
         if (fechaInicio == null || fechaFin == null) {
-            throw new IllegalArgumentException("Fecha no valido");
+            throw new IllegalArgumentException("Fechas no válidas");
         }
-        if (fechaInicio.before(fechaFin)) {
-            throw new IllegalArgumentException("Fecha no valido");
+        if (fechaInicio.after(fechaFin)) { // CORRECCIÓN: estaba al revés
+            throw new IllegalArgumentException("La fecha de inicio no puede ser posterior a la fecha fin");
         }
         return compraRepository.findByFechaCompraBetween(fechaInicio, fechaFin);
     }
@@ -89,6 +82,11 @@ public class CompraServiceImpl implements CompraService {
         }
         if (compra.getPrecioCompra() == 0) {
             throw new IllegalArgumentException("Precio no valido");
+        }
+        // Validar que el inmueble no haya sido vendido previamente
+        List<Compra> comprasExistentes = compraRepository.findByInmueble(compra.getInmueble());
+        if (!comprasExistentes.isEmpty()) {
+            throw new IllegalArgumentException("El inmueble ya ha sido vendido anteriormente");
         }
         return compraRepository.save(compra);
     }

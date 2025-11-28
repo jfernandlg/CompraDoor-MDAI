@@ -1,96 +1,50 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "servicios")
 public class Servicio {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idServicio;
 
     @Enumerated(EnumType.STRING)
     private TipoServicio tipoServicio;
+
     private String descripcion;
     private float coste;
 
     @Temporal(TemporalType.DATE)
     private Date fechaAplicacion;
 
-
+    // --- CAMBIO PRINCIPAL: Ahora apunta a COMPRA ---
     @ManyToOne
-    @JoinColumn(name = "venta_id")
-    private Venta venta;
+    @JoinColumn(name = "compra_id")
+    private Compra compra;
 
-    public Venta getVenta() {
-        return venta;
-    }
+    public Servicio() {}
 
-    public void setVenta(Venta venta) {
-        this.venta = venta;
-    }
+    // Getters y Setters
+    public UUID getIdServicio() { return idServicio; }
+    public void setIdServicio(UUID idServicio) { this.idServicio = idServicio; }
 
-    public UUID getIdServicio() {
-        return idServicio;
-    }
+    public TipoServicio getTipoServicio() { return tipoServicio; }
+    public void setTipoServicio(TipoServicio tipoServicio) { this.tipoServicio = tipoServicio; }
 
-    public TipoServicio getTipoServicio() {
-        return tipoServicio;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public float getCoste() { return coste; }
+    public void setCoste(float coste) { this.coste = coste; }
 
-    public void setIdServicio(UUID idServicio) {
-        this.idServicio = idServicio;
-    }
+    public Date getFechaAplicacion() { return fechaAplicacion; }
+    public void setFechaAplicacion(Date fechaAplicacion) { this.fechaAplicacion = fechaAplicacion; }
 
-    public void setTipoServicio(TipoServicio tipoServicio) {
-        this.tipoServicio = tipoServicio;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Servicio servicios = (Servicio) o;
-        return Objects.equals(idServicio, servicios.idServicio) && tipoServicio == servicios.tipoServicio && Objects.equals(descripcion, servicios.descripcion) && Objects.equals(venta, servicios.venta);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idServicio, tipoServicio, descripcion, venta);
-    }
-
-    @Override
-    public String toString() {
-        return "Servicios{" +
-                "idServicio=" + idServicio +
-                ", tipoServicio=" + tipoServicio +
-                ", descripcion='" + descripcion + '\'' +
-                ", venta=" + venta +
-                '}';
-    }
-
-    public void setCoste(float coste) {
-        this.coste = coste;
-    }
-
-    public float getCoste() {
-        return this.coste;
-    }
-
-    public void setFechaAplicacion(Date fecha) {
-        this.fechaAplicacion = fecha;
-    }
+    // Getter y Setter para Compra
+    public Compra getCompra() { return compra; }
+    public void setCompra(Compra compra) { this.compra = compra; }
 }

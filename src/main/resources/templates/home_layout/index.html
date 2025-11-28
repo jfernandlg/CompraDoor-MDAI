@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Galáctico - Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+    <style>
+        /* Estilos exclusivos para la portada */
+        .hero-section {
+            text-align: center;
+            padding: 3rem 1rem;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            background: -webkit-linear-gradient(45deg, #a29bfe, #74b9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            /* Grid responsive: se adapta a 1, 2 o 3 columnas según la pantalla */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.2);
+            background: white;
+            border-color: var(--primary-color);
+        }
+
+        .module-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .module-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .module-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="galaxy-container">
+
+    <div class="hero-section">
+        <h1 class="hero-title">Sistema Compradoor</h1>
+        <p class="hero-subtitle">
+            Panel de control integral. Gestiona todo tu universo inmobiliario desde aquí.
+        </p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <a th:href="@{/compras/menu}" class="module-card">
+            <span class="module-icon">🪐</span>
+            <div class="module-title">Compras</div>
+            <p class="module-desc">Gestión de adquisiciones, buscador avanzado y nuevas compras.</p>
+        </a>
+
+        <a th:href="@{/ventas}" class="module-card">
+            <span class="module-icon">💰</span>
+            <div class="module-title">Ventas</div>
+            <p class="module-desc">Registro de ventas realizadas, consulta por cliente y precios.</p>
+        </a>
+
+        <a th:href="@{/inmuebles/}" class="module-card">
+            <span class="module-icon">🏠</span>
+            <div class="module-title">Inmuebles</div>
+            <p class="module-desc">Catálogo de propiedades, altas de stock y filtrado por precio.</p>
+        </a>
+
+        <a th:href="@{/clientes}" class="module-card">
+            <span class="module-icon">👤</span>
+            <div class="module-title">Clientes</div>
+            <p class="module-desc">Base de datos de usuarios, registro y búsqueda por DNI.</p>
+        </a>
+
+        <a th:href="@{/servicios/menu}" class="module-card">
+            <span class="module-icon">🛠️</span>
+            <div class="module-title">Servicios</div>
+            <p class="module-desc">Gestión de servicios adicionales contratados.</p>
+        </a>
+
+        <a th:href="@{/tarjetas/menu}" class="module-card">
+            <span class="module-icon">💳</span>
+            <div class="module-title">Tarjetas</div>
+            <p class="module-desc">Administración de tarjetas VIP y métodos de pago.</p>
+        </a>
+
+    </div>
+
+    <footer style="text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.9rem; padding-bottom: 2rem;">
+        &copy; 2025 Compradoor Systems | Versión Galáctica 2.0
+    </footer>
+
+</div>
+</body>
+</html>

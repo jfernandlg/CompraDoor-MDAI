@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Servicio - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+</head>
+<body>
+<div class="galaxy-container">
+    <header class="galaxy-header">
+        <h1>🛠️ Gestión de Servicios</h1>
+        <p>Añadir servicio a una compra existente</p>
+    </header>
+
+    <div class="cosmic-card">
+        <form th:action="@{/servicios/save}" th:object="${servicio}" method="post" class="cosmic-form">
+
+            <div th:if="${error}" class="cosmic-alert alert-error">
+                ❌ <span th:text="${error}"></span>
+            </div>
+            <div th:if="${#fields.hasErrors('*')}" class="cosmic-alert alert-error">
+                ❌ Revisa los campos marcados
+            </div>
+
+            <div class="form-group">
+                <label>💰 Asociar a Compra Existente:</label>
+                <select th:field="*{compra}" class="form-control" required>
+                    <option value="">-- Seleccionar Compra --</option>
+                    <option th:each="c : ${compras}"
+                            th:value="${c.idCompra}"
+                            th:text="${c.cliente.nombre + ' | ' + c.inmueble.direccion + ' (' + #dates.format(c.fechaCompra, 'dd/MM/yyyy') + ')'}">
+                    </option>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>🏷️ Categoría:</label>
+                    <select th:field="*{tipoServicio}" class="form-control" required>
+                        <option value="">-- Seleccionar --</option>
+                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>📅 Fecha Aplicación:</label>
+                    <input type="date" th:field="*{fechaAplicacion}" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📝 Descripción Detallada:</label>
+                <input type="text" th:field="*{descripcion}" class="form-control" placeholder="Ej: Pintura de 2 habitaciones y pasillo" required>
+            </div>
+
+            <div class="form-group">
+                <label>💶 Coste (€):</label>
+                <input type="number" step="0.01" th:field="*{coste}" class="form-control" required>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button type="submit" class="galaxy-btn">💾 Guardar Servicio</button>
+                <a th:href="@{/servicios/all}" class="galaxy-btn btn-danger">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

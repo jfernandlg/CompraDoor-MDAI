@@ -1,8 +1,8 @@
 package es.unex.cum.mdai.compradoor.data.repository;
 
+import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Servicio;
 import es.unex.cum.mdai.compradoor.data.model.TipoServicio;
-import es.unex.cum.mdai.compradoor.data.model.Venta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,17 +12,13 @@ import java.util.UUID;
 
 @Repository
 public interface ServicioRepository extends JpaRepository<Servicio, UUID> {
+
     List<Servicio> findByTipoServicio(TipoServicio tipoServicio);
 
-    List<Servicio> findByDescripcionContainingIgnoreCase(String descripcion);
+    // Cambiado de Venta a Compra
+    List<Servicio> findByCompra(Compra compra);
 
-    List<Servicio> findByVenta(Venta venta);
+    List<Servicio> findByCosteBetween(float min, float max);
 
-    long countByVenta(Venta venta);
-
-    boolean existsByVenta(Venta venta);
-
-    List<Servicio> findByCosteBetween(Float minCoste, Float maxCoste);
-
-    List<Servicio> findByFechaAplicacionBetween(Date startDate, Date endDate);
+    List<Servicio> findByFechaAplicacionBetween(Date fechaInicio, Date fechaFin);
 }

@@ -1,15 +1,14 @@
 package es.unex.cum.mdai.compradoor.data.repository;
+
 import es.unex.cum.mdai.compradoor.data.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +19,7 @@ class ServicioTest {
     private ServicioRepository serviciosRepository;
 
     @Autowired
-    private VentaRepository ventaRepository;
+    private CompraRepository compraRepository;
 
     @Autowired
     private InmuebleRepository inmuebleRepository;
@@ -30,93 +29,123 @@ class ServicioTest {
 
     @BeforeEach
     void setUp() {
+        // Orden de borrado: Hijos primero -> Padres después
         serviciosRepository.deleteAll();
-        ventaRepository.deleteAll();
+        compraRepository.deleteAll();
         inmuebleRepository.deleteAll();
         clienteRepository.deleteAll();
     }
 
-    private Servicio crearServicio(TipoServicio tipo, String descripcion, Venta venta, float coste, Date fecha) {
+    // Método auxiliar para crear Servicios
+    private Servicio crearServicio(TipoServicio tipo, String descripcion, Compra compra, float coste, Date fecha) {
         Servicio servicio = new Servicio();
         servicio.setTipoServicio(tipo);
         servicio.setDescripcion(descripcion);
-        servicio.setVenta(venta);
+        servicio.setCompra(compra);
         servicio.setCoste(coste);
-        servicio.setFechaAplicacion(fecha);  // Ahora funciona correctamente
+        servicio.setFechaAplicacion(fecha);
         return servicio;
     }
 
-    private Venta crearVentaValida() {
-        Inmueble inmueble = new Inmueble("Don Benito", 200_000f, "C/ Mayor");
+    // Método auxiliar para crear una Compra válida con Inmueble y Cliente REALES
+    private Compra crearCompraValida() {
+        // 1. Inmueble
+        // Usamos el constructor disponible: Inmueble(String localidad, Float precio, String direccion)
+        Inmueble inmueble = new Inmueble("Don Benito", 200_000f, "C/ Mayor, 123");
         inmuebleRepository.save(inmueble);
 
-        Cliente cliente = new Cliente("12345678Z", "Prueba Cliente");
+        // 2. Cliente
+        // CORRECCIÓN: Cliente no tiene 'apellido', solo 'nombre', 'dni' y 'email'
+        Cliente cliente = new Cliente();
+        cliente.setDni("12345678Z");
+        cliente.setNombre("Pepe Cliente Prueba"); // Nombre completo aquí
+        cliente.setEmail("test@email.com");       // Obligatorio por @NotBlank
         clienteRepository.save(cliente);
 
-        Venta venta = new Venta(inmueble, 210_000f, cliente);
-        return ventaRepository.save(venta);
+        // 3. Compra
+        Compra compra = new Compra();
+        compra.setInmueble(inmueble);
+        compra.setCliente(cliente);
+        compra.setPrecioCompra(210_000f);
+        compra.setFechaCompra(new Date());
+
+        return compraRepository.save(compra);
     }
 
     @Test
     void testFindByTipoServicio() {
-        Venta venta = crearVentaValida();
-        Servicio servicio = crearServicio(TipoServicio.LIMPIEZA, "Limpieza final", venta, 120f, new Date());
+        Compra compra = crearCompraValida();
+        Servicio servicio = crearServicio(TipoServicio.LIMPIEZA, "Limpieza final", compra, 120f, new Date());
         serviciosRepository.save(servicio);
 
         List<Servicio> result = serviciosRepository.findByTipoServicio(TipoServicio.LIMPIEZA);
 
         assertThat(result).hasSize(1);
-        assertThat(result).first().extracting(Servicio::getTipoServicio).isEqualTo(TipoServicio.LIMPIEZA);
+        assertThat(result.get(0).getTipoServicio()).isEqualTo(TipoServicio.LIMPIEZA);
     }
 
     @Test
-    void testFindByDescripcionContainingIgnoreCase() {
-        Venta venta = crearVentaValida();
-        Servicio servicio = crearServicio(TipoServicio.PINTURA, "Esta es una Prueba Unica", venta, 90f, new Date());
+    void testFindByCompra() {
+        Compra compra = crearCompraValida();
+        Servicio servicio = crearServicio(TipoServicio.FONTANERIA, "Fontanería básica", compra, 40f, new Date());
         serviciosRepository.save(servicio);
 
-        List<Servicio> result = serviciosRepository.findByDescripcionContainingIgnoreCase("prueba");
-
-        assertThat(result).hasSize(1);
-        assertThat(result).first().extracting(Servicio::getDescripcion)
-                .asString()
-                .containsIgnoringCase("prueba");
-    }
-
-    @Test
-    void testFindByVenta() {
-        Venta venta = crearVentaValida();
-        Servicio servicio = crearServicio(TipoServicio.FONTANERIA, "Fontanería básica", venta, 40f, new Date());
-        serviciosRepository.save(servicio);
-
-        List<Servicio> servicios = serviciosRepository.findByVenta(venta);
+        List<Servicio> servicios = serviciosRepository.findByCompra(compra);
 
         assertThat(servicios).hasSize(1);
-        assertThat(servicios).first().extracting(Servicio::getVenta).isEqualTo(venta);
+        assertThat(servicios.get(0).getCompra().getIdCompra()).isEqualTo(compra.getIdCompra());
+    }
+
+    @Test
+    void testFindByCosteBetween() {
+        Compra compra = crearCompraValida();
+        // Guardamos 3 servicios con precios distintos
+        serviciosRepository.save(crearServicio(TipoServicio.OTROS, "Barato", compra, 50f, new Date()));
+        serviciosRepository.save(crearServicio(TipoServicio.OTROS, "Medio", compra, 150f, new Date()));
+        serviciosRepository.save(crearServicio(TipoServicio.OTROS, "Caro", compra, 300f, new Date()));
+
+        // Buscamos entre 100 y 200 (debería encontrar solo el "Medio" de 150)
+        List<Servicio> encontrados = serviciosRepository.findByCosteBetween(100f, 200f);
+
+        assertThat(encontrados).hasSize(1);
+        assertThat(encontrados.get(0).getCoste()).isEqualTo(150f);
     }
 
     @Test
     void testFindByFechaAplicacionBetween() {
-        Venta venta = crearVentaValida();
+        Compra compra = crearCompraValida();
 
         Calendar cal = Calendar.getInstance();
+
+        // Definimos fechas clave
         cal.set(2024, Calendar.JANUARY, 1);
-        Date fecha1 = cal.getTime();
+        Date fechaEnero = cal.getTime();
 
         cal.set(2024, Calendar.APRIL, 1);
-        Date fechaIntermedia = cal.getTime();
+        Date fechaAbril = cal.getTime(); // Dentro del rango
 
         cal.set(2024, Calendar.JUNE, 1);
-        Date fecha2 = cal.getTime();
+        Date fechaJunio = cal.getTime(); // Dentro del rango
 
-        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "FechaAntigua", venta, 45f, fecha1));
-        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "FechaIntermedia", venta, 45f, fechaIntermedia));
-        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "FechaReciente", venta, 45f, fecha2));
+        cal.set(2024, Calendar.DECEMBER, 31);
+        Date fechaDiciembre = cal.getTime();
 
-        List<Servicio> encontrados = serviciosRepository.findByFechaAplicacionBetween(fecha1, fecha2);
+        // Guardamos servicios en distintas fechas
+        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "Enero", compra, 45f, fechaEnero));
+        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "Abril", compra, 45f, fechaAbril));
+        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "Junio", compra, 45f, fechaJunio));
+        serviciosRepository.save(crearServicio(TipoServicio.LIMPIEZA, "Diciembre", compra, 45f, fechaDiciembre));
 
-        assertThat(encontrados).hasSize(3);
+        // Rango de búsqueda: Febrero a Octubre
+        cal.set(2024, Calendar.FEBRUARY, 1);
+        Date inicioBusqueda = cal.getTime();
+
+        cal.set(2024, Calendar.OCTOBER, 1);
+        Date finBusqueda = cal.getTime();
+
+        List<Servicio> encontrados = serviciosRepository.findByFechaAplicacionBetween(inicioBusqueda, finBusqueda);
+
+        // Debería encontrar 2 (Abril y Junio)
+        assertThat(encontrados).hasSize(2);
     }
-
-    // Los demás tests funcionarán de manera similar...
 }

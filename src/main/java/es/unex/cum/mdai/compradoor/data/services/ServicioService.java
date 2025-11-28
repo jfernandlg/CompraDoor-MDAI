@@ -1,20 +1,24 @@
 package es.unex.cum.mdai.compradoor.data.services;
 
-import es.unex.cum.mdai.compradoor.data.model.Cliente;
+import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Servicio;
 import es.unex.cum.mdai.compradoor.data.model.TipoServicio;
-import es.unex.cum.mdai.compradoor.data.model.Venta;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface ServicioService {
 
     List<Servicio> findAllServicios();
 
+    Optional<Servicio> findServicioById(UUID id);
+
     List<Servicio> findServicioByTipoServicio(TipoServicio tipoServicio);
 
-    List<Servicio> findServicioByVenta(Venta venta);
+    // Cambiado de Venta a Compra
+    List<Servicio> findServicioByCompra(Compra compra);
 
     List<Servicio> findServicioByPrecioCompraBetween(float min, float max);
 
@@ -23,5 +27,4 @@ public interface ServicioService {
     Servicio saveServicio(Servicio servicio);
 
     void deleteServicio(Servicio servicio);
-
 }

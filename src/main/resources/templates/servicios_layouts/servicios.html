@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Servicios</title>
+    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+</head>
+<body>
+<div class="galaxy-container">
+    <header class="galaxy-header">
+        <h1>🛠️ Servicios Contratados</h1>
+        <p>Gestión administrativa de mantenimientos y extras</p>
+    </header>
+
+    <div th:if="${error}" class="cosmic-alert alert-error">
+        ❌ <span th:text="${error}"></span>
+    </div>
+
+    <div class="cosmic-card" style="padding: 1.5rem; background: rgba(255,255,255,0.9);">
+        <details open>
+            <summary style="cursor: pointer; font-weight: bold; color: var(--primary-color);">
+                ⚙️ Filtros Avanzados
+            </summary>
+
+            <form th:action="@{/servicios/buscar}" method="get" style="margin-top: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">🏷️ Categoría</label>
+                        <select name="tipo" class="form-control">
+                            <option value="">-- Todas --</option>
+                            <option th:each="t : ${tipos}"
+                                    th:value="${t}"
+                                    th:text="${t}"
+                                    th:selected="${t == tipoSeleccionado}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">💰 ID Compra</label>
+                        <input type="text" name="compraId" th:value="${compraId}" class="form-control" placeholder="UUID Compra...">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">📅 Desde</label>
+                        <input type="date" name="fechaInicio" th:value="${#dates.format(fechaInicio, 'yyyy-MM-dd')}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">📅 Hasta</label>
+                        <input type="date" name="fechaFin" th:value="${#dates.format(fechaFin, 'yyyy-MM-dd')}" class="form-control">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
+                    <button type="submit" class="galaxy-btn">🔎 Filtrar</button>
+                    <a th:href="@{/servicios/all}" class="galaxy-btn btn-danger">Limpiar</a>
+                </div>
+            </form>
+        </details>
+    </div>
+
+    <div class="cosmic-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span style="color: var(--text-muted);">Registros: <strong th:text="${servicios.size()}"></strong></span>
+            <a th:href="@{/servicios/new}" class="galaxy-btn">✨ Añadir Servicio Manual</a>
+        </div>
+
+        <table th:unless="${servicios.empty}" class="stellar-table">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th>Compra Asociada</th>
+                <th>Coste</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${servicios}">
+                <td th:text="${#dates.format(s.fechaAplicacion, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <span style="background: #e0f7fa; color: #006064; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;"
+                          th:text="${s.tipoServicio}"></span>
+                </td>
+                <td th:text="${s.descripcion}"></td>
+                <td>
+                    <div th:if="${s.compra}">
+                        <span th:text="${s.compra.cliente.nombre}"></span><br>
+                        <small style="color: #b2bec3;" th:text="${'ID: ' + #strings.abbreviate(s.compra.idCompra.toString(), 8)}"></small>
+                    </div>
+                    <span th:unless="${s.compra}" style="color: #b2bec3;">- Sin asignar -</span>
+                </td>
+                <td th:text="${s.coste} + ' €'" style="font-weight: bold;"></td>
+                <td>
+                    <form th:action="@{/servicios/delete/{id}(id=${s.idServicio})}" method="post" style="display:inline;">
+                        <button type="submit" class="galaxy-btn btn-danger" style="padding: 5px 10px;" onclick="return confirm('¿Eliminar servicio permanentemente?')">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${servicios.empty}" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            No hay servicios que coincidan con tu búsqueda.
+        </div>
+    </div>
+
+    <div class="galaxy-nav" style="text-align: center; margin-top: 2rem;">
+        <a th:href="@{/servicios/menu}" class="galaxy-btn btn-secondary">🚀 Menú Servicios</a>
+        <a th:href="@{/}" class="galaxy-btn btn-secondary">🏠 Inicio</a>
+    </div>
+</div>
+</body>
+</html>

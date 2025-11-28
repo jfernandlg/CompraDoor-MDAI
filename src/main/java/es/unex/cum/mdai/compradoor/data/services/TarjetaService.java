@@ -15,6 +15,8 @@ public interface TarjetaService {
 
     List<Tarjeta> findAllTarjetasByCliente(Cliente cliente);
 
+    List<Tarjeta> findAllTarjetas();
+
     Tarjeta saveTarjeta(Tarjeta tarjeta);
 
     void deleteTarjeta(Tarjeta tarjeta);

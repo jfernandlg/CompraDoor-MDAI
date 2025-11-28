@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Compras</title>
+    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+</head>
+<body>
+<div class="galaxy-container">
+    <header class="galaxy-header">
+        <h1>
+            <span th:if="${filtrosAplicados}">🔍 Resultados Filtrados</span>
+            <span th:unless="${filtrosAplicados}">📋 Registro de Compras</span>
+        </h1>
+    </header>
+
+    <div th:if="${msg}" class="cosmic-card" style="background: #d4edda; border-color: #c3e6cb; color: #155724; padding: 1rem;">
+        ✅ <span th:text="${msg}"></span>
+    </div>
+    <div th:if="${error}" class="cosmic-card" style="background: #f8d7da; border-color: #f5c6cb; color: #721c24; padding: 1rem;">
+        ❌ <span th:text="${error}"></span>
+    </div>
+
+    <div class="cosmic-card" style="padding: 1.5rem; background: rgba(255,255,255,0.9);">
+        <details open> <summary style="cursor: pointer; font-weight: bold; color: var(--primary-color); outline: none; margin-bottom: 1rem;">
+            ⚙️ Panel de Filtros y Ordenación
+        </summary>
+
+            <form th:action="@{/compras/buscar}" method="get">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">👤 ID Cliente</label>
+                        <input type="text" name="clienteId" th:value="${clienteId}" class="form-control" placeholder="Buscar por cliente...">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">🏠 ID Inmueble</label>
+                        <input type="text" name="inmuebleId" th:value="${inmuebleId}" class="form-control" placeholder="Buscar por inmueble...">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">📅 Desde</label>
+                        <input type="date" name="fechaInicio" th:value="${#dates.format(fechaInicio, 'yyyy-MM-dd')}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="font-size: 0.9em; color: var(--text-muted);">🔃 Ordenar por</label>
+                        <select name="orden" class="form-control" style="background-color: #f0f8ff; border-color: var(--primary-color);">
+                            <option value="">-- Por Defecto --</option>
+                            <option value="fecha_desc" th:selected="${ordenSeleccionado == 'fecha_desc'}">📅 Más recientes primero</option>
+                            <option value="fecha_asc" th:selected="${ordenSeleccionado == 'fecha_asc'}">📅 Más antiguas primero</option>
+                            <option value="precio_desc" th:selected="${ordenSeleccionado == 'precio_desc'}">💰 Precio: Mayor a Menor</option>
+                            <option value="precio_asc" th:selected="${ordenSeleccionado == 'precio_asc'}">💰 Precio: Menor a Mayor</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="galaxy-btn" style="width: 100%;">Aplicar Todo</button>
+                        <a th:href="@{/compras/all}" class="galaxy-btn btn-danger" th:if="${filtrosAplicados}" title="Borrar filtros">🗑️</a>
+                    </div>
+                </div>
+            </form>
+        </details>
+    </div>
+
+    <div class="cosmic-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span style="color: var(--text-muted);">
+                Resultados: <strong th:text="${compras.size()}"></strong>
+            </span>
+            <a th:href="@{/compras/new}" class="galaxy-btn">✨ Nueva Compra</a>
+        </div>
+
+        <div th:if="${compras.empty}" style="text-align: center; padding: 2rem;">
+            <p style="color: var(--text-muted);">No hay resultados que coincidan con tu búsqueda.</p>
+        </div>
+
+        <table th:unless="${compras.empty}" class="stellar-table">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Inmueble</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="compra : ${compras}">
+                <td th:text="${#temporals.format(compra.fechaCompra, 'dd/MM/yyyy')}"></td>
+                <td th:text="${compra.cliente?.nombre + ' ' + compra.cliente?.apellido}"></td>
+                <td>
+                    <div style="font-weight: bold;" th:text="${compra.inmueble?.direccion}"></div>
+                    <small style="color: #636e72;" th:text="${'ID: ' + compra.inmueble?.idInmueble}"></small>
+                </td>
+                <td th:text="${'$' + #numbers.formatDecimal(compra.precioCompra, 1, 2)}"></td>
+                <td>
+                    <a th:href="@{/compras/edit/{id}(id=${compra.idCompra})}" class="galaxy-btn" style="padding: 6px 12px;">✏️</a>
+                    <form th:action="@{/compras/delete/{id}(id=${compra.idCompra})}" method="post" style="display:inline;">
+                        <button type="submit" class="galaxy-btn btn-danger" style="padding: 6px 12px;" onclick="return confirm('¿Eliminar?')">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="galaxy-nav" style="text-align: center; margin-top: 2rem;">
+        <a th:href="@{/compras/menu}" class="galaxy-btn btn-secondary">🚀 Volver al Menú</a>
+    </div>
+</div>
+</body>
+</html>

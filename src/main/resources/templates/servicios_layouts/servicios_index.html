@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Servicios - Galaxy</title>
+    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+    <style>
+        .action-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 2rem; }
+        .menu-card { flex: 1 1 300px; max-width: 380px; min-height: 260px; padding: 2.5rem 2rem; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+        .icon-large { font-size: 3rem; margin-bottom: 0.8rem; display: block; }
+    </style>
+</head>
+<body>
+<div class="galaxy-container">
+    <header class="galaxy-header">
+        <h1>🛠️ Administración de Servicios</h1>
+        <p>Control total de mantenimientos y extras</p>
+    </header>
+
+    <div class="action-container">
+        <div class="cosmic-card menu-card">
+            <div style="text-align: center;">
+                <span class="icon-large">📋</span>
+                <h3 style="color: var(--primary-color);">Catálogo</h3>
+                <p style="color: var(--text-muted);">Consultar, filtrar y eliminar servicios</p>
+            </div>
+            <a th:href="@{/servicios/all}" class="galaxy-btn" style="width:100%">Ver Listado</a>
+        </div>
+
+        <div class="cosmic-card menu-card">
+            <div style="text-align: center;">
+                <span class="icon-large">⚡</span>
+                <h3 style="color: var(--accent-pink);">Añadir Manual</h3>
+                <p style="color: var(--text-muted);">Crear servicio y asignarlo a una compra existente</p>
+            </div>
+            <a th:href="@{/servicios/new}" class="galaxy-btn" style="width:100%">Nuevo Servicio</a>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+        <a th:href="@{/}" class="galaxy-btn btn-secondary">🏠 Volver a Inicio</a>
+    </div>
+</div>
+</body>
+</html>

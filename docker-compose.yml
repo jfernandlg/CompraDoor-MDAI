@@ -45,6 +45,8 @@ services:
       DB_NAME: mi_base_de_datos
       DB_USER: root
       DB_PASS: password
+    volumes:
+      - ./src/main/resources/static/images:/src/main/resources/static/images
 
 # Volúmenes Docker para persistencia de datos
 volumes:
