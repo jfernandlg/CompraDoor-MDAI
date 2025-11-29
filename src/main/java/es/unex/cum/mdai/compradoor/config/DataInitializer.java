@@ -1,6 +1,8 @@
 package es.unex.cum.mdai.compradoor.config;
 
+import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
+import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +14,7 @@ import java.util.Arrays;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initData(InmuebleRepository inmuebleRepository) {
+    CommandLineRunner initDataInmueble(InmuebleRepository inmuebleRepository) {
         return args -> {
             if (inmuebleRepository.count() == 0) {
 
@@ -93,6 +95,19 @@ public class DataInitializer {
                 System.out.println("---------------------------------------------");
 
             }
+        };
+    }
+
+    @Bean
+    CommandLineRunner initDataCliente(ClienteRepository clienteRepository) {
+        return (args) -> {
+            Cliente admin = new Cliente();
+            admin.setNombre("Admin");
+            admin.setDni("00000000A");
+            admin.setEmail("admin@compradoor.com");
+            admin.setPassword("admin");
+            admin.setAdmin(true);
+            clienteRepository.save(admin);
         };
     }
 }

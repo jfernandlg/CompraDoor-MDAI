@@ -42,6 +42,8 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     private List<Compra> compras = new ArrayList<>();
 
+    private boolean admin = false;
+
     public Cliente(String dni, String nombre) {
         this.dni = dni;
         this.nombre = nombre;
@@ -124,5 +126,13 @@ public class Cliente {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

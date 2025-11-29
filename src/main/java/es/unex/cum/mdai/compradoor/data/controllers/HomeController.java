@@ -45,9 +45,15 @@ public class HomeController {
 
         if (clienteOptional.isPresent()) {
             Cliente cliente = clienteOptional.get();
-            if (cliente.getPassword() != null && cliente.getPassword().equals(password)) {
+            if (cliente.getPassword().equals(password)) {
+
                 httpSession.setAttribute("clienteLogueado", cliente);
-                return "redirect:/";
+
+                if (cliente.isAdmin()) {
+                    return "redirect:/admin";
+                } else {
+                    return "redirect:/";
+                }
             }
         }
 

@@ -3,6 +3,7 @@ package es.unex.cum.mdai.compradoor.data.controllers;
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.services.InmuebleService;
 import es.unex.cum.mdai.compradoor.data.services.StorageService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +36,12 @@ public class InmuebleController {
     }
 
     @GetMapping("/new")
-    public String showInmuebleForm(Model model) {
+    public String showInmuebleForm(Model model, HttpSession session) {
+
+        if (session.getAttribute("clienteLogueado") == null) {
+            return "redirect:/login";
+        }
+
         model.addAttribute("inmueble", new Inmueble());
         return "inmuebleform";
     }
@@ -43,7 +49,13 @@ public class InmuebleController {
     @PostMapping("/")
     public String createInmueble(@Valid @ModelAttribute Inmueble inmueble,
                                  BindingResult result,
-                                 @RequestParam("archivos") MultipartFile[] archivos) {
+                                 @RequestParam("archivos") MultipartFile[] archivos,
+                                 HttpSession session) {
+
+        if (session.getAttribute("clienteLogueado") == null) {
+            return "redirect:/login";
+        }
+
         if (result.hasErrors()) {
             return "inmuebleform";
         }
@@ -54,7 +66,7 @@ public class InmuebleController {
             String nombreCarpeta = storageService.generarNombreNuevaCarpeta();
 
             for (MultipartFile archivo : archivos) {
-                if(!archivo.isEmpty()) {
+                if (!archivo.isEmpty()) {
                     String rutaURL = storageService.store(archivo, nombreCarpeta);
                     rutasFotos.add(rutaURL);
                 }

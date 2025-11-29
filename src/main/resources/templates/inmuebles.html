@@ -38,7 +38,7 @@
         </a>
 
         <div class="d-flex gap-2">
-            <a th:href="@{/inmuebles/new}" class="btn btn-light text-primary fw-bold btn-sm">
+            <a th:href="${session.clienteLogueado != null} ? @{/inmuebles/new} : @{/login}" class="btn btn-light text-primary fw-bold btn-sm">
                 <i class="bi bi-tag-fill"></i> Vender mi Casa
             </a>
         </div>
