@@ -10,9 +10,12 @@ import java.util.UUID;
 @Repository
 public interface InmuebleRepository extends JpaRepository<Inmueble, UUID> {
 
+    // Buscar por localidad (Podrías necesitar actualizar este también si lo usas)
     List<Inmueble> findByLocalidadIgnoreCase(String localidad);
 
-    List<Inmueble> findByPrecioBetween(Float min, Float max);
+    // ESTE ES EL NUEVO PARA EL BUSCADOR: Rango de precio Y que no esté vendido
+    List<Inmueble> findByVentaIsNullAndPrecioBetween(Float min, Float max);
 
+    // ESTE ES PARA EL CATÁLOGO PRINCIPAL: Todo lo que no tenga venta asignada
     List<Inmueble> findByVentaIsNull();
 }

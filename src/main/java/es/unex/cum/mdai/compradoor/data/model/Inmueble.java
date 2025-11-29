@@ -3,7 +3,6 @@ package es.unex.cum.mdai.compradoor.data.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +21,7 @@ public class Inmueble {
 
     private String localidad;
     private Float precio;
+
     @Size(min = 5, max = 50, message = "La dirección debe tener entre 5 y 50 caracteres")
     @Pattern(regexp = "^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ][a-zA-Z0-9ñÑáéíóúÁÉÍÓÚüÜ\\s,./ºª\\-()]*+$",
             message = "La dirección contiene caracteres no válidos")
@@ -37,80 +37,7 @@ public class Inmueble {
     @OneToMany(mappedBy = "inmueble")
     private List<Compra> compras = new ArrayList<>();
 
-    public Inmueble() {
-
-    }
-
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
-    }
-
-    public void setPrecio(Float precio) {
-        this.precio = precio;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public void setPathFotos(List<String> pathFotos) {
-        this.pathFotos = pathFotos;
-    }
-
-    public String getLocalidad() {
-        return localidad;
-    }
-
-    public Float getPrecio() {
-        return precio;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public List<String> getPathFotos() {
-        return pathFotos;
-    }
-
-    public UUID getIdInmueble() {
-        return idInmueble;
-    }
-
-    public Venta getVenta() {
-        return venta;
-    }
-
-    public void setIdInmueble(UUID idInmueble) {
-        this.idInmueble = idInmueble;
-    }
-
-    public void setVenta(Venta venta) {
-        this.venta = venta;
-    }
-
-    public List<Compra> getCompras() {
-        return compras;
-    }
-
-    public void setCompras(List<Compra> compras) {
-        this.compras = compras;
-    }
-
-    public Inmueble(UUID uuid, List<String> pathFotos, String localidad, Float precio, String direccion) {
-        this.idInmueble = uuid;
-        this.pathFotos = pathFotos;
-        this.localidad = localidad;
-        this.precio = precio;
-        this.direccion = direccion;
-    }
-
-    public Inmueble(Venta venta, String localidad, Float precio, String direccion) {
-        this.venta = venta;
-        this.localidad = localidad;
-        this.precio = precio;
-        this.direccion = direccion;
-    }
+    public Inmueble() {}
 
     public Inmueble(String localidad, Float precio, String direccion) {
         this.localidad = localidad;
@@ -118,28 +45,45 @@ public class Inmueble {
         this.direccion = direccion;
     }
 
+    // --- GETTERS Y SETTERS ---
+    public UUID getIdInmueble() { return idInmueble; }
+    public void setIdInmueble(UUID idInmueble) { this.idInmueble = idInmueble; }
+    public Venta getVenta() { return venta; }
+    public void setVenta(Venta venta) { this.venta = venta; }
+    public String getLocalidad() { return localidad; }
+    public void setLocalidad(String localidad) { this.localidad = localidad; }
+    public Float getPrecio() { return precio; }
+    public void setPrecio(Float precio) { this.precio = precio; }
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public List<String> getPathFotos() { return pathFotos; }
+    public void setPathFotos(List<String> pathFotos) { this.pathFotos = pathFotos; }
+    public List<Compra> getCompras() { return compras; }
+    public void setCompras(List<Compra> compras) { this.compras = compras; }
+
+    // --- CORRECCIÓN CRÍTICA: ROMPER EL BUCLE INFINITO ---
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inmueble inmueble = (Inmueble) o;
-        return Objects.equals(idInmueble, inmueble.idInmueble) && Objects.equals(venta, inmueble.venta) && Objects.equals(localidad, inmueble.localidad) && Objects.equals(precio, inmueble.precio) && Objects.equals(direccion, inmueble.direccion) && Objects.equals(pathFotos, inmueble.pathFotos) && Objects.equals(compras, inmueble.compras);
+        return Objects.equals(idInmueble, inmueble.idInmueble); // Solo comparamos ID
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idInmueble, venta, localidad, precio, direccion, pathFotos, compras);
+        return Objects.hash(idInmueble); // Solo ID
     }
 
     @Override
     public String toString() {
+        // NO INCLUIMOS 'venta' NI 'compras'
         return "Inmueble{" +
                 "idInmueble=" + idInmueble +
-                ", venta=" + venta +
                 ", localidad='" + localidad + '\'' +
                 ", precio=" + precio +
                 ", direccion='" + direccion + '\'' +
-                ", pathFotos=" + pathFotos +
-                ", compras=" + compras +
                 '}';
     }
 }

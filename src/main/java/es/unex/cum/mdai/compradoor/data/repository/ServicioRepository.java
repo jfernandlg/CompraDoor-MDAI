@@ -20,5 +20,7 @@ public interface ServicioRepository extends JpaRepository<Servicio, UUID> {
 
     List<Servicio> findByCosteBetween(float min, float max);
 
+    List<Servicio> findByCompraIsNull();
+
     List<Servicio> findByFechaAplicacionBetween(Date fechaInicio, Date fechaFin);
 }

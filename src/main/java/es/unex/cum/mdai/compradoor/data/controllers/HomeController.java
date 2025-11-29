@@ -26,7 +26,7 @@ public class HomeController {
     @GetMapping({"", "/"})
     public String index(HttpSession httpSession, Model model) {
         model.addAttribute("cliente", httpSession.getAttribute("clienteLogueado"));
-        return "index_client";
+        return "clientes_layouts/index_client";
     }
 
     @GetMapping("/login")
@@ -34,7 +34,7 @@ public class HomeController {
         if (session.getAttribute("clienteLogueado") != null) {
             return "redirect:/";
         }
-        return "login";
+        return "home_layout/login";
     }
 
     @PostMapping("/login")
@@ -58,7 +58,7 @@ public class HomeController {
         }
 
         model.addAttribute("error", "Credenciales incorrectas");
-        return "login";
+        return "home_layout/login";
     }
 
     @GetMapping("/logout")
@@ -73,14 +73,14 @@ public class HomeController {
             return "redirect:/";
         }
         model.addAttribute("cliente", new Cliente());
-        return "register";
+        return "home_layout/register";
     }
 
     @PostMapping("/register")
     public String processRegister(@Valid @ModelAttribute Cliente cliente, HttpSession session, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            return "register";
+            return "home_layout/register";
         }
 
         try {
@@ -89,7 +89,7 @@ public class HomeController {
 
         } catch (IllegalArgumentException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "register";
+            return "home_layout/register";
         }
 
         return "redirect:/";

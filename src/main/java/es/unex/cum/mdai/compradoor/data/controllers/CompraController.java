@@ -37,18 +37,17 @@ public class CompraController {
         this.servicioService = servicioService;
     }
 
-    // 1. Menú Principal
-    @GetMapping({"/menu", "", "/"})
-    public String menu() {
-        return "compras_layouts/compras_index";
+    // NUEVO: ventana de inicio / menú para compras
+    @GetMapping({"", "/", "/menu"})
+    public String compraMenu() {
+        return "compras_layouts/compras_index"; // plantilla nueva con opciones
     }
 
-    // 2. Listar TODAS las compras
+    // LISTA: ahora sólo en /all
     @GetMapping("/all")
-    public String listAll(Model model) {
+    public String listCompras(Model model) {
         model.addAttribute("compras", compraService.findAllCompras());
-        model.addAttribute("filtrosAplicados", false);
-        return "compras_layouts/compras";
+        return "compras_layouts/compras"; // vista lista en carpeta compras_layouts
     }
 
     // 3. Formulario de NUEVA compra
@@ -60,7 +59,7 @@ public class CompraController {
 
         // Pasamos los tipos de servicio para el desplegable opcional
         model.addAttribute("tiposServicio", TipoServicio.values());
-        return "compras_layouts/compraform";
+        return "compras_layouts/compraform"; // plantilla de formulario en carpeta compras_layouts
     }
 
     // 4. GUARDAR COMPRA (+ SERVICIO OPCIONAL)

@@ -1,9 +1,11 @@
 package es.unex.cum.mdai.compradoor.data.services;
 
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
+import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
+import es.unex.cum.mdai.compradoor.data.repository.CompraRepository;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
 import es.unex.cum.mdai.compradoor.data.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,43 +21,36 @@ import java.util.UUID;
 @Transactional
 public class VentaServiceImpl implements VentaService {
 
-    public final VentaRepository ventaRepository;
-
-    public final ClienteRepository clienteRepository;
-
-    public final InmuebleRepository inmuebleRepository;
+    private final VentaRepository ventaRepository;
+    private final ClienteRepository clienteRepository;
+    private final InmuebleRepository inmuebleRepository;
+    private final CompraRepository compraRepository;
 
     @Autowired
-    public VentaServiceImpl(VentaRepository ventaRepository, ClienteRepository clienteRepository, InmuebleRepository inmuebleRepository) {
+    public VentaServiceImpl(VentaRepository ventaRepository,
+                            ClienteRepository clienteRepository,
+                            InmuebleRepository inmuebleRepository,
+                            CompraRepository compraRepository) {
         this.ventaRepository = ventaRepository;
         this.clienteRepository = clienteRepository;
         this.inmuebleRepository = inmuebleRepository;
+        this.compraRepository = compraRepository;
     }
 
     @Override
     public List<Venta> findVentaByCliente(Cliente cliente) {
-        if (cliente == null) {
-            throw new IllegalArgumentException("Cliente no es válido");
-        }
+        if (cliente == null) throw new IllegalArgumentException("Cliente no válido");
         return ventaRepository.findByCliente(cliente);
     }
 
     @Override
     public List<Venta> findVentaByInmueble(Inmueble inmueble) {
-        if (inmueble == null) {
-            throw new IllegalArgumentException("Inmueble no es valido");
-        }
+        if (inmueble == null) throw new IllegalArgumentException("Inmueble no válido");
         return ventaRepository.findByInmueble(inmueble);
     }
 
     @Override
     public List<Venta> findVentaByFechaVentaBetween(Date inicio, Date fin) {
-        if (inicio == null || fin == null) {
-            throw new IllegalArgumentException("Fechas no validas");
-        }
-        if (inicio.before(fin)) {
-            throw new IllegalArgumentException("Fechas no validas");
-        }
         return ventaRepository.findByFechaVentaBetween(inicio, fin);
     }
 
@@ -66,29 +61,13 @@ public class VentaServiceImpl implements VentaService {
 
     @Override
     public Optional<Venta> findVentaById(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id no es valido");
-        }
-
         return ventaRepository.findById(id);
     }
 
     @Override
     public Venta saveVenta(Venta venta) {
-        if (venta == null) {
-            throw new IllegalArgumentException("Venta no es valida");
-        }
-        if (venta.getCliente() == null) {
-            throw new IllegalArgumentException("Cliente no es valido");
-        }
-        if (venta.getInmueble() == null) {
-            throw new IllegalArgumentException("Inmueble no es valido");
-        }
-        if (venta.getFechaVenta() == null) {
-            throw new IllegalArgumentException("Fecha no es valido");
-        }
-        if (venta.getPrecioVenta() == 0) {
-            throw new IllegalArgumentException("Precio no es valido");
+        if (venta == null || venta.getCliente() == null || venta.getInmueble() == null) {
+            throw new IllegalArgumentException("Datos de venta incompletos");
         }
         return ventaRepository.save(venta);
     }
@@ -96,12 +75,28 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public void deleteVenta(Venta venta) {
         if (venta == null) {
-            throw new IllegalArgumentException("Venta no es valido");
+            throw new IllegalArgumentException("Venta no válida");
         }
-        Optional<Venta> optionalVenta = ventaRepository.findById(venta.getIdVenta());
-        if (optionalVenta.isEmpty()) {
-            throw new IllegalArgumentException("Venta no encontrada");
+
+        // 1. Gestionar el Inmueble asociado
+        if (venta.getInmueble() != null) {
+            Inmueble inmueble = venta.getInmueble();
+
+            // A. Borrar Compras asociadas (y sus servicios por cascada)
+            List<Compra> comprasAsociadas = compraRepository.findByInmueble(inmueble);
+            if (!comprasAsociadas.isEmpty()) {
+                compraRepository.deleteAll(comprasAsociadas);
+                compraRepository.flush(); // Forzar borrado inmediato
+            }
+
+            // B. ¡CORRECCIÓN DEL ERROR 500!
+            // Debemos romper la relación bidireccional antes de borrar la venta.
+            // Si no hacemos esto, Hibernate intenta guardar el Inmueble que apunta a una Venta borrada.
+            inmueble.setVenta(null);
+            inmuebleRepository.save(inmueble); // Guardamos el inmueble "libre"
         }
+
+        // 2. Ahora es seguro borrar la Venta
         ventaRepository.delete(venta);
     }
 }

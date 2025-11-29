@@ -27,111 +27,138 @@ public class TarjetaController {
         this.clienteService = clienteService;
     }
 
-//    @GetMapping({"", "/", "/menu"})
-//    public String tarjetaMenu() {
-//        return "tarjetas_index";
-//    }
+    // ==========================================
+    // ZONA ADMIN (Gestión total)
+    // ==========================================
 
     @GetMapping("/all")
     public String listTarjetas(Model model) {
         model.addAttribute("tarjetas", tarjetaService.findAllTarjetas());
-        return "tarjetas";
+        return "tarjetas_layouts/tarjetas";
     }
 
+    // Formulario para ADMIN (Debe permitir elegir cliente)
     @GetMapping("/new")
-    public String showTarjetaForm(Model model) {
+    public String showTarjetaFormAdmin(Model model) {
         model.addAttribute("tarjeta", new Tarjeta());
+        // Pasamos la lista de clientes para el desplegable
         model.addAttribute("clientes", clienteService.findAllClientes());
-        return "tarjetaform";
+        // Devolvemos la vista ADMIN (tarjetaform.html)
+        return "tarjetas_layouts/tarjetaform";
     }
 
-    @PostMapping("/")
-    public String createTarjeta(@Valid @ModelAttribute Tarjeta tarjeta, BindingResult result, Model model) {
+    // Guardado para ADMIN (Recibe el cliente del formulario)
+    @PostMapping("/save")
+    public String saveTarjetaAdmin(@Valid @ModelAttribute Tarjeta tarjeta, BindingResult result, Model model) {
+
+        // Limpieza de espacios en blanco
+        if(tarjeta.getCodigoTarjeta() != null) {
+            tarjeta.setCodigoTarjeta(tarjeta.getCodigoTarjeta().replaceAll("\\s+", ""));
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("clientes", clienteService.findAllClientes());
-            return "tarjetaform";
+            return "tarjetas_layouts/tarjetaform";
         }
 
         try {
+            // Aquí NO cogemos el usuario de la sesión, respetamos el que viene seleccionado en el form
+            if (tarjeta.getCliente() == null) {
+                throw new IllegalArgumentException("Debes seleccionar un cliente titular.");
+            }
             tarjetaService.saveTarjeta(tarjeta);
         } catch (Exception e) {
+            model.addAttribute("error", "Error: " + e.getMessage());
             model.addAttribute("clientes", clienteService.findAllClientes());
-            model.addAttribute("error", e.getMessage()); // Muestra error global si quieres
-            return "tarjetaform";
+            return "tarjetas_layouts/tarjetaform";
         }
 
         return "redirect:/tarjetas/all";
     }
 
+    // Borrado Admin
     @PostMapping("/{id}/delete")
-    public String deleteTarjeta(@PathVariable UUID id) {
+    public String deleteTarjetaAdmin(@PathVariable UUID id) {
         tarjetaService.findById(id).ifPresent(tarjetaService::deleteTarjeta);
         return "redirect:/tarjetas/all";
     }
 
+
+    // ==========================================
+    // ZONA CLIENTE (Mis Tarjetas)
+    // ==========================================
+
     @GetMapping("/mis-tarjetas")
-    public String misTarjetas(HttpSession session, Model model) {
+    public String listMisTarjetas(Model model, HttpSession session) {
         Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
         if (cliente == null) return "redirect:/login";
 
-        // Pasamos la lista de tarjetas
         model.addAttribute("tarjetas", tarjetaService.findAllTarjetasByCliente(cliente));
-
-        // CORRECCIÓN: Devolvemos la vista de LISTA (no la del formulario)
-        return "mis_tarjetas"; // <--- Asegúrate de tener este archivo creado
+        return "tarjetas_layouts/mis_tarjetas";
     }
 
-    // 2. VER FORMULARIO (Usa tarjetas_cliente.html)
+    // Formulario para CLIENTE (Automático, sin elegir usuario)
     @GetMapping("/mis-tarjetas/new")
-    public String createTarjetaForm(Model model, HttpSession session) {
-        if (session.getAttribute("clienteLogueado") == null) return "redirect:/login";
+    public String showTarjetaFormCliente(Model model, HttpSession session) {
+        Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
+        if (cliente == null) return "redirect:/login";
 
-        // Pasamos el objeto vacío para el formulario
         model.addAttribute("tarjeta", new Tarjeta());
-
-        // Devolvemos la vista del FORMULARIO
-        return "tarjetaform_cliente";
+        // NO pasamos lista de clientes, no hace falta
+        return "tarjetas_layouts/tarjetaform_cliente";
     }
 
-    @PostMapping("/mis-tarjetas")
-    public String saveTarjetaForm(@Valid @ModelAttribute Tarjeta tarjeta,
-                                  BindingResult result,
-                                  HttpSession session,
-                                  Model model) {
+    // Guardado para CLIENTE (Se auto-asigna)
+    @PostMapping("/mis-tarjetas/save")
+    public String saveTarjetaCliente(@Valid @ModelAttribute Tarjeta tarjeta,
+                                     BindingResult result,
+                                     HttpSession session,
+                                     Model model) {
 
         Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
-        if (cliente == null) {
-            return "redirect:/login";
-        }
+        if (cliente == null) return "redirect:/login";
 
         if(tarjeta.getCodigoTarjeta() != null) {
-            String codigoTarjeta = tarjeta.getCodigoTarjeta().replaceAll("\\s+", "");
-            tarjeta.setCodigoTarjeta(codigoTarjeta);
+            tarjeta.setCodigoTarjeta(tarjeta.getCodigoTarjeta().replaceAll("\\s+", ""));
         }
 
         if (result.hasErrors()) {
-            return "tarjetaform_cliente";
+            return "tarjetas_layouts/tarjetaform_cliente";
         }
 
         try {
+            // FORZAMOS que el dueño sea el usuario logueado
             tarjeta.setCliente(cliente);
             tarjetaService.saveTarjeta(tarjeta);
         } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("error", "Error " + e.getMessage());
-            return "tarjetaform_cliente";
+            model.addAttribute("error", "Error: " + e.getMessage());
+            return "tarjetas_layouts/tarjetaform_cliente";
         }
-
 
         return "redirect:/tarjetas/mis-tarjetas";
     }
 
     @PostMapping("/mis-tarjetas/{id}/delete")
     public String deleteTarjetaCliente(@PathVariable UUID id, HttpSession session) {
-
+        // Podríamos añadir seguridad extra comprobando que la tarjeta pertenece al usuario
         tarjetaService.findById(id).ifPresent(tarjetaService::deleteTarjeta);
         return "redirect:/tarjetas/mis-tarjetas";
-
     }
 
+    // NUEVO: Método para activar/desactivar tarjeta
+    @PostMapping("/mis-tarjetas/{id}/toggle")
+    public String toggleTarjetaValida(@PathVariable UUID id, HttpSession session) {
+        Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
+        if (cliente == null) return "redirect:/login";
+
+        // Buscamos la tarjeta y verificamos que sea del usuario logueado por seguridad
+        tarjetaService.findById(id).ifPresent(t -> {
+            if (t.getCliente().getId().equals(cliente.getId())) {
+                t.setValida(!t.isValida()); // Cambiamos de true a false o viceversa
+                tarjetaService.saveTarjeta(t);
+            }
+        });
+
+        return "redirect:/tarjetas/mis-tarjetas";
+    }
 }

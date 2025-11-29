@@ -2,7 +2,6 @@ package es.unex.cum.mdai.compradoor.data.controllers;
 
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.services.InmuebleService;
-import es.unex.cum.mdai.compradoor.data.services.StorageService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,112 +18,83 @@ import java.util.UUID;
 public class InmuebleController {
 
     private final InmuebleService inmuebleService;
-    private final StorageService storageService;
 
     @Autowired
-    public InmuebleController(InmuebleService inmuebleService, StorageService storageService) {
+    public InmuebleController(InmuebleService inmuebleService) {
         this.inmuebleService = inmuebleService;
-        this.storageService = storageService;
     }
 
+    // LISTADO PRINCIPAL (Catálogo)
     @GetMapping({"/", ""})
-    public String listInmuebles(Model model) {
-        model.addAttribute("inmuebles", inmuebleService.findAllInmueble());
-        return "inmuebles";
+    public String listInmuebles(Model model, HttpSession session) {
+
+        // OPCIONAL: Si eres ADMIN, quizás quieras ver todas (incluidas vendidas).
+        // Si eres CLIENTE o ANÓNIMO, solo ves las disponibles.
+        /* Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
+        if (cliente != null && cliente.isAdmin()) {
+             model.addAttribute("inmuebles", inmuebleService.findAllInmueble());
+        } else {
+             model.addAttribute("inmuebles", inmuebleService.findInmueblesDisponibles());
+        }
+        */
+
+        // POR AHORA: Mostramos solo disponibles a todo el mundo en esta vista
+        model.addAttribute("inmuebles", inmuebleService.findInmueblesDisponibles());
+
+        return "inmuebles_layouts/inmuebles";
     }
 
     @GetMapping("/new")
-    public String showInmuebleForm(Model model, HttpSession session) {
-
-        if (session.getAttribute("clienteLogueado") == null) {
-            return "redirect:/login";
-        }
-
+    public String showInmuebleForm(Model model) {
         model.addAttribute("inmueble", new Inmueble());
-        return "inmuebleform";
+        return "inmuebles_layouts/inmuebleform";
     }
 
     @PostMapping("/")
-    public String createInmueble(@Valid @ModelAttribute Inmueble inmueble,
-                                 BindingResult result,
-                                 @RequestParam(value = "archivos", required = false) MultipartFile[] archivos,
-                                 HttpSession session) {
-
-        if (session.getAttribute("clienteLogueado") == null) {
-            return "redirect:/login";
-        }
-
+    public String createInmueble(@Valid @ModelAttribute Inmueble inmueble, BindingResult result) {
         if (result.hasErrors()) {
-            return "inmuebleform";
+            return "inmuebles_layouts/inmuebleform";
         }
-
-        try {
-            List<String> rutasFotos = new ArrayList<>();
-
-            String nombreCarpeta = storageService.generarNombreNuevaCarpeta();
-
-            if (archivos != null || archivos.length > 0) {
-                for (MultipartFile archivo : archivos) {
-                    if (!archivo.isEmpty()) {
-                        String rutaURL = storageService.store(archivo, nombreCarpeta);
-                        rutasFotos.add(rutaURL);
-                    }
-                }
-            }
-
-
-            if (!rutasFotos.isEmpty()) {
-                inmueble.setPathFotos(rutasFotos);
-            }
-            inmuebleService.saveInmueble(inmueble);
-
-        } catch (IllegalArgumentException e) {
-            result.reject("error.inmueble", "Error al guardar" + e.getMessage());
-            return "inmuebleform";
-        }
-
-        return "redirect:/inmuebles/";
-    }
-
-    @PostMapping("/{id}/delete")
-    public String deleteInmueble(@PathVariable UUID id) {
-        inmuebleService.deleteInmueble(id);
+        inmuebleService.saveInmueble(inmueble);
         return "redirect:/inmuebles/";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable UUID id, Model model) {
+    public String editInmueble(@PathVariable UUID id, Model model) {
         Inmueble inmueble = inmuebleService.findInmuebleById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Inmueble no encontrado"));
         model.addAttribute("inmueble", inmueble);
-        return "inmuebleform";
+        return "inmuebles_layouts/inmuebleform";
     }
 
     @PostMapping("/update/{id}")
     public String updateInmueble(@PathVariable UUID id, @ModelAttribute Inmueble inmueble, BindingResult result) {
         if (result.hasErrors()) {
-            return "inmuebleform";
+            return "inmuebles_layouts/inmuebleform";
         }
         inmueble.setIdInmueble(id);
         try {
             inmuebleService.updateInmueble(inmueble);
         } catch (IllegalArgumentException e) {
             result.reject("error.inmueble", e.getMessage());
-            return "inmuebleform";
+            return "inmuebles_layouts/inmuebleform";
         }
 
         return "redirect:/inmuebles/";
     }
 
+    // BUSCADOR (Filtrado también para ocultar vendidos)
     @GetMapping("/search")
     public String searchByPrecio(@RequestParam(required = false) Float min, @RequestParam(required = false) Float max, Model model) {
         if (min == null || max == null) {
             model.addAttribute("error", "Debe proporcionar min y max");
-            model.addAttribute("inmuebles", List.of());
-            return "inmuebles";
+            // Si hay error, mostramos disponibles por defecto
+            model.addAttribute("inmuebles", inmuebleService.findInmueblesDisponibles());
+            return "inmuebles_layouts/inmuebles";
         }
 
         try {
+            // Este método del servicio ahora llama a findByVentaIsNullAndPrecioBetween
             List<Inmueble> res = inmuebleService.findInmuebleByPrecioBetween(min, max);
             model.addAttribute("inmuebles", res);
         } catch (IllegalArgumentException e) {
@@ -134,6 +102,12 @@ public class InmuebleController {
             model.addAttribute("inmuebles", List.of());
         }
 
-        return "inmuebles";
+        return "inmuebles_layouts/inmuebles";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteInmueble(@PathVariable UUID id) {
+        inmuebleService.deleteInmueble(id);
+        return "redirect:/inmuebles/";
     }
 }

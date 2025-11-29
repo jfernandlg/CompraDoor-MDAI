@@ -1,9 +1,6 @@
 package es.unex.cum.mdai.compradoor.data.services;
 
-import es.unex.cum.mdai.compradoor.data.model.Cliente;
-import es.unex.cum.mdai.compradoor.data.model.Compra;
-import es.unex.cum.mdai.compradoor.data.model.Inmueble;
-import es.unex.cum.mdai.compradoor.data.model.Venta;
+import es.unex.cum.mdai.compradoor.data.model.*;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.CompraRepository;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
@@ -132,5 +129,25 @@ public class CompraServiceImpl implements CompraService {
         compraRepository.delete(compra);
     }
 
+    @Override
+    public void realizarCompraConServicios(Cliente cliente, Inmueble inmueble, List<Servicio> servicios) {
+        // 1. Crear la Compra
+        Compra compra = new Compra(cliente, inmueble.getPrecio(), inmueble);
+
+        // 2. Asociar los servicios a la compra (Bidireccional)
+        if (servicios != null) {
+            for (Servicio s : servicios) {
+                compra.addServicio(s); // Esto usa el método helper que pusiste en Compra.java
+            }
+        }
+
+        // 3. Crear registro de Venta (espejo)
+        Venta venta = new Venta(inmueble, inmueble.getPrecio(), cliente);
+
+        // 4. Guardar todo
+        // Al tener CascadeType.ALL en Compra->Servicios, al guardar compra se guardan los servicios
+        compraRepository.save(compra);
+        ventaRepository.save(venta);
+    }
 
 }

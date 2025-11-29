@@ -1,144 +1,157 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrador - Inicio</title>
+    <title>Admin - Compradoor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
     <style>
-        /* TUS ESTILOS GALÁCTICOS ORIGINALES */
+        /* Fondo limpio y luminoso */
         body {
-            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
             min-height: 100vh;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .galaxy-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .hero-section { text-align: center; padding: 3rem 1rem; animation: fadeIn 1.5s ease; }
+
         .hero-title {
-            font-size: 3rem;
-            background: -webkit-linear-gradient(45deg, #a29bfe, #74b9ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            font-weight: 800; color: #2d3436; margin-bottom: 4rem;
         }
-        .hero-subtitle { font-size: 1.1rem; color: #b2bec3; margin-bottom: 2rem; }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 1rem;
+
+        /* GRID DE FIGURAS */
+        .figure-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
         }
-        .module-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 20px;
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
+
+        /* EL CONCEPTO: NO ES UNA CAJA, ES UNA FIGURA (CÍRCULO) */
+        .circle-link {
             text-decoration: none;
-            color: white;
-            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            backdrop-filter: blur(5px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            group: hover;
         }
-        .module-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 0 25px rgba(116, 185, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
+
+        .circle-figure {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%; /* <--- ESTO LO CONVIERTE EN CÍRCULO PERFECTO */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
             color: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .module-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
-        .module-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 0.5rem; color: #74b9ff; }
-        .module-desc { font-size: 0.95rem; color: #dfe6e9; line-height: 1.5; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Efecto de brillo interior */
+        .circle-figure::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            border-radius: 50%;
+        }
+
+        .circle-link:hover .circle-figure {
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+
+        .label-text {
+            font-weight: 700; color: #636e72; font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .circle-link:hover .label-text { color: #2d3436; }
+
+        /* --- PALETA DE COLORES (FIGURAS) --- */
+
+        /* Ventas: Naranja Fuego */
+        .fig-ventas { background: linear-gradient(135deg, #FF512F 0%, #DD2476 100%); }
+
+        /* Inmuebles: Azul Océano */
+        .fig-inmuebles { background: linear-gradient(135deg, #1CB5E0 0%, #000851 100%); }
+
+        /* Clientes: Violeta Mágico */
+        .fig-clientes { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+
+        /* Servicios: Verde Esmeralda */
+        .fig-servicios { background: linear-gradient(135deg, #02AAB0 0%, #00CDAC 100%); }
+
+        /* Tarjetas: Amarillo/Oro */
+        .fig-tarjetas { background: linear-gradient(135deg, #F2994A 0%, #F2C94C 100%); }
+
+        /* --- DISEÑO ESPECIAL PARA EL PRINCIPAL (VENTAS) --- */
+        /* Hacemos que el de Ventas sea un poco más grande para destacar */
+        .circle-link.main-action .circle-figure {
+            width: 160px; height: 160px; font-size: 5rem;
+            box-shadow: 0 20px 40px rgba(221, 36, 118, 0.3);
+        }
+
     </style>
 </head>
 <body>
 
-<!-- Navbar simple -->
-<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3"
-     style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="/">Compradoor</a>
+<div class="container text-center py-5">
 
-        <div class="d-flex gap-3 align-items-center">
+    <h1 class="display-4 hero-title">Panel de Control</h1>
 
-            <div th:if="${session.clienteLogueado == null}" class="d-flex gap-2">
-                <a th:href="@{/login}" class="btn btn-outline-primary rounded-pill px-4">Iniciar Sesión</a>
-                <a th:href="@{/register}" class="btn btn-primary rounded-pill px-4">Registrarse</a>
+    <div class="figure-grid">
+
+        <a th:href="@{/ventas}" class="circle-link main-action">
+            <div class="circle-figure fig-ventas">
+                <i class="bi bi-graph-up-arrow"></i>
             </div>
+            <span class="label-text">Ventas</span>
+        </a>
 
-            <div th:if="${session.clienteLogueado != null}" class="d-flex gap-3 align-items-center">
-                <span class="text-muted fw-bold">
-                    Hola, <span th:text="${session.clienteLogueado.nombre}" class="text-primary">Usuario</span>
-                </span>
-
-                <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm rounded-pill">
-                    <i class="bi bi-box-arrow-right"></i> Salir
-                </a>
+        <a th:href="@{/inmuebles/}" class="circle-link">
+            <div class="circle-figure fig-inmuebles">
+                <i class="bi bi-houses"></i>
             </div>
-
-        </div>
-    </div>
-</nav>
-
-
-<div class="galaxy-container">
-
-    <div class="hero-section">
-        <h1 class="hero-title">Sistema Compradoor</h1>
-        <p class="hero-subtitle">
-            Panel de control integral. Gestiona todo tu universo inmobiliario desde aquí.
-        </p>
-    </div>
-
-    <div class="dashboard-grid">
-
-        <a th:href="@{/compras/menu}" class="module-card">
-            <span class="module-icon">🪐</span>
-            <div class="module-title">Compras</div>
-            <p class="module-desc">Gestión de adquisiciones, buscador avanzado y nuevas compras.</p>
+            <span class="label-text">Inmuebles</span>
         </a>
 
-        <a th:href="@{/ventas}" class="module-card">
-            <span class="module-icon">💰</span>
-            <div class="module-title">Ventas</div>
-            <p class="module-desc">Registro de ventas realizadas, consulta por cliente y precios.</p>
+        <a th:href="@{/clientes}" class="circle-link">
+            <div class="circle-figure fig-clientes">
+                <i class="bi bi-people"></i>
+            </div>
+            <span class="label-text">Clientes</span>
         </a>
 
-        <a th:href="@{/inmuebles/}" class="module-card">
-            <span class="module-icon">🏠</span>
-            <div class="module-title">Inmuebles</div>
-            <p class="module-desc">Catálogo de propiedades, altas de stock y filtrado por precio.</p>
+        <a th:href="@{/servicios/menu}" class="circle-link">
+            <div class="circle-figure fig-servicios">
+                <i class="bi bi-tools"></i>
+            </div>
+            <span class="label-text">Servicios</span>
         </a>
 
-        <a th:href="@{/clientes}" class="module-card">
-            <span class="module-icon">👤</span>
-            <div class="module-title">Clientes</div>
-            <p class="module-desc">Base de datos de usuarios, registro y búsqueda por DNI.</p>
-        </a>
-
-        <a th:href="@{/servicios/menu}" class="module-card">
-            <span class="module-icon">🛠️</span>
-            <div class="module-title">Servicios</div>
-            <p class="module-desc">Gestión de servicios adicionales contratados.</p>
-        </a>
-
-        <a th:href="@{/tarjetas/all}" class="module-card">
-            <span class="module-icon">💳</span>
-            <div class="module-title">Tarjetas</div>
-            <p class="module-desc">Administración de tarjetas VIP y métodos de pago.</p>
+        <a th:href="@{/tarjetas/all}" class="circle-link">
+            <div class="circle-figure fig-tarjetas">
+                <i class="bi bi-credit-card-2-front"></i>
+            </div>
+            <span class="label-text">Tarjetas</span>
         </a>
 
     </div>
 
-    <footer style="text-align: center; margin-top: 4rem; color: var(--text-muted); font-size: 0.9rem; padding-bottom: 2rem;">
-        &copy; 2025 Compradoor Systems
-    </footer>
+    <div class="mt-5 pt-5">
+        <a th:href="@{/logout}" class="btn btn-outline-danger rounded-pill px-4">
+            <i class="bi bi-power"></i> Salir
+        </a>
+    </div>
 
 </div>
+
 </body>
 </html>

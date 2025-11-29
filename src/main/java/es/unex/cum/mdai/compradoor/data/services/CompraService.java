@@ -3,6 +3,7 @@ package es.unex.cum.mdai.compradoor.data.services;
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
+import es.unex.cum.mdai.compradoor.data.model.Servicio;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,8 @@ public interface CompraService {
     void realizarCompra(Cliente cliente, Inmueble inmueble);
 
     Compra saveCompra(Compra compra);
+
+    void realizarCompraConServicios(Cliente cliente, Inmueble inmueble, List<Servicio> servicios);
 
     void deleteCompra(Compra compra);
 }

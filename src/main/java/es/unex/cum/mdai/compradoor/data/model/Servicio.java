@@ -1,6 +1,8 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat; // IMPORTANTE
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,12 +18,13 @@ public class Servicio {
     private TipoServicio tipoServicio;
 
     private String descripcion;
-    private float coste;
+
+    private Float coste;
 
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // <--- ESTO ARREGLA LA CONVERSIÓN AUTOMÁTICA
     private Date fechaAplicacion;
 
-    // --- CAMBIO PRINCIPAL: Ahora apunta a COMPRA ---
     @ManyToOne
     @JoinColumn(name = "compra_id")
     private Compra compra;
@@ -38,13 +41,12 @@ public class Servicio {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public float getCoste() { return coste; }
-    public void setCoste(float coste) { this.coste = coste; }
+    public Float getCoste() { return coste; }
+    public void setCoste(Float coste) { this.coste = coste; }
 
     public Date getFechaAplicacion() { return fechaAplicacion; }
     public void setFechaAplicacion(Date fechaAplicacion) { this.fechaAplicacion = fechaAplicacion; }
 
-    // Getter y Setter para Compra
     public Compra getCompra() { return compra; }
     public void setCompra(Compra compra) { this.compra = compra; }
 }

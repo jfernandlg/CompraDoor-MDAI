@@ -1,7 +1,6 @@
 package es.unex.cum.mdai.compradoor.data.controllers;
 
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
-import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.services.ClienteService;
 import es.unex.cum.mdai.compradoor.data.services.InmuebleService;
@@ -36,7 +35,7 @@ public class VentaController {
     @GetMapping
     public String listVentas(Model model) {
         model.addAttribute("ventas", ventaService.findAllVentas());
-        return "ventas";
+        return "ventas_layouts/ventas";
     }
 
     @GetMapping("/new")
@@ -45,7 +44,7 @@ public class VentaController {
 
         model.addAttribute("listaClientes", clienteService.findAllClientes());
         model.addAttribute("listaInmuebles", inmuebleService.findAllInmueble());
-        return "ventaform";
+        return "ventas_layouts/ventaform";
     }
 
     @PostMapping
@@ -54,7 +53,7 @@ public class VentaController {
         if (result.hasErrors()) {
             model.addAttribute("listaClientes", clienteService.findAllClientes());
             model.addAttribute("listaInmuebles", inmuebleService.findAllInmueble());
-            return "ventaform";
+            return "ventas_layouts/ventaform";
         }
 
         try {
@@ -64,7 +63,7 @@ public class VentaController {
 
             model.addAttribute("listaClientes", clienteService.findAllClientes());
             model.addAttribute("listaInmuebles", inmuebleService.findAllInmueble());
-            return "ventaform";
+            return "ventas_layouts/ventaform";
         }
 
         return "redirect:/ventas";
@@ -97,7 +96,7 @@ public class VentaController {
             model.addAttribute("error", "Error en la búsqueda");
         }
 
-        return "ventas";
+        return "ventas_layouts/ventas";
     }
 
     @GetMapping("/search")
@@ -106,7 +105,7 @@ public class VentaController {
         if (fechaInicio == null || fechaFin == null) {
             model.addAttribute("error", "Debe proporcionar min y max");
             model.addAttribute("ventas", List.of());
-            return "ventas";
+            return "ventas_layouts/ventas";
         }
 
         try {
@@ -117,7 +116,7 @@ public class VentaController {
             model.addAttribute("ventas", List.of());
         }
 
-        return "ventas";
+        return "ventas_layouts/ventas";
     }
 
     @GetMapping("/mis-ventas")
@@ -131,7 +130,7 @@ public class VentaController {
         List<Venta> misVentas = ventaService.findVentaByCliente(cliente);
 
         model.addAttribute("ventas", misVentas);
-        return "ventas_cliente";
+        return "ventas_layouts/ventas_cliente";
     }
 
 }

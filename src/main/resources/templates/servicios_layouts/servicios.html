@@ -25,103 +25,62 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold text-primary mb-0"><i class="bi bi-tools"></i> Servicios Contratados</h2>
-            <p class="text-muted mb-0 small">Gestión de mantenimientos y extras</p>
+            <h2 class="fw-bold text-primary mb-0">🛠️ Gestión de Servicios</h2>
+            <p class="text-muted mb-0">Historial de trabajos y catálogo de precios</p>
         </div>
-        <a th:href="@{/servicios/new}" class="btn btn-success fw-bold shadow-sm">
-            <i class="bi bi-plus-lg"></i> Añadir Servicio Manual
+        <a th:href="@{/servicios/new}" class="btn btn-success shadow-sm">
+            <i class="bi bi-plus-lg"></i> Nuevo Servicio
         </a>
     </div>
 
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-header bg-white py-3">
-            <button class="btn btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse">
-                <span><i class="bi bi-sliders"></i> Filtros Avanzados</span>
-                <i class="bi bi-chevron-down"></i>
-            </button>
-        </div>
-        <div class="collapse show" id="filtrosCollapse">
-            <div class="card-body bg-light">
-                <form th:action="@{/servicios/buscar}" method="get" class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted fw-bold">Categoría</label>
-                        <select name="tipo" class="form-select">
-                            <option value="">-- Todas --</option>
-                            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}" th:selected="${t == tipoSeleccionado}"></option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted fw-bold">ID Compra</label>
-                        <input type="text" name="compraId" th:value="${compraId}" class="form-control" placeholder="UUID...">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted fw-bold">Desde</label>
-                        <input type="date" name="fechaInicio" th:value="${#dates.format(fechaInicio, 'yyyy-MM-dd')}" class="form-control">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted fw-bold">Hasta</label>
-                        <input type="date" name="fechaFin" th:value="${#dates.format(fechaFin, 'yyyy-MM-dd')}" class="form-control">
-                    </div>
-                    <div class="col-12 d-flex justify-content-end gap-2 mt-3">
-                        <a th:href="@{/servicios/all}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
-                        <button type="submit" class="btn btn-primary btn-sm px-4">Filtrar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-            <span class="text-muted small">Registros encontrados: <strong th:text="${servicios.size()}"></strong></span>
-        </div>
+    <div class="card shadow-sm">
         <div class="card-body p-0">
-            <div th:if="${servicios.empty}" class="text-center py-5 text-muted">
-                <i class="bi bi-inbox display-4 d-block mb-3"></i>
-                No hay servicios que coincidan con tu búsqueda.
-            </div>
-
-            <div class="table-responsive" th:unless="${servicios.empty}">
+            <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light text-secondary text-uppercase small">
+                    <thead class="table-light">
                     <tr>
-                        <th class="ps-4">Fecha</th>
-                        <th>Categoría</th>
+                        <th class="ps-4">Tipo</th>
                         <th>Descripción</th>
-                        <th>Compra / Cliente</th>
+                        <th>Asignado A (Compra)</th>
                         <th>Coste</th>
                         <th class="text-end pe-4">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="s : ${servicios}">
-                        <td class="ps-4 fw-bold text-muted" th:text="${#dates.format(s.fechaAplicacion, 'dd/MM/yyyy')}"></td>
-                        <td>
-                            <span class="badge bg-info text-dark bg-opacity-25 border border-info" th:text="${s.tipoServicio}"></span>
-                        </td>
-                        <td class="text-truncate" style="max-width: 200px;" th:text="${s.descripcion}" th:title="${s.descripcion}"></td>
+                        <td class="ps-4 fw-bold" th:text="${s.tipoServicio}">TIPO</td>
+                        <td class="text-truncate" style="max-width: 250px;" th:text="${s.descripcion}" th:title="${s.descripcion}">Desc</td>
+
                         <td>
                             <div th:if="${s.compra}">
-                                <i class="bi bi-person-fill text-primary"></i> <span th:text="${s.compra.cliente.nombre}"></span><br>
-                                <small class="text-muted" style="font-size: 0.75rem;">ID Compra: <span th:text="${#strings.abbreviate(s.compra.idCompra.toString(), 8)}"></span></small>
+                                <i class="bi bi-person-fill text-primary"></i>
+                                <span th:text="${s.compra.cliente.nombre}">Cliente</span><br>
+                                <small class="text-muted" style="font-size: 0.75rem;">
+                                    <i class="bi bi-house"></i> <span th:text="${s.compra.inmueble.direccion}">Dir</span>
+                                </small>
                             </div>
-                            <span th:unless="${s.compra}" class="text-muted fst-italic">- Sin asignar -</span>
+                            <span th:unless="${s.compra}" class="badge bg-warning text-dark border border-warning">
+                                <i class="bi bi-tag-fill"></i> PLANTILLA CATÁLOGO
+                            </span>
                         </td>
-                        <td class="fw-bold text-success" th:text="${s.coste} + ' €'"></td>
+
+                        <td class="fw-bold text-success" th:text="${s.coste} + ' €'">0 €</td>
+
                         <td class="text-end pe-4">
-                            <form th:action="@{/servicios/delete/{id}(id=${s.idServicio})}" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar servicio permanentemente?')">
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                            <form th:action="@{/servicios/delete/{id}(id=${s.idServicio})}" method="post" style="display:inline;"
+                                  onsubmit="return confirm('¿Eliminar este servicio?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="card-footer bg-white text-center text-muted small py-3">
+            Mostrando <span th:text="${servicios.size()}">0</span> servicios registrados.
         </div>
     </div>
 

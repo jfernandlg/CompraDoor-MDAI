@@ -26,5 +26,7 @@ public interface ServicioService {
 
     Servicio saveServicio(Servicio servicio);
 
+    List<Servicio> findCatalogo(); // Añade esto
+
     void deleteServicio(Servicio servicio);
 }

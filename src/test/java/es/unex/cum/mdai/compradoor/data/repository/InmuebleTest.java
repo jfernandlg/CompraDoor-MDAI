@@ -27,6 +27,7 @@ class InmuebleTest {
 
     @BeforeEach
     void setUp() {
+        // Limpiamos en orden para respetar las claves foráneas
         ventaRepository.deleteAll();
         inmuebleRepository.deleteAll();
         clienteRepository.deleteAll();
@@ -38,6 +39,7 @@ class InmuebleTest {
         Inmueble i2 = new Inmueble("Cáceres", 470_000f, "Avenida de la Hispanidad, 35");
         Inmueble i3 = new Inmueble("Badajoz", 170_000f, "Avenida de España, 10");
         Inmueble i4 = new Inmueble("Badajoz", 545_000f, "Paseo Fluvial, 16");
+
         inmuebleRepository.save(i);
         inmuebleRepository.save(i2);
         inmuebleRepository.save(i3);
@@ -55,16 +57,18 @@ class InmuebleTest {
 
     @Test
     void testPriceBetween() {
+        // Este test requiere que InmuebleRepository tenga el método findByPrecioBetween(min, max)
         Inmueble i = new Inmueble("Badajoz", 250_000f, "Avenida de América, 25");
         Inmueble i2 = new Inmueble("Cáceres", 470_000f, "Avenida de la Hispanidad, 35");
         Inmueble i3 = new Inmueble("Badajoz", 170_000f, "Avenida de España, 10");
         Inmueble i4 = new Inmueble("Badajoz", 545_000f, "Paseo Fluvial, 16");
+
         inmuebleRepository.save(i);
         inmuebleRepository.save(i2);
         inmuebleRepository.save(i3);
         inmuebleRepository.save(i4);
 
-        List<Inmueble> ByPriceBetween = inmuebleRepository.findByPrecioBetween(100_000f, 500_000f);
+        List<Inmueble> ByPriceBetween = inmuebleRepository.findByVentaIsNullAndPrecioBetween(100_000f, 500_000f);
         assertThat(ByPriceBetween).hasSize(3);
     }
 
@@ -73,76 +77,57 @@ class InmuebleTest {
         Inmueble a = new Inmueble("Test", 100_000f, "A");
         Inmueble b = new Inmueble("Test", 200_000f, "B");
         Inmueble c = new Inmueble("Test", 300_000f, "C");
+
         inmuebleRepository.save(a);
         inmuebleRepository.save(b);
         inmuebleRepository.save(c);
 
         // límites incluidos
-        List<Inmueble> res = inmuebleRepository.findByPrecioBetween(100_000f, 300_000f);
+        List<Inmueble> res = inmuebleRepository.findByVentaIsNullAndPrecioBetween(100_000f, 300_000f);
         assertThat(res).hasSize(3);
         assertThat(res).extracting("idInmueble").containsExactlyInAnyOrder(a.getIdInmueble(), b.getIdInmueble(), c.getIdInmueble());
     }
 
     @Test
     void testPriceBetweenEmpty() {
-        List<Inmueble> res = inmuebleRepository.findByPrecioBetween(10_000f, 20_000f);
+        List<Inmueble> res = inmuebleRepository.findByVentaIsNullAndPrecioBetween(10_000f, 20_000f);
         assertThat(res).isEmpty();
     }
 
     @Test
     void testVentaIsNull() {
-        // ===== CONFIGURACIÓN INICIAL =====
-
-        // Crear y guardar un cliente
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        // 1. Crear Cliente (Usamos setters por si el constructor no existe en tu versión de Cliente)
+        Cliente c = new Cliente();
+        c.setDni("12345678A");
+        c.setNombre("Juan Perez");
         c.setEmail("juan@example.com");
         clienteRepository.save(c);
 
-        // Crear tres inmuebles en diferentes localidades
+        // 2. Crear Inmuebles
         Inmueble i = new Inmueble("Badajoz", 250_000f, "Avenida de América, 25");
         Inmueble i2 = new Inmueble("Cáceres", 470_000f, "Avenida de la Hispanidad, 35");
         Inmueble i3 = new Inmueble("Mérida", 340_000f, "Avenida Reina Sofía, 12");
 
-        // Guardar los inmuebles en la base de datos
         inmuebleRepository.save(i);
         inmuebleRepository.save(i2);
         inmuebleRepository.save(i3);
 
-        // ===== SIMULACIÓN DE VENTA =====
-
-        // Crear una venta asociando el primer inmueble (i) con el cliente
-        // El inmueble i (Badajoz) ahora tiene una venta asociada
+        // 3. Crear Venta (Vende el inmueble 'i')
         Venta v = new Venta(i, 270_000f, c);
         ventaRepository.save(v);
 
-        // Añadir la venta a la lista de ventas del cliente (relación bidireccional)
-        c.getVentas().add(v);
+        // Nota: Al guardar la venta, la relación se establece en la base de datos.
 
-        // ===== PRIMERA VERIFICACIÓN: Inmuebles SIN venta asociada =====
+        // 4. Test: Buscar inmuebles DISPONIBLES (Sin venta)
+        List<Inmueble> disponibles = inmuebleRepository.findByVentaIsNull();
 
-        // findByVentaIsNull() debe retornar solo los inmuebles que NO tienen venta
-        List<Inmueble> byVenta = inmuebleRepository.findByVentaIsNull();
+        // Deben ser 2 (i2 e i3). El 'i' está vendido.
+        assertThat(disponibles).hasSize(2);
+        assertThat(disponibles).extracting("idInmueble")
+                .containsExactlyInAnyOrder(i2.getIdInmueble(), i3.getIdInmueble());
 
-        // Verificar que hay 2 inmuebles sin venta (i2 e i3)
-        assertThat(byVenta).hasSize(2);
-
-        // Verificar que los inmuebles sin venta son exactamente i2 e i3 (en cualquier orden)
-        assertThat(byVenta).extracting("idInmueble").containsExactlyInAnyOrder(i2.getIdInmueble(), i3.getIdInmueble());
-
-        // ===== SEGUNDA VERIFICACIÓN: Confirmar que i SÍ tiene venta =====
-
-        // Realizar la misma consulta nuevamente para confirmar consistencia
-        List<Inmueble> after = inmuebleRepository.findByVentaIsNull();
-
-        // VERIFICACIÓN CORREGIDA:
-        // El inmueble i (Badajoz) NO debe aparecer porque tiene una venta asociada
-        assertThat(after).doesNotContain(i);
-
-        // Verificación adicional opcional: confirmar que i2 e i3 siguen en la lista
-        assertThat(after).contains(i2, i3);
-
-        // Otra verificación opcional: confirmar que el tamaño sigue siendo 2
-        assertThat(after).hasSize(2);
+        // Aseguramos que el vendido NO aparece
+        assertThat(disponibles).doesNotContain(i);
     }
 
     @Test
@@ -166,5 +151,4 @@ class InmuebleTest {
         Optional<Inmueble> afterDelete = inmuebleRepository.findById(i.getIdInmueble());
         assertThat(afterDelete).isNotPresent();
     }
-
 }

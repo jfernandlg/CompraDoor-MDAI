@@ -27,20 +27,20 @@ public class ClienteController {
     @GetMapping
     public String listClientes(Model model) {
         model.addAttribute("clientes", clienteService.findAllClientes());
-        return "clientes";
+        return "clientes_layouts/clientes";
     }
 
     @GetMapping("/new")
     public String showClienteForm(Model model) {
         model.addAttribute("cliente", new Cliente());
-        return "clienteform";
+        return "clientes_layouts/clienteform";
     }
 
     @PostMapping
     public String createCliente(@Valid @ModelAttribute Cliente cliente, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            return "clienteform";
+            return "clientes_layouts/clienteform";
         }
 
         try {
@@ -53,7 +53,7 @@ public class ClienteController {
             } else {
                 result.reject("error.global", e.getMessage());
             }
-            return "clienteform";
+            return "clientes_layouts/clienteform";
         }
 
         return "redirect:/clientes";
@@ -72,14 +72,14 @@ public class ClienteController {
                 orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado"));
 
         model.addAttribute("cliente", cliente);
-        return "clienteform";
+        return "clientes_layouts/clienteform";
     }
 
     @PostMapping("/update/{id}")
     public String updateCliente(@PathVariable("id") UUID id, @Valid @ModelAttribute Cliente cliente, BindingResult result) {
 
         if (result.hasErrors()) {
-            return "clienteform";
+            return "clientes_layouts/clienteform";
         }
 
         try {
@@ -93,7 +93,7 @@ public class ClienteController {
             } else {
                 result.reject("error.global", e.getMessage());
             }
-            return "clienteform";
+            return "clientes_layouts/clienteform";
         }
 
         return "redirect:/clientes";
@@ -110,7 +110,7 @@ public class ClienteController {
             model.addAttribute("error", "cliente no encontrado");
         }
 
-        return "clientes";
+        return "clientes_layouts/clientes";
     }
 
 }

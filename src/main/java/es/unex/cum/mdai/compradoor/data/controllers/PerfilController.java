@@ -18,6 +18,6 @@ public class PerfilController {
         }
 
         model.addAttribute("cliente", cliente);
-        return "perfil";
+        return "home_layout/perfil";
     }
 }

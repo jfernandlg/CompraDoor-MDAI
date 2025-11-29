@@ -1,7 +1,6 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
-
 import java.util.*;
 
 @Entity
@@ -22,6 +21,8 @@ public class Venta {
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
 
+    public Venta() {}
+
     public Venta(Inmueble inmueble, float precioVenta, Cliente cliente) {
         this.inmueble = inmueble;
         this.fechaVenta = new Date();
@@ -29,74 +30,40 @@ public class Venta {
         this.cliente = cliente;
     }
 
-    public Venta() {
+    // --- GETTERS Y SETTERS ---
+    public UUID getIdVenta() { return idVenta; }
+    public void setIdVenta(UUID idVenta) { this.idVenta = idVenta; }
+    public Inmueble getInmueble() { return inmueble; }
+    public void setInmueble(Inmueble inmueble) { this.inmueble = inmueble; }
+    public Date getFechaVenta() { return fechaVenta; }
+    public void setFechaVenta(Date fechaVenta) { this.fechaVenta = fechaVenta; }
+    public float getPrecioVenta() { return precioVenta; }
+    public void setPrecioVenta(float precioVenta) { this.precioVenta = precioVenta; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    }
-
-    public void setId(UUID id) {
-        this.idVenta = id;
-    }
-
-    public UUID getIdVenta() {
-        return idVenta;
-    }
-
-    public Inmueble getInmueble() {
-        return inmueble;
-    }
-
-    public Date getFechaVenta() {
-        return fechaVenta;
-    }
-
-    public float getPrecioVenta() {
-        return precioVenta;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setIdVenta(UUID idVenta) {
-        this.idVenta = idVenta;
-    }
-
-    public void setInmueble(Inmueble inmueble) {
-        this.inmueble = inmueble;
-    }
-
-    public void setFechaVenta(Date fechaVenta) {
-        this.fechaVenta = fechaVenta;
-    }
-
-    public void setPrecioVenta(float precioVenta) {
-        this.precioVenta = precioVenta;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+    // --- CORRECCIÓN CRÍTICA: ROMPER EL BUCLE INFINITO ---
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Venta venta = (Venta) o;
-        return Float.compare(precioVenta, venta.precioVenta) == 0 && Objects.equals(idVenta, venta.idVenta) && Objects.equals(inmueble, venta.inmueble) && Objects.equals(fechaVenta, venta.fechaVenta) && Objects.equals(cliente, venta.cliente);
+        return Objects.equals(idVenta, venta.idVenta); // Solo ID
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idVenta, inmueble, fechaVenta, precioVenta, cliente);
+        return Objects.hash(idVenta); // Solo ID
     }
 
     @Override
     public String toString() {
+        // NO INCLUIMOS 'inmueble' NI 'cliente'
         return "Venta{" +
                 "idVenta=" + idVenta +
-                ", inmueble=" + inmueble +
                 ", fechaVenta=" + fechaVenta +
                 ", precioVenta=" + precioVenta +
-                ", cliente=" + cliente +
                 '}';
     }
 }

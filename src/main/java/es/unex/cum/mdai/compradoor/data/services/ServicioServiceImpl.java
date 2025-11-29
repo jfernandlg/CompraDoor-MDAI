@@ -73,4 +73,8 @@ public class ServicioServiceImpl implements ServicioService {
             servicioRepository.delete(servicio);
         }
     }
+    @Override
+    public List<Servicio> findCatalogo() {
+        return servicioRepository.findByCompraIsNull();
+    }
 }
