@@ -22,9 +22,7 @@
                           enctype="multipart/form-data">
 
                         <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
-                            <ul>
-                                <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
-                            </ul>
+                            <ul><li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li></ul>
                         </div>
 
                         <div class="row g-3 mb-3">
@@ -33,31 +31,25 @@
                                 <input type="text" class="form-control" th:field="*{direccion}"
                                        placeholder="Ej: Calle Mayor 12"
                                        th:classappend="${#fields.hasErrors('direccion')} ? 'is-invalid' : ''">
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('direccion')}"
-                                     th:errors="*{direccion}">Error
-                                </div>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}">Error</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Localidad</label>
-                                <input type="text" class="form-control" th:field="*{localidad}"
-                                       placeholder="Ej: Madrid">
+                                <input type="text" class="form-control" th:field="*{localidad}" placeholder="Ej: Madrid">
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Precio de Venta (€)</label>
-                            <input type="number" step="0.01" class="form-control" th:field="*{precio}"
-                                   placeholder="150000.00">
+                            <input type="number" step="0.01" class="form-control" th:field="*{precio}" placeholder="150000.00">
                         </div>
 
                         <hr class="my-4">
 
                         <h5 class="mb-3">Fotos del Inmueble</h5>
-
                         <div class="mb-3">
-                            <label for="archivos" class="form-label">Selecciona las fotos (puedes elegir varias)</label>
-                            <input class="form-control" type="file" id="archivos" name="archivos" multiple
-                                   accept="image/*">
+                            <label for="archivos" class="form-label">Selecciona las fotos</label>
+                            <input class="form-control" type="file" id="archivos" name="archivos" multiple accept="image/*">
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">

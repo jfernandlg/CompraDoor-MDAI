@@ -49,7 +49,7 @@ public class InmuebleController {
     @PostMapping("/")
     public String createInmueble(@Valid @ModelAttribute Inmueble inmueble,
                                  BindingResult result,
-                                 @RequestParam("archivos") MultipartFile[] archivos,
+                                 @RequestParam(value = "archivos", required = false) MultipartFile[] archivos,
                                  HttpSession session) {
 
         if (session.getAttribute("clienteLogueado") == null) {
@@ -65,12 +65,15 @@ public class InmuebleController {
 
             String nombreCarpeta = storageService.generarNombreNuevaCarpeta();
 
-            for (MultipartFile archivo : archivos) {
-                if (!archivo.isEmpty()) {
-                    String rutaURL = storageService.store(archivo, nombreCarpeta);
-                    rutasFotos.add(rutaURL);
+            if (archivos != null || archivos.length > 0) {
+                for (MultipartFile archivo : archivos) {
+                    if (!archivo.isEmpty()) {
+                        String rutaURL = storageService.store(archivo, nombreCarpeta);
+                        rutasFotos.add(rutaURL);
+                    }
                 }
             }
+
 
             if (!rutasFotos.isEmpty()) {
                 inmueble.setPathFotos(rutasFotos);

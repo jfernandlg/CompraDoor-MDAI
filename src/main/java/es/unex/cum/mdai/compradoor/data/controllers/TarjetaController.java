@@ -96,19 +96,32 @@ public class TarjetaController {
     @PostMapping("/mis-tarjetas")
     public String saveTarjetaForm(@Valid @ModelAttribute Tarjeta tarjeta,
                                   BindingResult result,
-                                  HttpSession session) {
+                                  HttpSession session,
+                                  Model model) {
 
         Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
         if (cliente == null) {
             return "redirect:/login";
         }
 
+        if(tarjeta.getCodigoTarjeta() != null) {
+            String codigoTarjeta = tarjeta.getCodigoTarjeta().replaceAll("\\s+", "");
+            tarjeta.setCodigoTarjeta(codigoTarjeta);
+        }
+
         if (result.hasErrors()) {
             return "tarjetaform_cliente";
         }
 
-        tarjeta.setCliente(cliente);
-        tarjetaService.saveTarjeta(tarjeta);
+        try {
+            tarjeta.setCliente(cliente);
+            tarjetaService.saveTarjeta(tarjeta);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Error " + e.getMessage());
+            return "tarjetaform_cliente";
+        }
+
 
         return "redirect:/tarjetas/mis-tarjetas";
     }

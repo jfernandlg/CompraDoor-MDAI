@@ -101,13 +101,16 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initDataCliente(ClienteRepository clienteRepository) {
         return (args) -> {
-            Cliente admin = new Cliente();
-            admin.setNombre("Admin");
-            admin.setDni("00000000A");
-            admin.setEmail("admin@compradoor.com");
-            admin.setPassword("admin");
-            admin.setAdmin(true);
-            clienteRepository.save(admin);
+            if (clienteRepository.count() == 0) {
+                Cliente admin = new Cliente();
+                admin.setNombre("Admin");
+                admin.setDni("00000000A");
+                admin.setEmail("admin@compradoor.com");
+                admin.setPassword("admin");
+                admin.setAdmin(true);
+                clienteRepository.save(admin);
+            }
+
         };
     }
 }

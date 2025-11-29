@@ -3,116 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${compra.idCompra != null} ? 'Editar Compra' : 'Nueva Compra'"></title>
-    <link rel="stylesheet" th:href="@{/css/galaxy.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
-        // Lógica para mostrar/ocultar el formulario de servicio extra
         function toggleServicio() {
-            var checkbox = document.getElementById('checkServicio');
+            var check = document.getElementById('checkServicio');
             var bloque = document.getElementById('bloqueServicio');
-            if (checkbox.checked) {
-                bloque.style.display = 'block';
-                // Hacemos required los campos si se muestra el bloque
-                document.getElementById('srvTipo').setAttribute('required', 'required');
-                document.getElementById('srvDesc').setAttribute('required', 'required');
+            var inputs = bloque.querySelectorAll('input, select');
+
+            if (check.checked) {
+                bloque.classList.remove('d-none');
+                inputs.forEach(i => i.setAttribute('required', ''));
             } else {
-                bloque.style.display = 'none';
-                // Quitamos required si se oculta
-                document.getElementById('srvTipo').removeAttribute('required');
-                document.getElementById('srvDesc').removeAttribute('required');
+                bloque.classList.add('d-none');
+                inputs.forEach(i => i.removeAttribute('required'));
             }
         }
     </script>
 </head>
-<body>
-<div class="galaxy-container">
-    <header class="galaxy-header">
-        <h1 th:text="${compra.idCompra != null} ? '✏️ Editar Compra' : '✨ Nueva Compra'"></h1>
-    </header>
+<body class="bg-light">
 
-    <div class="cosmic-card">
-        <form th:action="${compra.idCompra != null} ? @{/compras/update/{id}(id=${compra.idCompra})} : @{/compras/save}"
-              th:object="${compra}" method="post" class="cosmic-form">
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-            <div th:if="${error}" class="cosmic-alert alert-error">
-                ❌ <span th:text="${error}"></span>
-            </div>
-
-            <div th:if="${#fields.hasErrors('*')}" class="cosmic-alert alert-error">
-                ❌ Revisa los campos marcados
-            </div>
-
-            <div class="form-group">
-                <label>👤 Cliente:</label>
-                <select th:field="*{cliente}" class="form-control" required>
-                    <option value="">-- Seleccionar --</option>
-                    <option th:each="c : ${clientes}"
-                            th:value="${c.id}"
-                            th:text="${c.nombre + ' (' + c.dni + ')'}"></option>
-                </select>
-                <span th:if="${#fields.hasErrors('cliente')}" th:errors="*{cliente}" style="color: #ff6b6b;"></span>
-            </div>
-
-            <div class="form-group">
-                <label>🏠 Inmueble:</label>
-                <select th:field="*{inmueble}" class="form-control" required>
-                    <option value="">-- Seleccionar --</option>
-                    <option th:each="i : ${inmuebles}"
-                            th:value="${i.idInmueble}"
-                            th:text="${i.direccion + ' - ' + i.localidad}"></option>
-                </select>
-                <span th:if="${#fields.hasErrors('inmueble')}" th:errors="*{inmueble}" style="color: #ff6b6b;"></span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="form-group">
-                    <label>📅 Fecha:</label>
-                    <input type="date" th:field="*{fechaCompra}" class="form-control" required>
-                    <span th:if="${#fields.hasErrors('fechaCompra')}" th:errors="*{fechaCompra}" style="color: #ff6b6b;"></span>
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold">
+                        <span th:text="${compra.idCompra != null} ? '✏️ Editar Registro' : '📝 Registrar Nueva Compra'"></span>
+                    </h4>
                 </div>
 
-                <div class="form-group">
-                    <label>💰 Precio:</label>
-                    <input type="number" step="0.01" th:field="*{precioCompra}" class="form-control" required>
-                    <span th:if="${#fields.hasErrors('precioCompra')}" th:errors="*{precioCompra}" style="color: #ff6b6b;"></span>
+                <div class="card-body p-4 p-md-5">
+
+                    <form th:action="${compra.idCompra != null} ? @{/compras/update/{id}(id=${compra.idCompra})} : @{/compras/save}"
+                          th:object="${compra}" method="post">
+
+                        <div th:if="${error}" class="alert alert-danger"><i class="bi bi-exclamation-circle"></i> <span th:text="${error}"></span></div>
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-warning">Por favor revisa los campos marcados.</div>
+
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 small ls-1">Datos de la Transacción</h6>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Cliente Comprador</label>
+                                <select th:field="*{cliente}" class="form-select" required>
+                                    <option value="">-- Seleccionar --</option>
+                                    <option th:each="c : ${clientes}"
+                                            th:value="${c.id}"
+                                            th:text="${c.nombre + ' (' + c.dni + ')'}"></option>
+                                </select>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('cliente')}" th:errors="*{cliente}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Inmueble</label>
+                                <select th:field="*{inmueble}" class="form-select" required>
+                                    <option value="">-- Seleccionar --</option>
+                                    <option th:each="i : ${inmuebles}"
+                                            th:value="${i.idInmueble}"
+                                            th:text="${i.direccion}"></option>
+                                </select>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('inmueble')}" th:errors="*{inmueble}"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Fecha de Firma</label>
+                                <input type="date" th:field="*{fechaCompra}" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Precio Final (€)</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" th:field="*{precioCompra}" class="form-control" required>
+                                    <span class="input-group-text">€</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="bg-light p-4 rounded border">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="checkServicio" onchange="toggleServicio()">
+                                <label class="form-check-label fw-bold text-primary" for="checkServicio">
+                                    ¿Añadir Servicio Adicional? (Limpieza, Reformas...)
+                                </label>
+                            </div>
+
+                            <div id="bloqueServicio" class="d-none">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Tipo de Servicio</label>
+                                        <select name="srvTipo" id="srvTipo" class="form-select">
+                                            <option value="">Seleccionar...</option>
+                                            <option th:each="t : ${tiposServicio}" th:value="${t}" th:text="${t}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Coste Extra</label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.01" name="srvCoste" class="form-control" value="0">
+                                            <span class="input-group-text">€</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Descripción</label>
+                                        <input type="text" name="srvDesc" id="srvDesc" class="form-control" placeholder="Ej: Pintura salón">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a th:href="@{/compras/all}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-success fw-bold px-4">Guardar Compra</button>
+                        </div>
+
+                    </form>
                 </div>
             </div>
-
-            <hr style="border-color: rgba(255,255,255,0.2); margin: 2rem 0;">
-
-            <div th:if="${compra.idCompra == null}" style="background: rgba(255,255,255,0.8); padding: 1.5rem; border-radius: 15px; border: 2px dashed var(--primary-color);">
-
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
-                    <input type="checkbox" id="checkServicio" name="agregarServicio" onchange="toggleServicio()" style="width: 20px; height: 20px;">
-                    <label for="checkServicio" style="font-weight: bold; color: var(--primary-color); cursor: pointer; font-size: 1.1em;">
-                        ➕ ¿Contratar Servicio Adicional? (Limpieza, Reformas...)
-                    </label>
-                </div>
-
-                <div id="bloqueServicio" style="display: none; animation: fadeIn 0.5s;">
-                    <div class="form-group">
-                        <label>🏷️ Tipo Servicio:</label>
-                        <select name="srvTipo" id="srvTipo" class="form-control">
-                            <option value="">-- Seleccionar Tipo --</option>
-                            <option th:each="t : ${tiposServicio}" th:value="${t}" th:text="${t}"></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>📝 Descripción:</label>
-                        <input type="text" name="srvDesc" id="srvDesc" class="form-control" placeholder="Ej: Pintura completa del salón">
-                    </div>
-                    <div class="form-group">
-                        <label>💶 Coste Extra (€):</label>
-                        <input type="number" step="0.01" name="srvCoste" class="form-control" value="0">
-                    </div>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 2rem;">
-                <button type="submit" class="galaxy-btn">💾 Guardar Operación</button>
-                <a th:href="@{/compras/all}" class="galaxy-btn btn-danger">Cancelar</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+
 </body>
 </html>

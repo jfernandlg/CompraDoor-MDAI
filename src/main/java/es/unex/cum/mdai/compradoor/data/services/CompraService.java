@@ -21,6 +21,8 @@ public interface CompraService {
 
     List<Compra> findAllCompras();
 
+    void realizarCompra(Cliente cliente, Inmueble inmueble);
+
     Compra saveCompra(Compra compra);
 
     void deleteCompra(Compra compra);

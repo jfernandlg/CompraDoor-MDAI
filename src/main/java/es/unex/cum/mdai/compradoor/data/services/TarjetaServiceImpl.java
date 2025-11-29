@@ -44,13 +44,10 @@ public class TarjetaServiceImpl implements TarjetaService {
 
     @Override
     public List<Tarjeta> findAllTarjetasByCliente(Cliente cliente) {
-        if (cliente == null) {
+        if (cliente == null || cliente.getId() == null) {
             throw new IllegalArgumentException("Cliente no valido");
         }
-        boolean existCliente = clienteRepository.existsById(cliente.getId());
-        if (!existCliente) {
-            throw new IllegalArgumentException("Cliente no encontrado");
-        }
+
         return tarjetaRepository.findByCliente(cliente);
     }
 
@@ -64,21 +61,22 @@ public class TarjetaServiceImpl implements TarjetaService {
         if (tarjeta == null) {
             throw new IllegalArgumentException("Tarjeta no valida");
         }
-        Optional<Tarjeta> optionalTarjetaExist = tarjetaRepository.findByCodigoTarjeta(tarjeta.getCodigoTarjeta());
-        if (optionalTarjetaExist.isPresent()) {
-            throw new IllegalArgumentException("Codigo de tarjeta existente");
-        }
-        Optional<Tarjeta> optionalTarjetaExistById = tarjetaRepository.findById(tarjeta.getId());
-        if (optionalTarjetaExistById.isPresent()) {
-            throw new IllegalArgumentException("Id de tarjeta existente");
-        }
-        String codigoTajetaRegex = "\\d{16}";
-        if (!tarjeta.getCodigoTarjeta().matches(codigoTajetaRegex)) {
-            throw new IllegalArgumentException("Codigo de tarjeta no valido");
-        }
-        if (tarjeta.getCodigoTarjeta().trim().isEmpty()) {
+        if (tarjeta.getCodigoTarjeta() == null || tarjeta.getCodigoTarjeta().trim().isEmpty()) {
             throw new IllegalArgumentException("Codigo de tarjeta es obligatorio");
         }
+
+        String regexTarjeta = "\\d{16}";
+        if(!tarjeta.getCodigoTarjeta().matches(regexTarjeta)) {
+            throw new IllegalArgumentException("Codigo de tarjeta debe contener 16 dígitos numéricos");
+        }
+
+        Optional<Tarjeta> optionalTarjetaExistById = tarjetaRepository.findByCodigoTarjeta(tarjeta.getCodigoTarjeta());
+        if (optionalTarjetaExistById.isPresent()) {
+            if(tarjeta.getId() == null || !optionalTarjetaExistById.get().getId().equals(tarjeta.getId())) {
+                throw new IllegalArgumentException("La tarjeta introducida ya existe en el sistema");
+            }
+        }
+
         return tarjetaRepository.save(tarjeta);
     }
 

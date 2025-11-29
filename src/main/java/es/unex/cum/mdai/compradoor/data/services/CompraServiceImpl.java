@@ -3,9 +3,11 @@ package es.unex.cum.mdai.compradoor.data.services;
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
+import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.CompraRepository;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
+import es.unex.cum.mdai.compradoor.data.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +27,14 @@ public class CompraServiceImpl implements CompraService {
 
     private final InmuebleRepository inmuebleRepository;
 
+    private final VentaRepository ventaRepository;
+
     @Autowired
-    public CompraServiceImpl(CompraRepository compraRepository, ClienteRepository clienteRepository, InmuebleRepository inmuebleRepository) {
+    public CompraServiceImpl(CompraRepository compraRepository, ClienteRepository clienteRepository, InmuebleRepository inmuebleRepository, VentaRepository ventaRepository) {
         this.compraRepository = compraRepository;
         this.clienteRepository = clienteRepository;
         this.inmuebleRepository = inmuebleRepository;
+        this.ventaRepository = ventaRepository;
     }
 
     @Override
@@ -65,6 +70,30 @@ public class CompraServiceImpl implements CompraService {
     }
 
     @Override
+    public void realizarCompra(Cliente cliente, Inmueble inmueble) {
+        Compra compra = new Compra();
+        compra.setCliente(cliente);
+        compra.setInmueble(inmueble);
+        compra.setFechaCompra(new Date());
+        if (inmueble.getPrecio() != null) {
+            compra.setPrecioCompra(inmueble.getPrecio());
+        } else {
+            compra.setPrecioCompra(0.0f);
+        }
+
+        compraRepository.save(compra);
+
+        Venta venta = new Venta();
+        venta.setCliente(cliente);
+        venta.setInmueble(inmueble);
+        venta.setFechaVenta(new Date());
+        venta.setPrecioVenta(compra.getPrecioCompra());
+        ventaRepository.save(venta);
+
+
+    }
+
+    @Override
     public Compra saveCompra(Compra compra) {
         if (compra == null) {
             throw new IllegalArgumentException("Compra no valido");
@@ -73,7 +102,7 @@ public class CompraServiceImpl implements CompraService {
         if (optionalCliente.isEmpty()) {
             throw new IllegalArgumentException("Cliente no encontrado");
         }
-        Optional<Inmueble>optionalInmueble = inmuebleRepository.findById(compra.getInmueble().getIdInmueble());
+        Optional<Inmueble> optionalInmueble = inmuebleRepository.findById(compra.getInmueble().getIdInmueble());
         if (optionalInmueble.isEmpty()) {
             throw new IllegalArgumentException("Inmueble no encontrado");
         }
@@ -102,4 +131,6 @@ public class CompraServiceImpl implements CompraService {
         }
         compraRepository.delete(compra);
     }
+
+
 }

@@ -1,6 +1,9 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -12,6 +15,9 @@ public class Tarjeta {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(unique = true)
+    @NotBlank(message = "El código de la tarjeta es obligatoria")
+    @Pattern(regexp = "^(?:(?:\\d{4}[- ]?){3}\\d{4}|\\d{16})$",
+            message = "La tarjeta debe tener 16 dígitos (ej: 1234 5678 1234 5678) ")
     private String codigoTarjeta;
     private boolean valida;
 
