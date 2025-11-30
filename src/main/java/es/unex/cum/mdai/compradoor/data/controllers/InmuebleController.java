@@ -2,6 +2,7 @@ package es.unex.cum.mdai.compradoor.data.controllers;
 
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
 import es.unex.cum.mdai.compradoor.data.services.InmuebleService;
+import es.unex.cum.mdai.compradoor.data.services.StorageService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,26 +22,18 @@ public class InmuebleController {
 
     private final InmuebleService inmuebleService;
 
+    private final StorageService storageService;
+
     @Autowired
-    public InmuebleController(InmuebleService inmuebleService) {
+    public InmuebleController(InmuebleService inmuebleService, StorageService storageService) {
         this.inmuebleService = inmuebleService;
+        this.storageService = storageService;
     }
 
     // LISTADO PRINCIPAL (Catálogo)
     @GetMapping({"/", ""})
     public String listInmuebles(Model model, HttpSession session) {
 
-        // OPCIONAL: Si eres ADMIN, quizás quieras ver todas (incluidas vendidas).
-        // Si eres CLIENTE o ANÓNIMO, solo ves las disponibles.
-        /* Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
-        if (cliente != null && cliente.isAdmin()) {
-             model.addAttribute("inmuebles", inmuebleService.findAllInmueble());
-        } else {
-             model.addAttribute("inmuebles", inmuebleService.findInmueblesDisponibles());
-        }
-        */
-
-        // POR AHORA: Mostramos solo disponibles a todo el mundo en esta vista
         model.addAttribute("inmuebles", inmuebleService.findInmueblesDisponibles());
 
         return "inmuebles_layouts/inmuebles";
@@ -51,11 +46,40 @@ public class InmuebleController {
     }
 
     @PostMapping("/")
-    public String createInmueble(@Valid @ModelAttribute Inmueble inmueble, BindingResult result) {
+    public String createInmueble(@Valid @ModelAttribute Inmueble inmueble,
+                                 BindingResult result,
+                                 @RequestParam(value = "archivos", required = false) MultipartFile[] archivos) {
+
         if (result.hasErrors()) {
             return "inmuebles_layouts/inmuebleform";
         }
-        inmuebleService.saveInmueble(inmueble);
+
+        try {
+            List<String> rutasFotos = new ArrayList<>();
+
+            if (archivos != null && archivos.length > 0 && !archivos[0].isEmpty()) {
+
+                String nombreCarpeta = storageService.generarNombreNuevaCarpeta(); // Ej: inmueble5
+
+                for (MultipartFile archivo : archivos) {
+                    if (!archivo.isEmpty()) {
+                        String rutaURL = storageService.store(archivo, nombreCarpeta);
+                        rutasFotos.add(rutaURL);
+                    }
+                }
+            }
+
+            if (!rutasFotos.isEmpty()) {
+                inmueble.setPathFotos(rutasFotos);
+            }
+
+            inmuebleService.saveInmueble(inmueble);
+
+        } catch (Exception e) {
+            result.reject("error.global", "Error al subir fotos: " + e.getMessage());
+            return "inmuebles_layouts/inmuebleform";
+        }
+
         return "redirect:/inmuebles/";
     }
 
