@@ -1,73 +1,67 @@
 @startuml
-'https://plantuml.com/class-diagram
 
-skinparam {
-  shadowing false
-  arrowColor #003366
-  borderColor #003366
-  classBackgroundColor #f9f9f9
-  classBorderColor #003366
-  classFontSize 12
-  classFontStyle normal
-  defaultFontSize 12
+' Configuración de estilo
+!theme plain
+hide circle
+skinparam linetype ortho
+
+' --- CLASES (ENTIDADES) ---
+
+class Cliente {
+  - UUID id
+  - String dni
+  - String nombre
+  - String email
+  - String password
+  - boolean admin
+  + List<Tarjeta> tarjetas
+  + List<Compra> compras
+  + List<Venta> ventas
 }
 
-title "Diagrama E/R - CompraDoor"
-
-entity Cliente {
-  * id: UUID <<generated>>
-  --
-  dni: String
-  nombre: String
-  email: String
-  telefono: int
+class Tarjeta {
+  - UUID id
+  - String codigoTarjeta
+  - boolean valida
+  - Cliente cliente
 }
 
-entity Tarjeta {
-  * id: UUID <<generated>>
-  --
-  codigoTarjeta: String <<unique>>
-  valida: boolean
-  id_cliente: UUID <<FK>>
+class Inmueble {
+  - UUID idInmueble
+  - String localidad
+  - String direccion
+  - Float precio
+  - List<String> pathFotos
+  - Venta venta
+  - List<Compra> compras
 }
 
-entity Inmueble {
-  * idInmueble: UUID <<generated>>
-  --
-  localidad: String
-  precio: Float
-  direccion: String
-  pathFotos: List<String>
+class Compra {
+  - UUID idCompra
+  - Date fechaCompra
+  - float precioCompra
+  - Cliente cliente
+  - Inmueble inmueble
+  - List<Servicio> servicios
 }
 
-entity Compra {
-  * idCompra: UUID <<generated>>
-  --
-  fechaCompra: Date
-  precioCompra: float
-  inmueble_id: UUID <<FK>>
-  cliente_id: UUID <<FK>>
+class Venta {
+  - UUID idVenta
+  - Date fechaVenta
+  - float precioVenta
+  - Cliente cliente
+  - Inmueble inmueble
+  - List<Servicio> servicios
 }
 
-entity Venta {
-  * idVenta: UUID <<generated>>
-  --
-  fechaVenta: Date
-  precioVenta: float
-  idInmueble: UUID <<FK>>
-  idCliente: UUID <<FK>>
+class Servicio {
+  - UUID idServicio
+  - String descripcion
+  - Float coste
+  - Date fechaAplicacion
+  - Compra compra
+  - Venta venta
 }
-
-entity Servicio {
-  * idServicio: UUID <<generated>>
-  --
-  tipoServicio: TipoServicio
-  descripcion: String
-  coste: float
-  fechaAplicacion: Date
-  venta_id: UUID <<FK>>
-}
-
 
 enum TipoServicio {
   LIMPIEZA
@@ -78,48 +72,22 @@ enum TipoServicio {
   OTROS
 }
 
-' ========== RELACIONES ==========
-Cliente ||--o{ Tarjeta : "posee (1:N)\n@OneToMany"
+' --- RELACIONES ---
 
-Cliente ||--o{ Compra : "realiza (1:N)\n@OneToMany"
-Compra }o--|| Cliente : "comprador\n@ManyToOne"
+' Cliente y sus relaciones
+Cliente "1" -down- "0..*" Tarjeta : tiene >
+Cliente "1" -right- "0..*" Compra : realiza >
+Cliente "1" -right- "0..*" Venta : vendedor en >
 
-Cliente ||--o{ Venta : "vende (1:N)\n@OneToMany"
-Venta }o--|| Cliente : "vendedor\n@ManyToOne"
+' Inmueble y sus relaciones
+Inmueble "1" -down- "0..1" Venta : < objeto de venta (1:1)
+Inmueble "1" -up- "0..*" Compra : recibe ofertas >
 
-Inmueble ||--o{ Compra : "tiene (1:N)\n@OneToMany"
-Compra }o--|| Inmueble : "comprado\n@ManyToOne"
+' Relaciones de Compra y Venta (Transacciones)
+Compra "1" -down- "0..*" Servicio : incluye >
+Venta "1" -down- "0..*" Servicio : incluye (final) >
 
-Inmueble ||--|| Venta : "vendido en (1:1)\n@OneToOne"
+' Dependencia de Enum
+Servicio .right.> TipoServicio : es de tipo >
 
-Venta ||--o{ Servicio : "incluye (1:N)\n@OneToMany"
-Servicio }o--|| Venta : "aplicado a\n@ManyToOne"
-
-note left of Cliente
-  <b>UUID como clave primaria</b>
-  • Identificador único global
-  • Generación automática
-  • Relaciones bidireccionales
-end note
-
-note right of Tarjeta
-  <b>Relación con Cliente</b>
-  @ManyToOne con el cliente
-  Cascade ALL y orphanRemoval
-  en el lado Cliente
-end note
-
-note bottom of Venta
-  <b>Relación OneToOne</b>
-  Con Inmueble mediante
-  @OneToOne y @JoinColumn
-end note
-
-note top of Servicio
-  <b>Enum TipoServicio</b>
-  Almacenado como STRING
-  mediante @Enumerated
-end note
-
-\
 @enduml

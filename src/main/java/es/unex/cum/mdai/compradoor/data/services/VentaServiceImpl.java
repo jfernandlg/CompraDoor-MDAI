@@ -3,10 +3,12 @@ package es.unex.cum.mdai.compradoor.data.services;
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
 import es.unex.cum.mdai.compradoor.data.model.Compra;
 import es.unex.cum.mdai.compradoor.data.model.Inmueble;
+import es.unex.cum.mdai.compradoor.data.model.Servicio; // Importar Modelo
 import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import es.unex.cum.mdai.compradoor.data.repository.CompraRepository;
 import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
+import es.unex.cum.mdai.compradoor.data.repository.ServicioRepository; // Importar Repo
 import es.unex.cum.mdai.compradoor.data.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,27 +27,31 @@ public class VentaServiceImpl implements VentaService {
     private final ClienteRepository clienteRepository;
     private final InmuebleRepository inmuebleRepository;
     private final CompraRepository compraRepository;
+    // 1. AÑADIMOS EL REPOSITORIO DE SERVICIOS
+    private final ServicioRepository servicioRepository;
 
     @Autowired
     public VentaServiceImpl(VentaRepository ventaRepository,
                             ClienteRepository clienteRepository,
                             InmuebleRepository inmuebleRepository,
-                            CompraRepository compraRepository) {
+                            CompraRepository compraRepository,
+                            ServicioRepository servicioRepository) { // 2. INYECTAMOS EN CONSTRUCTOR
         this.ventaRepository = ventaRepository;
         this.clienteRepository = clienteRepository;
         this.inmuebleRepository = inmuebleRepository;
         this.compraRepository = compraRepository;
+        this.servicioRepository = servicioRepository;
     }
+
+    // ... (El resto de métodos findAll, findById, save se mantienen igual) ...
 
     @Override
     public List<Venta> findVentaByCliente(Cliente cliente) {
-        if (cliente == null) throw new IllegalArgumentException("Cliente no válido");
         return ventaRepository.findByCliente(cliente);
     }
 
     @Override
     public List<Venta> findVentaByInmueble(Inmueble inmueble) {
-        if (inmueble == null) throw new IllegalArgumentException("Inmueble no válido");
         return ventaRepository.findByInmueble(inmueble);
     }
 
@@ -72,31 +78,44 @@ public class VentaServiceImpl implements VentaService {
         return ventaRepository.save(venta);
     }
 
+    // ================================================================
+    // AQUÍ ESTÁ LA CORRECCIÓN DEL ERROR 500
+    // ================================================================
     @Override
     public void deleteVenta(Venta venta) {
         if (venta == null) {
             throw new IllegalArgumentException("Venta no válida");
         }
 
-        // 1. Gestionar el Inmueble asociado
+        // 1. Gestionar el Inmueble asociado (Lógica existente)
         if (venta.getInmueble() != null) {
             Inmueble inmueble = venta.getInmueble();
 
-            // A. Borrar Compras asociadas (y sus servicios por cascada)
+            // A. Borrar Compras asociadas
             List<Compra> comprasAsociadas = compraRepository.findByInmueble(inmueble);
             if (!comprasAsociadas.isEmpty()) {
                 compraRepository.deleteAll(comprasAsociadas);
-                compraRepository.flush(); // Forzar borrado inmediato
+                compraRepository.flush();
             }
 
-            // B. ¡CORRECCIÓN DEL ERROR 500!
-            // Debemos romper la relación bidireccional antes de borrar la venta.
-            // Si no hacemos esto, Hibernate intenta guardar el Inmueble que apunta a una Venta borrada.
+            // B. Desvincular Inmueble
             inmueble.setVenta(null);
-            inmuebleRepository.save(inmueble); // Guardamos el inmueble "libre"
+            inmuebleRepository.save(inmueble);
         }
 
-        // 2. Ahora es seguro borrar la Venta
+        // 2. NUEVO: BORRAR SERVICIOS ASOCIADOS A LA VENTA
+        // Como estamos en una transacción (@Transactional), podemos acceder a la lista Lazy
+        List<Servicio> serviciosAsociados = venta.getServicios();
+        if (serviciosAsociados != null && !serviciosAsociados.isEmpty()) {
+            // Opción A: Borrarlos (lo más lógico si borras la venta)
+            servicioRepository.deleteAll(serviciosAsociados);
+
+            // Forzamos el vaciado para evitar conflictos en memoria
+            servicioRepository.flush();
+            venta.setServicios(null);
+        }
+
+        // 3. Finalmente borramos la venta
         ventaRepository.delete(venta);
     }
 }
