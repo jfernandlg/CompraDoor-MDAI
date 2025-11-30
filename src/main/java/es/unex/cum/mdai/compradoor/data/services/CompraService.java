@@ -26,7 +26,7 @@ public interface CompraService {
 
     Compra saveCompra(Compra compra);
 
-    void realizarCompraConServicios(Cliente cliente, Inmueble inmueble, List<Servicio> servicios);
+    void realizarCompraConServicios(Cliente cliente, Inmueble inmueble, List<UUID> serviciosIds, UUID tarjeta);
 
     void deleteCompra(Compra compra);
 }

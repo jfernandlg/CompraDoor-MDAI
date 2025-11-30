@@ -46,7 +46,7 @@
 
                 <div class="date-badge me-4">
                     <div class="fw-bold fs-5" th:text="${#dates.format(v.fechaVenta, 'dd')}">01</div>
-                    <div class="small text-uppercase" th:text="${#dates.format(v.fechaVenta, 'MMM')}">ENE</div>
+                    <div class="small text-uppercase" th:text="${#dates.format(v.fechaVenta, 'MM')}">ENE</div>
                     <div class="small text-muted" th:text="${#dates.format(v.fechaVenta, 'yyyy')}">2024</div>
                 </div>
 
@@ -67,8 +67,12 @@
                 </div>
 
                 <div class="text-end ms-3">
-                    <div class="small text-muted mb-1">IMPORTE PAGADO</div>
+                    <div class="small text-muted mb-1">TOTAL PAGADO</div>
                     <div class="fs-4 fw-bold text-success" th:text="${v.precioVenta} + ' €'">150.000 €</div>
+
+                    <div th:if="${!v.servicios.empty}" class="badge bg-info text-dark mt-1">
+                        + <span th:text="${v.servicios.size()}"></span> Extras
+                    </div>
                 </div>
 
             </div>

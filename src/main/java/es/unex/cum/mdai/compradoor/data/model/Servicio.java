@@ -29,6 +29,10 @@ public class Servicio {
     @JoinColumn(name = "compra_id")
     private Compra compra;
 
+    @ManyToOne
+    @JoinColumn(name = "venta_id")
+    private Venta venta;
+
     public Servicio() {}
 
     // Getters y Setters
@@ -49,4 +53,12 @@ public class Servicio {
 
     public Compra getCompra() { return compra; }
     public void setCompra(Compra compra) { this.compra = compra; }
+
+    public Venta getVenta() {
+        return venta;
+    }
+
+    public void setVenta(Venta venta) {
+        this.venta = venta;
+    }
 }

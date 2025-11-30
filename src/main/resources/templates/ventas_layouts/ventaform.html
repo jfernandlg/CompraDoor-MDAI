@@ -27,7 +27,7 @@
 
                         <div class="mb-3">
                             <label for="fechaVenta" class="form-label">Fecha de Venta</label>
-                            <input type="datetime-local" class="form-control" id="fechaVenta" th:field="*{fechaVenta}"
+                            <input type="date" class="form-control" id="fechaVenta" th:field="*{fechaVenta}"
                                    th:classappend="${#fields.hasErrors('fechaVenta')} ? 'is-invalid' : ''" required>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaVenta')}" th:errors="*{fechaVenta}">
                                 Error en la fecha

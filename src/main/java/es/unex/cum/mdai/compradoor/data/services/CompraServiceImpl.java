@@ -1,10 +1,7 @@
 package es.unex.cum.mdai.compradoor.data.services;
 
 import es.unex.cum.mdai.compradoor.data.model.*;
-import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
-import es.unex.cum.mdai.compradoor.data.repository.CompraRepository;
-import es.unex.cum.mdai.compradoor.data.repository.InmuebleRepository;
-import es.unex.cum.mdai.compradoor.data.repository.VentaRepository;
+import es.unex.cum.mdai.compradoor.data.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +23,15 @@ public class CompraServiceImpl implements CompraService {
 
     private final VentaRepository ventaRepository;
 
+    private final ServicioRepository servicioRepository;
+
     @Autowired
-    public CompraServiceImpl(CompraRepository compraRepository, ClienteRepository clienteRepository, InmuebleRepository inmuebleRepository, VentaRepository ventaRepository) {
+    public CompraServiceImpl(CompraRepository compraRepository, ClienteRepository clienteRepository, InmuebleRepository inmuebleRepository, VentaRepository ventaRepository, ServicioRepository servicioRepository) {
         this.compraRepository = compraRepository;
         this.clienteRepository = clienteRepository;
         this.inmuebleRepository = inmuebleRepository;
         this.ventaRepository = ventaRepository;
+        this.servicioRepository = servicioRepository;
     }
 
     @Override
@@ -130,22 +130,56 @@ public class CompraServiceImpl implements CompraService {
     }
 
     @Override
-    public void realizarCompraConServicios(Cliente cliente, Inmueble inmueble, List<Servicio> servicios) {
-        // 1. Crear la Compra
-        Compra compra = new Compra(cliente, inmueble.getPrecio(), inmueble);
+    public void realizarCompraConServicios(Cliente cliente, Inmueble inmueble, List<UUID> serviciosIds, UUID tarjetaId) {
 
-        // 2. Asociar los servicios a la compra (Bidireccional)
-        if (servicios != null) {
-            for (Servicio s : servicios) {
-                compra.addServicio(s); // Esto usa el método helper que pusiste en Compra.java
+        float precioBase = (inmueble.getPrecio() != null) ? inmueble.getPrecio() : 0.0f;
+
+        float gastosGestion = precioBase * 0.02f;
+        float precioTotal = precioBase +  gastosGestion;
+
+        // 1. Crear y Guardar la COMPRA (Historial Cliente)
+        Compra compra = new Compra();
+        compra.setCliente(cliente);
+        compra.setInmueble(inmueble);
+        compra.setFechaCompra(new Date());
+        // Guardamos temporalmente con precio base
+        compra.setPrecioCompra(precioBase);
+        compraRepository.save(compra);
+
+        // 2. Crear y Guardar la VENTA (Historial Inmobiliaria)
+        // Guardamos la venta ANTES de asociar los servicios para tener el ID
+        Venta venta = new Venta();
+        venta.setCliente(cliente);
+        venta.setInmueble(inmueble);
+        venta.setFechaVenta(new Date());
+        venta.setPrecioVenta(precioBase);
+        ventaRepository.save(venta); // ¡IMPORTANTE! Save aquí para tener ID
+
+        // 3. Procesar Servicios Extra
+        if (serviciosIds != null && !serviciosIds.isEmpty()) {
+            List<Servicio> serviciosExtra = servicioRepository.findAllById(serviciosIds);
+
+            for (Servicio s : serviciosExtra) {
+                precioTotal += s.getCoste();
+
+                // CAMBIO CRÍTICO: Asociamos el servicio a la VENTA, no a la compra
+                // Esto arregla el error de Thymeleaf "Property 'servicios' not found on Venta"
+                s.setVenta(venta);
+                s.setCompra(null); // Limpiamos referencia a compra por si acaso existía en tu modelo viejo
+
+                servicioRepository.save(s); // Guardamos el servicio con la nueva relación
             }
+
+            // Si tu clase Venta tiene una lista, Java la actualiza en memoria,
+            // pero es bueno refrescar.
+            venta.setServicios(serviciosExtra);
         }
 
-        // 3. Crear registro de Venta (espejo)
-        Venta venta = new Venta(inmueble, inmueble.getPrecio(), cliente);
+        // 4. Actualizar Precios Finales (Base + Extras)
+        compra.setPrecioCompra(precioTotal);
+        venta.setPrecioVenta(precioTotal);
 
-        // 4. Guardar todo
-        // Al tener CascadeType.ALL en Compra->Servicios, al guardar compra se guardan los servicios
+        // 5. Guardar cambios de precio
         compraRepository.save(compra);
         ventaRepository.save(venta);
     }

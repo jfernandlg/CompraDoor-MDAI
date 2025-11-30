@@ -60,40 +60,17 @@ public class CompraTransaccionController {
     @PostMapping("/realizar")
     public String realizarCompra(@RequestParam("idInmueble") UUID idInmueble,
                                  @RequestParam("idTarjeta") UUID idTarjeta,
-                                 // Ahora recibimos IDs de los servicios del catálogo, no un Enum
                                  @RequestParam(value = "serviciosIds", required = false) List<UUID> serviciosIds,
                                  HttpSession session) {
 
         Cliente cliente = (Cliente) session.getAttribute("clienteLogueado");
         if (cliente == null) return "redirect:/login";
 
-        // Validaciones...
         Tarjeta tarjeta = tarjetaService.findById(idTarjeta).orElseThrow(() -> new IllegalArgumentException("Tarjeta error"));
         if (!tarjeta.getCliente().getId().equals(cliente.getId()) || !tarjeta.isValida()) return "redirect:/perfil?error=Tarjeta";
         Inmueble inmueble = inmuebleService.findInmuebleById(idInmueble).orElseThrow(() -> new RuntimeException("Inmueble error"));
 
-        // 3. PROCESAR SERVICIOS SELECCIONADOS
-        List<Servicio> serviciosParaGuardar = new ArrayList<>();
-
-        if (serviciosIds != null) {
-            for (UUID idPlantilla : serviciosIds) {
-                // Buscamos la plantilla original en BBDD
-                servicioService.findServicioById(idPlantilla).ifPresent(plantilla -> {
-
-                    // CREAMOS UNA COPIA (INSTANCIA) PARA ESTA COMPRA
-                    Servicio nuevoServicio = new Servicio();
-                    nuevoServicio.setTipoServicio(plantilla.getTipoServicio());
-                    // Copiamos descripción y añadimos nota
-                    nuevoServicio.setDescripcion(plantilla.getDescripcion() + " (Ref: " + inmueble.getDireccion() + ")");
-                    nuevoServicio.setCoste(plantilla.getCoste()); // Usamos el precio definido por Admin
-                    nuevoServicio.setFechaAplicacion(new Date());
-
-                    serviciosParaGuardar.add(nuevoServicio);
-                });
-            }
-        }
-
-        compraService.realizarCompraConServicios(cliente, inmueble, serviciosParaGuardar);
+        compraService.realizarCompraConServicios(cliente, inmueble, serviciosIds, idTarjeta);
 
         return "redirect:/perfil";
     }

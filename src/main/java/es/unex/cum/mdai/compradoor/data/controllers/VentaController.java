@@ -43,7 +43,7 @@ public class VentaController {
         model.addAttribute("venta", new Venta());
 
         model.addAttribute("listaClientes", clienteService.findAllClientes());
-        model.addAttribute("listaInmuebles", inmuebleService.findAllInmueble());
+        model.addAttribute("listaInmuebles", inmuebleService.findInmueblesDisponibles());
         return "ventas_layouts/ventaform";
     }
 
@@ -52,7 +52,7 @@ public class VentaController {
 
         if (result.hasErrors()) {
             model.addAttribute("listaClientes", clienteService.findAllClientes());
-            model.addAttribute("listaInmuebles", inmuebleService.findAllInmueble());
+            model.addAttribute("listaInmuebles", inmuebleService.findInmueblesDisponibles());
             return "ventas_layouts/ventaform";
         }
 
@@ -62,7 +62,7 @@ public class VentaController {
             result.reject("error.global", e.getMessage());
 
             model.addAttribute("listaClientes", clienteService.findAllClientes());
-            model.addAttribute("listaInmuebles", inmuebleService.findAllInmueble());
+            model.addAttribute("listaInmuebles", inmuebleService.findInmueblesDisponibles());
             return "ventas_layouts/ventaform";
         }
 

@@ -25,13 +25,11 @@ public class InmuebleServiceImpl implements InmuebleService {
 
     @Override
     public List<Inmueble> findAllInmueble() {
-        // Este lo usamos para el panel de ADMIN (ver todo, vendido y no vendido)
         return inmuebleRepository.findAll();
     }
 
     @Override
     public List<Inmueble> findInmueblesDisponibles() {
-        // ESTE ES EL CLAVE: Solo devuelve los que no tienen venta asociada
         return inmuebleRepository.findByVentaIsNull();
     }
 

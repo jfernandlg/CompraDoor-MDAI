@@ -1,6 +1,8 @@
 package es.unex.cum.mdai.compradoor.data.model;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.*;
 
 @Entity
@@ -14,12 +16,16 @@ public class Venta {
     @JoinColumn(name = "idInmueble")
     private Inmueble inmueble;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaVenta;
     private float precioVenta;
 
     @ManyToOne
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
+
+    @OneToMany(mappedBy = "venta")
+    private List<Servicio> servicios = new ArrayList<>();
 
     public Venta() {}
 
@@ -41,6 +47,14 @@ public class Venta {
     public void setPrecioVenta(float precioVenta) { this.precioVenta = precioVenta; }
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
+
+    public List<Servicio> getServicios() {
+        return servicios;
+    }
+
+    public void setServicios(List<Servicio> servicios) {
+        this.servicios = servicios;
+    }
 
     // --- CORRECCIÓN CRÍTICA: ROMPER EL BUCLE INFINITO ---
 
