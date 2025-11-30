@@ -1,0 +1,122 @@
+Aquí tienes el diagrama PlantUML actualizado con la estructura exacta de tus clases Java (UUIDs, nuevos atributos como password y admin, y las relaciones correctas de Servicio con Compra y Venta).
+
+He mantenido tu estilo visual pero actualizado la lógica:
+
+Fragmento de código
+
+@startuml
+'https://plantuml.com/class-diagram
+
+skinparam {
+  shadowing false
+  arrowColor #003366
+  borderColor #003366
+  classBackgroundColor #f9f9f9
+  classBorderColor #003366
+  classFontSize 12
+  classFontStyle normal
+  defaultFontSize 12
+}
+
+title "Diagrama E/R - Sistema Inmobiliario (CompraDoor)"
+
+entity Cliente {
+  * id: UUID <<PK>>
+  --
+  dni: String
+  nombre: String
+  email: String
+  telefono: String
+  password: String
+  admin: Boolean
+}
+
+entity Tarjeta {
+  * id: UUID <<PK>>
+  --
+  codigoTarjeta: String
+  valida: Boolean
+  id_cliente: UUID <<FK>>
+}
+
+entity Inmueble {
+  * idInmueble: UUID <<PK>>
+  --
+  localidad: String
+  precio: Float
+  direccion: String
+  pathFotos: List<String>
+}
+
+entity Compra {
+  * idCompra: UUID <<PK>>
+  --
+  fechaCompra: Date
+  precioCompra: Float
+  inmueble_id: UUID <<FK>>
+  cliente_id: UUID <<FK>>
+}
+
+entity Venta {
+  * idVenta: UUID <<PK>>
+  --
+  fechaVenta: Date
+  precioVenta: Float
+  idInmueble: UUID <<FK>>
+  idCliente: UUID <<FK>>
+}
+
+entity Servicio {
+  * idServicio: UUID <<PK>>
+  --
+  tipoServicio: TipoServicio
+  descripcion: String
+  coste: Float
+  fechaAplicacion: Date
+  compra_id: UUID <<FK>>
+  venta_id: UUID <<FK>>
+}
+
+enum TipoServicio {
+  LIMPIEZA
+  MANTENIMIENTO
+  REPARACION
+  PINTURA
+  FONTANERIA
+  OTROS
+}
+
+' ========== RELACIONES ==========
+
+' Un Cliente tiene muchas Tarjetas
+Cliente ||--o{ Tarjeta : "posee (1:N)"
+
+' Un Cliente realiza muchas Compras y muchas Ventas
+Cliente ||--o{ Compra : "realiza compra (1:N)"
+Cliente ||--o{ Venta : "realiza venta (1:N)"
+
+' Un Inmueble puede estar asociado a una Venta (actual) y múltiples Compras (histórico)
+Inmueble ||--o{ Compra : "es comprado (1:N)"
+Inmueble |o--|| Venta : "está en venta (1:1)"
+
+' Los Servicios pueden estar asociados a una Compra O a una Venta
+Compra ||--o{ Servicio : "incluye (1:N)"
+Venta ||--o{ Servicio : "incluye (1:N)"
+
+' Enum usado en Servicio
+Servicio ..> TipoServicio : "usa"
+
+note right of Servicio
+  <b>Relación Dual</b>
+  Un servicio puede vincularse
+  a una Compra o a una Venta
+  (Claves foráneas opcionales)
+end note
+
+note bottom of Inmueble
+  <b>Fotos</b>
+  Se almacenan como una colección
+  de Strings (@ElementCollection)
+end note
+
+@enduml
