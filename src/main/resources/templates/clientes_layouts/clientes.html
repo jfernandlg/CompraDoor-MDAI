@@ -7,12 +7,29 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .table-hover tbody tr:hover { background-color: #f1f3f5; }
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
         .avatar-initial {
-            width: 40px; height: 40px; background-color: #e9ecef; color: #495057;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;
+            width: 40px;
+            height: 40px;
+            background-color: #e9ecef;
+            color: #495057;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -50,7 +67,8 @@
                     <span class="fw-bold text-muted"><i class="bi bi-funnel"></i> Filtrar:</span>
                 </div>
                 <div class="col">
-                    <input type="text" name="query" class="form-control bg-light" placeholder="Buscar por DNI..." th:value="${param.query}">
+                    <input type="text" name="query" class="form-control bg-light" placeholder="Buscar por DNI..."
+                           th:value="${param.query}">
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary">
@@ -68,7 +86,8 @@
         <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
         <div>
             <strong>No se han encontrado resultados.</strong>
-            <br>Intenta buscar con otro DNI o <a th:href="@{/clientes}" class="alert-link">vuelve al listado completo</a>.
+            <br>Intenta buscar con otro DNI o <a th:href="@{/clientes}" class="alert-link">vuelve al listado
+            completo</a>.
         </div>
     </div>
 
@@ -90,25 +109,37 @@
                             <div class="avatar-initial me-3" th:text="${#strings.substring(cliente.nombre,0,1)}">A</div>
                             <div>
                                 <div class="fw-bold text-dark" th:text="${cliente.nombre}">Nombre</div>
-                                <small class="text-muted">ID: <span th:text="${#strings.abbreviate(cliente.id.toString(),8)}"></span></small>
+                                <small class="text-muted">ID: <span
+                                        th:text="${#strings.abbreviate(cliente.id.toString(),8)}"></span></small>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <span class="badge bg-light text-dark border font-monospace" th:text="${cliente.dni}">12345678A</span>
+                        <span class="badge bg-light text-dark border font-monospace"
+                              th:text="${cliente.dni}">12345678A</span>
                     </td>
                     <td>
                         <div class="d-flex flex-column">
-                            <span class="text-muted"><i class="bi bi-envelope-at small"></i> <span th:text="${cliente.email}">email</span></span>
-                            <span class="text-muted"><i class="bi bi-telephone small"></i> <span th:text="${cliente.telefono}">tlf</span></span>
+                            <span class="text-muted"><i class="bi bi-envelope-at small"></i> <span
+                                    th:text="${cliente.email}">email</span></span>
+                            <span class="text-muted"><i class="bi bi-telephone small"></i> <span
+                                    th:text="${cliente.telefono}">tlf</span></span>
                         </div>
                     </td>
                     <td class="text-end pe-4">
                         <div class="btn-group">
-                            <a th:href="@{/clientes/edit/{id}(id=${cliente.id})}" class="btn btn-outline-primary btn-sm" title="Editar">
+                            <a th:href="@{/clientes/edit/{id}(id=${cliente.id})}" class="btn btn-outline-primary btn-sm"
+                               title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <form th:action="@{/clientes/{id}/delete(id=${cliente.id})}" method="post" onsubmit="return confirm('¿Borrar cliente? Se borrarán sus ventas y tarjetas asociadas.');">
+
+                            <span th:if="${cliente.admin}" class="btn btn-outline-secondary btn-sm disabled"
+                                  title="Administrador protegido">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </span>
+
+                            <form th:unless="${cliente.admin}" th:action="@{/clientes/{id}/delete(id=${cliente.id})}" method="post"
+                                  onsubmit="return confirm('¿Borrar cliente? Se borrarán sus ventas y tarjetas asociadas.');">
                                 <button type="submit" class="btn btn-outline-danger btn-sm rounded-0 rounded-end" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </button>

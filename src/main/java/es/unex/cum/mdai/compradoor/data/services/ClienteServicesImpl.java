@@ -1,6 +1,7 @@
 package es.unex.cum.mdai.compradoor.data.services;
 
 import es.unex.cum.mdai.compradoor.data.model.Cliente;
+import es.unex.cum.mdai.compradoor.data.model.Venta;
 import es.unex.cum.mdai.compradoor.data.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,20 @@ public class ClienteServicesImpl implements ClienteService {
         if (id == null) {
             throw new IllegalArgumentException("ID de cliente invalido " + id);
         }
+
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("ID de cliente no encontrado"));
+
+        if (cliente.isAdmin()) {
+            throw new IllegalArgumentException("No se puede eliminar a un usuario Administrador");
+        }
+
+        for (Venta venta: cliente.getVentas()) {
+            if(venta.getInmueble() != null){
+                venta.getInmueble().setVenta(null);
+            }
+        }
+
         if (!clienteRepository.existsById(id)) {
             throw new IllegalArgumentException("ID de cliente no encontrado " + id);
         }

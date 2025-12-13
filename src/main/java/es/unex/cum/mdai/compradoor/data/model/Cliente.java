@@ -33,13 +33,13 @@ public class Cliente {
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Venta> ventas = new ArrayList<>();
 
     @OneToMany(mappedBy = "cliente", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Tarjeta> tarjetas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Compra> compras = new ArrayList<>();
 
     private boolean admin = false;
