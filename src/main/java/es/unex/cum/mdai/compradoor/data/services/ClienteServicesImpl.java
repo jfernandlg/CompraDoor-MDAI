@@ -130,5 +130,10 @@ public class ClienteServicesImpl implements ClienteService {
         return clienteRepository.save(clienteUpdate);
     }
 
+    @Override
+    public List<Cliente> findClientesNoAdmin() {
+        return clienteRepository.findByAdminFalse();
+    }
+
 
 }

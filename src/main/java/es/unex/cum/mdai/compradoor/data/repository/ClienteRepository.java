@@ -22,4 +22,6 @@ public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
     // Buscar clientes por el código de una de sus tarjetas (join implícito mediante convenciones de nombres)
     List<Cliente> findByTarjetasCodigoTarjeta(String codigoTarjeta);
+
+    List<Cliente> findByAdminFalse();
 }

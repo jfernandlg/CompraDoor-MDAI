@@ -135,6 +135,37 @@ public class DataInitializer {
 
                 inmuebleRepository.save(inmueble7);
 
+                Inmueble inmueble8 = new Inmueble();
+                inmueble8.setDireccion("Avenida Blas Infante, 2, 41011 Sevilla");
+                inmueble8.setLocalidad("Sevilla");
+                inmueble8.setPrecio(475_000f);
+                inmueble8.setPathFotos(Arrays.asList(
+                        "/images/inmueble8/pexels-andreaedavis-10658143.jpg",
+                        "/images/inmueble8/pexels-fotoaibe-1643383.jpg",
+                        "/images/inmueble8/pexels-pixabay-164558.jpg",
+                        "/images/inmueble8/pexels-ranamatloob567-35189675.jpg",
+                        "/images/inmueble8/pexels-ranamatloob567-35189677.jpg",
+                        "/images/inmueble8/pexels-ranamatloob567-35189704.jpg",
+                        "/images/inmueble8/pexels-ranamatloob567-35189705.jpg"
+                ));
+
+                inmuebleRepository.save(inmueble8);
+
+                Inmueble inmueble9 = new Inmueble();
+                inmueble9.setDireccion("Carrer de Montcada, 15-23, 08003 Barcelona");
+                inmueble9.setLocalidad("Ciutat Vella");
+                inmueble9.setPrecio(600_000f);
+                inmueble9.setPathFotos(Arrays.asList(
+                        "/images/inmueble9/pexels-andreaedavis-10511429.jpg",
+                        "/images/inmueble9/pexels-andreaedavis-10695814.jpg",
+                        "/images/inmueble9/pexels-andreaedavis-10820241.jpg",
+                        "/images/inmueble9/pexels-andreaedavis-12184651.jpg",
+                        "/images/inmueble9/pexels-andreaedavis-12334147.jpg",
+                        "/images/inmueble9/pexels-thgusstavo-2102587.jpg"
+                ));
+
+                inmuebleRepository.save(inmueble9);
+
 
                 System.out.println("---------------------------------------------");
                 System.out.println(" CARGA DE DATOS INICIALES COMPLETADA ");

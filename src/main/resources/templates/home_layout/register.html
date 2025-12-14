@@ -62,7 +62,7 @@
                 <label class="form-label">Teléfono</label>
                 <input type="text" class="form-control" th:field="*{telefono}"
                        th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid' : ''"
-                       placeholder="666777888" required>
+                       placeholder="+34666777888" required>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}">Error</div>
             </div>
         </div>

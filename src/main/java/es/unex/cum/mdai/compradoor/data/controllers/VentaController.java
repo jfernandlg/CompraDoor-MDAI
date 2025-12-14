@@ -42,7 +42,8 @@ public class VentaController {
     public String showVentaForm(Model model) {
         model.addAttribute("venta", new Venta());
 
-        model.addAttribute("listaClientes", clienteService.findAllClientes());
+        model.addAttribute("listaClientes", clienteService.findClientesNoAdmin());
+
         model.addAttribute("listaInmuebles", inmuebleService.findInmueblesDisponibles());
         return "ventas_layouts/ventaform";
     }
@@ -51,7 +52,8 @@ public class VentaController {
     public String createVenta(@Valid @ModelAttribute Venta venta, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("listaClientes", clienteService.findAllClientes());
+            model.addAttribute("listaClientes", clienteService.findClientesNoAdmin());
+
             model.addAttribute("listaInmuebles", inmuebleService.findInmueblesDisponibles());
             return "ventas_layouts/ventaform";
         }
@@ -61,7 +63,7 @@ public class VentaController {
         } catch (IllegalArgumentException e) {
             result.reject("error.global", e.getMessage());
 
-            model.addAttribute("listaClientes", clienteService.findAllClientes());
+            model.addAttribute("listaClientes", clienteService.findClientesNoAdmin());
             model.addAttribute("listaInmuebles", inmuebleService.findInmueblesDisponibles());
             return "ventas_layouts/ventaform";
         }
@@ -132,5 +134,7 @@ public class VentaController {
         model.addAttribute("ventas", misVentas);
         return "ventas_layouts/ventas_cliente";
     }
+
+
 
 }
