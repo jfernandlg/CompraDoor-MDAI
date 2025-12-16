@@ -5,113 +5,232 @@
     <title>Compradoor - Encuentra tu Hogar</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/galaxy.css}">
 
     <style>
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            /* Cambio sutil: De gris plano a un degradado muy suave azulado (+10% color) */
+            background: linear-gradient(180deg, #fdfbfb 0%, #e6effc 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
         }
 
-        /* Navbar Transparente con efecto Glass */
         .navbar-glass {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .galaxy-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-
-        .hero-section { text-align: center; padding: 5rem 1rem; margin-bottom: 3rem; }
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-top: 8rem;
+            text-align: center;
+        }
 
         .hero-title {
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 800;
-            background: -webkit-linear-gradient(45deg, #6c5ce7, #74b9ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #2d3436;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #636e72;
+            margin-bottom: 3rem;
+        }
+
+        /* BARRA DE BÚSQUEDA FLOTANTE */
+        .search-bar-container {
+            background: white;
+            padding: 15px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08); /* Sombra un pelín más suave */
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 800px;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f1f2f6;
+        }
+
+        .search-input {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: #f8f9fa;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            background: #fff;
+            box-shadow: inset 0 0 0 2px #74b9ff;
+        }
+
+        .btn-search {
+            background-color: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: transform 0.2s;
+        }
+
+        .btn-search:hover {
+            background-color: #00cec9;
+            transform: scale(1.05);
+        }
+
+        /* BOTÓN MAGICO IA */
+        .ai-suggestion {
+            display: inline-block;
+            margin-bottom: 4rem;
+        }
+
+        .btn-ai-pill {
+            background: white;
+            color: #6c5ce7;
+            border: 1px solid #e1e1e1;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-ai-pill:hover {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        /* GRID DE TARJETAS */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .nav-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #2d3436;
+            border: 1px solid #f1f2f6;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: #74b9ff;
+        }
+
+        .nav-card i {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        .search-card {
-            background: white; border-radius: 50px; padding: 10px 10px 10px 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: inline-block; width: 100%; max-width: 700px;
-        }
+        .nav-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .nav-card p { font-size: 0.9rem; color: #b2bec3; margin: 0; }
 
-        .btn-galaxy {
-            background: linear-gradient(45deg, #6c5ce7, #74b9ff); border: none; color: white;
-            border-radius: 40px; padding: 10px 30px; font-weight: bold; transition: transform 0.3s;
-        }
-        .btn-galaxy:hover { transform: scale(1.05); color: white; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); }
-
-        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; }
-
-        .action-card {
-            background: white; border-radius: 20px; padding: 2rem; text-align: center;
-            transition: all 0.3s; text-decoration: none; color: #2d3436; border: 1px solid rgba(0,0,0,0.05);
-        }
-        .action-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-glass sticky-top mb-4">
+<nav class="navbar navbar-expand-lg navbar-glass fixed-top">
     <div class="container">
-        <a class="navbar-brand fw-bold fs-4 text-primary" th:href="@{/}">
-            <i class="bi bi-building-fill-check"></i> Compradoor
+        <a class="navbar-brand fw-bold text-primary" href="#">
+            <i class="bi bi-building-check"></i> Compradoor
         </a>
-
-        <div class="d-flex align-items-center gap-3">
-            <div th:if="${session.clienteLogueado == null}">
-                <a th:href="@{/login}" class="btn btn-outline-primary rounded-pill px-4">Iniciar Sesión</a>
-                <a th:href="@{/register}" class="btn btn-primary rounded-pill px-4">Registrarse</a>
+        <div class="d-flex align-items-center">
+            <div th:if="${session.clienteLogueado != null}" class="d-flex align-items-center">
+                <span class="me-3 text-muted small">Hola, <strong th:text="${session.clienteLogueado.nombre}">Usuario</strong></span>
+                <a th:href="@{/logout}" class="btn btn-sm btn-outline-danger rounded-pill px-3">Salir</a>
             </div>
-
-            <div th:if="${session.clienteLogueado != null}" class="d-flex align-items-center gap-3">
-                <span class="text-muted small d-none d-md-block">Hola, <b th:text="${session.clienteLogueado.nombre}">User</b></span>
-                <a th:href="@{/perfil}" class="btn btn-outline-primary rounded-pill"><i class="bi bi-person-circle"></i> Mi Área</a>
-                <a th:href="@{/logout}" class="btn btn-link text-danger text-decoration-none"><i class="bi bi-box-arrow-right"></i></a>
+            <div th:unless="${session.clienteLogueado != null}">
+                <a th:href="@{/login}" class="btn btn-sm btn-primary rounded-pill px-4">Acceder</a>
             </div>
         </div>
     </div>
 </nav>
 
-<div class="galaxy-container">
+<div class="main-container">
 
-    <div class="hero-section">
-        <h1 class="hero-title">Encuentra tu lugar <br> en el mundo</h1>
-        <p class="lead text-muted mb-5">La plataforma inmobiliaria más moderna y segura.</p>
+    <h1 class="hero-title">Tu próximo hogar está aquí</h1>
+    <p class="hero-subtitle">Busca por precio o explora nuestro catálogo exclusivo.</p>
 
-        <div class="search-card">
-            <form th:action="@{/inmuebles/search}" method="get" class="row g-2 align-items-center">
-                <div class="col-md-4 border-end">
-                    <input type="number" name="min" class="form-control form-control-lg border-0 bg-transparent" placeholder="Precio Min €">
-                </div>
-                <div class="col-md-4 border-end">
-                    <input type="number" name="max" class="form-control form-control-lg border-0 bg-transparent" placeholder="Precio Máx €">
-                </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-galaxy w-100 h-100">Buscar Casas 🚀</button>
-                </div>
-            </form>
+    <form th:action="@{/inmuebles/search}" method="get" class="d-flex justify-content-center">
+        <div class="search-bar-container">
+            <div class="input-group">
+                <input type="number" name="min" class="search-input" placeholder="Precio Mínimo" aria-label="Precio Mínimo">
+            </div>
+            <div class="vr mx-2 text-muted"></div>
+            <div class="input-group">
+                <input type="number" name="max" class="search-input" placeholder="Precio Máximo" aria-label="Precio Máximo">
+            </div>
+            <button type="submit" class="btn-search">
+                <i class="bi bi-search"></i> Buscar
+            </button>
         </div>
+    </form>
+
+    <div class="ai-suggestion">
+        <a th:href="@{/asistente}" class="btn-ai-pill" th:if="${session.clienteLogueado != null}">
+            <i class="bi bi-stars"></i> ¿No sabes qué buscar? Pregúntale a la IA
+        </a>
+        <a th:href="@{/login}" class="btn-ai-pill" th:unless="${session.clienteLogueado != null}">
+            <i class="bi bi-lock"></i> Inicia sesión para usar el Asistente IA
+        </a>
     </div>
 
-    <div class="action-grid">
-        <a th:href="@{/inmuebles/}" class="action-card">
-            <i class="bi bi-houses display-4 text-primary mb-3"></i>
-            <h3>Ver Catálogo</h3>
-            <p class="text-muted">Explora todas las propiedades disponibles ahora mismo.</p>
+    <div class="info-grid">
+
+        <a th:href="@{/inmuebles/}" class="nav-card">
+            <i class="bi bi-grid-fill text-primary"></i>
+            <h3>Ver todo el Catálogo</h3>
+            <p>Explora todas las casas sin filtros.</p>
         </a>
 
-        <a th:href="${session.clienteLogueado != null && session.clienteLogueado.admin} ? @{/admin} : @{/perfil}" class="action-card">
-            <i class="bi bi-person-gear display-4 text-info mb-3"></i>
-            <h3>Gestión</h3>
-            <p class="text-muted">Accede a tu panel personal o de administración.</p>
+        <a th:href="${session.clienteLogueado != null} ? (${session.clienteLogueado.admin} ? @{/admin} : @{/perfil}) : @{/login}"
+           class="nav-card">
+            <i class="bi bi-person-circle text-info"></i>
+            <h3 th:text="${session.clienteLogueado != null} ? 'Mi Espacio' : 'Iniciar Sesión'">Mi Cuenta</h3>
+            <p>Gestiona tus favoritos y compras.</p>
         </a>
+
     </div>
 
 </div>
 
+<footer class="text-center py-4 text-muted small mt-5">
+    &copy; 2024 Compradoor Real Estate.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
