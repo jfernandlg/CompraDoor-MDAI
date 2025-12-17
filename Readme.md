@@ -28,6 +28,28 @@ Plataforma web innovadora que elimina intermediarios en transacciones inmobiliar
 
 ---
 
+### Modificaciones Realizadas En Esta Última Entrega
+
+Se ha implemntado una tabla denominada inmueble_fotos, esta tabla es utilizada para almacenar los path de las fotos.
+De esta forma se recupera cada foto de los inmuebles de forma correcta.
+
+Se han introducido varios inmuebles a través de la clase DataInitializer que realiza la carga inicial de datos en la
+base de datos cuando la aplicación se inicia. Además, se crea un usuario administrador que será el usuario encargado de
+controlar el panel de administración.
+
+### IA Implementada
+La implementación de la Inteligencia Artificial en CompraDoor se ha diseñado como un asistente inmobiliario inteligente 
+que ayuda a los usuarios a encontrar propiedades que se ajusten a sus necesidades específicas.
+
+El sistema utiliza el framework Spring AI para integrarse con el proveedor Groq. La configuración clave en application.properties incluye:
+
+**Modelo**: llama-3.3-70b-versatile, un modelo de lenguaje de alto rendimiento.
+
+**Base URL**: Se conecta a la API de Groq compatible con el estándar de OpenAI.
+
+**Seguridad**: La clave de API se gestiona mediante una variable de entorno para proteger la cuenta.
+
+
 ## ✅ COBERTURA DE CASOS DE USO
 
 ### CU-01: Gestión de Clientes
@@ -104,17 +126,21 @@ Plataforma web innovadora que elimina intermediarios en transacciones inmobiliar
 ## 📊 RESUMEN DE TESTS POR ENTIDAD
 
 | Entidad | Tests | CU Cubiertos | Aspectos Clave Validados |
-|---------|--------|--------------|--------------------------|
-| **Cliente** | 7 | CU-01, CU-06 | Registro, búsquedas, relación tarjetas, eliminación cascada |
-| **Inmueble** | 6 | CU-02, CU-08 | CRUD, búsquedas, disponibilidad, relaciones |
-| **Compra** | 5 | CU-04, CU-07 | Historial compras, relaciones, preservación datos |
-| **Venta** | 3 | CU-03, CU-07 | Publicación propiedades, historial ventas |
-| **Servicio** | 4 | CU-05 | Categorización, búsquedas, asociación ventas |
-| **Tarjeta** | 7 | CU-06 | Unicidad, estados, relación cliente, actualización |
+|---------|-------|--------------|--------------------------|
+| **Cliente** | 8     | CU-01, CU-06 | Registro, búsquedas, relación tarjetas, eliminación cascada |
+| **Inmueble** | 6     | CU-02, CU-08 | CRUD, búsquedas, disponibilidad, relaciones |
+| **Compra** | 7     | CU-04, CU-07 | Historial compras, relaciones, preservación datos |
+| **Venta** | 3     | CU-03, CU-07 | Publicación propiedades, historial ventas |
+| **Servicio** | 5     | CU-05 | Categorización, búsquedas, asociación ventas |
+| **Tarjeta** | 7     | CU-06 | Unicidad, estados, relación cliente, actualización |
 
 ---
 
-**✅ TOTAL: 32 tests implementados**  
+## NOTA TÉCNICA
+    
+Por defecto, los tests se ejecutan sobre una base de datos H2 en memoria para mayor velocidad y aislamiento
+
+**✅ TOTAL: 36 tests implementados**  
 **📋 Cobertura: 8 casos de uso principales validados**  
 **🔧 Estado: Sistema completamente probado y funcional**
 
