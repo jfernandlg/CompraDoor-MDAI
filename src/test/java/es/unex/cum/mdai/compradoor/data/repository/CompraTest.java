@@ -36,8 +36,9 @@ class CompraTest {
 
     @Test
     void testFindByCliente() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
         Inmueble i = new Inmueble("Badajoz", 250_000f, "Avenida de América, 25");
@@ -57,8 +58,13 @@ class CompraTest {
 
     @Test
     void testFindByInmueble() {
-        Cliente c1 = new Cliente("20000000A", "Cliente1");
-        Cliente c2 = new Cliente("30000000B", "Cliente2");
+        Cliente c1 = new Cliente("20000000A", "Juan");
+        c1.setEmail("juan@example.com");
+        c1.setPassword("password123");
+
+        Cliente c2 = new Cliente("30000000B", "Maria");
+        c2.setEmail("maria@example.com");
+        c2.setPassword("password123");
         clienteRepository.save(c1);
         clienteRepository.save(c2);
 
@@ -77,7 +83,9 @@ class CompraTest {
 
     @Test
     void testFindByFechaCompraBetween() {
-        Cliente c = new Cliente("40000000C", "FechaTester");
+        Cliente c = new Cliente("40000000C", "Juan");
+        c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
         Inmueble i = new Inmueble("Madrid", 300_000f, "Gran Vía 1");
@@ -149,5 +157,64 @@ class CompraTest {
             Optional<Compra> maybe = compraRepository.findById(comp.getIdCompra());
             assertThat(maybe).isPresent();
         }
+    }
+
+    @Test
+    void testExistsByInmuebleAndIdCompraNot() {
+        Cliente c = new Cliente("90000000C", "Juan");
+        c.setEmail("juan@test.com");
+        c.setPassword("password123");
+        clienteRepository.save(c);
+
+        Inmueble i = new Inmueble("Mérida", 150_000f, "Plaza España");
+        inmuebleRepository.save(i);
+
+        Compra comp1 = new Compra(c, 150_000f, i);
+        compraRepository.save(comp1);
+
+        boolean existsOther = compraRepository.existsByInmuebleAndIdCompraNot(i, comp1.getIdCompra());
+        assertThat(existsOther).isFalse();
+
+        Compra comp2 = new Compra(c, 160_000f, i);
+        compraRepository.save(comp2);
+
+        boolean existsNow = compraRepository.existsByInmuebleAndIdCompraNot(i, comp1.getIdCompra());
+        assertThat(existsNow).isTrue();
+    }
+
+    @Test
+    void testFindByClienteId() {
+        Cliente c = new Cliente("70000000X", "Cliente ID Test");
+        c.setEmail("clienteid@test.com");
+        c.setPassword("password123");
+        clienteRepository.save(c);
+
+        Inmueble i = new Inmueble("Don Benito", 100_000f, "Calle Test 1");
+        inmuebleRepository.save(i);
+
+        Compra comp = new Compra(c, 100_000f, i);
+        compraRepository.save(comp);
+
+        List<Compra> result = compraRepository.findByClienteId(c.getId());
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCliente().getId()).isEqualTo(c.getId());
+    }
+
+    @Test
+    void testFindByInmuebleIdInmueble() {
+        Cliente c = new Cliente("80000000Y", "Inmueble ID Test");
+        c.setEmail("inmuebleid@test.com");
+        c.setPassword("password123");
+        clienteRepository.save(c);
+
+        Inmueble i = new Inmueble("Villanueva", 120_000f, "Calle Test 2");
+        inmuebleRepository.save(i);
+
+        Compra comp = new Compra(c, 120_000f, i);
+        compraRepository.save(comp);
+
+        List<Compra> result = compraRepository.findByInmuebleIdInmueble(i.getIdInmueble());
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getInmueble().getIdInmueble()).isEqualTo(i.getIdInmueble());
     }
 }

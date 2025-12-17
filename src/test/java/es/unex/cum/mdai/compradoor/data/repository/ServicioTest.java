@@ -58,8 +58,9 @@ class ServicioTest {
         // CORRECCIÓN: Cliente no tiene 'apellido', solo 'nombre', 'dni' y 'email'
         Cliente cliente = new Cliente();
         cliente.setDni("12345678Z");
-        cliente.setNombre("Pepe Cliente Prueba"); // Nombre completo aquí
-        cliente.setEmail("test@email.com");       // Obligatorio por @NotBlank
+        cliente.setNombre("Pepe"); // Nombre completo aquí
+        cliente.setEmail("pepe@email.com");       // Obligatorio por @NotBlank
+        cliente.setPassword("password123");
         clienteRepository.save(cliente);
 
         // 3. Compra
@@ -147,5 +148,25 @@ class ServicioTest {
 
         // Debería encontrar 2 (Abril y Junio)
         assertThat(encontrados).hasSize(2);
+    }
+
+    @Test
+    void testFindByCompraIsNull() {
+        Compra compra = crearCompraValida();
+        Servicio conCompra = crearServicio(TipoServicio.REPARACION, "Con compra", compra, 100f, new Date());
+        serviciosRepository.save(conCompra);
+
+        Servicio sinCompra = new Servicio();
+        sinCompra.setTipoServicio(TipoServicio.MANTENIMIENTO);
+        sinCompra.setDescripcion("Sin compra asociada");
+        sinCompra.setCoste(50f);
+        sinCompra.setFechaAplicacion(new Date());
+        serviciosRepository.save(sinCompra);
+
+        List<Servicio> result = serviciosRepository.findByCompraIsNull();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getDescripcion()).isEqualTo("Sin compra asociada");
+        assertThat(result.get(0).getCompra()).isNull();
     }
 }

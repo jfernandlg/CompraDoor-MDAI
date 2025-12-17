@@ -26,8 +26,9 @@ class VentaTest {
     @Test
     void testFindByCliente() {
         // ===== CONFIGURACIÓN: Crear cliente y inmuebles =====
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
         Inmueble i = new Inmueble("Badajoz", 250_000f, "Avenida de América, 25");
@@ -62,8 +63,9 @@ class VentaTest {
         inmuebleRepository.save(i2);
         inmuebleRepository.save(i3);
 
-        Cliente c = new Cliente("87654321X", "Ana García");
+        Cliente c = new Cliente("87654321X", "Ana");
         c.setEmail("ana-garcia@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
         // ===== EJECUCIÓN: Crear ventas para algunos inmuebles =====
@@ -91,8 +93,9 @@ class VentaTest {
         inmuebleRepository.save(i);
         inmuebleRepository.save(i2);
 
-        Cliente c = new Cliente("87654321X", "Ana García");
+        Cliente c = new Cliente("87654321X", "Ana");
         c.setEmail("ana-garcia@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
         // ===== EJECUCIÓN: Crear ventas con fechas específicas =====

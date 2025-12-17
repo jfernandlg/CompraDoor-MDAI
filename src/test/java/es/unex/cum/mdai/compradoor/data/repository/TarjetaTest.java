@@ -22,29 +22,31 @@ class TarjetaTest {
 
     @Test
     void testFindByCodigoTarjeta() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
-        Tarjeta t = new Tarjeta("8126449987442222", true, c);
+        Tarjeta t = new Tarjeta("8126 4499 8744 2222", true, c);
         tarjetaRepository.save(t);
 
-        Optional<Tarjeta> byCodigoTarjeta = tarjetaRepository.findByCodigoTarjeta("8126449987442222");
+        Optional<Tarjeta> byCodigoTarjeta = tarjetaRepository.findByCodigoTarjeta("8126 4499 8744 2222");
         assertThat(byCodigoTarjeta).isPresent();
 
-        Optional<Tarjeta> byCodigoTarjetaNotExist = tarjetaRepository.findByCodigoTarjeta("123456787654321");
+        Optional<Tarjeta> byCodigoTarjetaNotExist = tarjetaRepository.findByCodigoTarjeta("1234 5678 7654 3211");
         assertThat(byCodigoTarjetaNotExist).isNotPresent();
 
     }
 
     @Test
     void testFindByCliente() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
-        Tarjeta t = new Tarjeta("8126449987442222", true, c);
-        Tarjeta t2 = new Tarjeta("123456787654321", true, c);
+        Tarjeta t = new Tarjeta("8126 4499 8744 2222", true, c);
+        Tarjeta t2 = new Tarjeta("1234 5678 7654 3211", true, c);
         tarjetaRepository.save(t);
         tarjetaRepository.save(t2);
 
@@ -55,34 +57,37 @@ class TarjetaTest {
 
     @Test
     void testExistByCodigoTarjeta() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
-        Tarjeta t = new Tarjeta("8126449987442222", true, c);
+        Tarjeta t = new Tarjeta("8126 4499 8744 2222", true, c);
         tarjetaRepository.save(t);
 
-        boolean exist = tarjetaRepository.existsByCodigoTarjeta("8126449987442222");
+        boolean exist = tarjetaRepository.existsByCodigoTarjeta("8126 4499 8744 2222");
         assertThat(exist).isTrue();
 
-        boolean notExist = tarjetaRepository.existsByCodigoTarjeta("123456787654321");
+        boolean notExist = tarjetaRepository.existsByCodigoTarjeta("1234 5678 7654 3211");
         assertThat(notExist).isFalse();
     }
 
     @Test
     void testCountByCliente() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
 
-        Cliente c2 = new Cliente("87654321X", "Ana García");
+        Cliente c2 = new Cliente("87654321X", "Ana");
         c2.setEmail("ana-garcia@example.com");
+        c2.setPassword("password123");
 
         clienteRepository.saveAll(List.of(c, c2));
 
-        Tarjeta t1 = new Tarjeta("8126449987442222", true, c);
-        Tarjeta t2 = new Tarjeta("123456787654321", true, c);
-        Tarjeta t3 = new Tarjeta("9999888877776666", false, c);
-        Tarjeta t4 = new Tarjeta("4444333322221111", true, c2);
+        Tarjeta t1 = new Tarjeta("8126 4499 8744 2222", true, c);
+        Tarjeta t2 = new Tarjeta("1234 5678 7654 3211", true, c);
+        Tarjeta t3 = new Tarjeta("9999 8888 7777 6666", false, c);
+        Tarjeta t4 = new Tarjeta("4444 3333 2222 1111", true, c2);
         tarjetaRepository.saveAll(List.of(t1, t2, t3, t4));
 
         long countC = tarjetaRepository.countByCliente(c);
@@ -95,26 +100,28 @@ class TarjetaTest {
 
     @Test
     void testCodigoTarjetaUnico() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
-        Tarjeta t1 = new Tarjeta("8126449987442222", true, c);
+        Tarjeta t1 = new Tarjeta("8126 4499 8744 2222", true, c);
         tarjetaRepository.save(t1);
 
-        Tarjeta t2 = new Tarjeta("8126449987442222", false, c);
+        Tarjeta t2 = new Tarjeta("8126 4499 8744 2222", false, c);
 
-        assertThat(tarjetaRepository.existsByCodigoTarjeta("8126449987442222")).isTrue();
+        assertThat(tarjetaRepository.existsByCodigoTarjeta("8126 4499 8744 2222")).isTrue();
     }
 
     @Test
     void testTarjetaValidasEInvalidas() {
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
-        Tarjeta t1 = new Tarjeta("8126449987442222", true, c);
-        Tarjeta t2 = new Tarjeta("123456787654321", false, c);
+        Tarjeta t1 = new Tarjeta("8126 4499 8744 2222", true, c);
+        Tarjeta t2 = new Tarjeta("1234 5678 7654 3211", false, c);
         tarjetaRepository.saveAll(List.of(t1, t2));
 
         List<Tarjeta> tarjetas = tarjetaRepository.findByCliente(c);
@@ -126,11 +133,12 @@ class TarjetaTest {
 
     @Test
     void testUpdateTarjeta(){
-        Cliente c = new Cliente("12345678A", "Juan Perez");
+        Cliente c = new Cliente("12345678A", "Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
-        Tarjeta t1 = new Tarjeta("8126449987442222", true, c);
+        Tarjeta t1 = new Tarjeta("8126 4499 8744 2222", true, c);
         Tarjeta t1_save = tarjetaRepository.save(t1);
 
         t1_save.setValida(false);

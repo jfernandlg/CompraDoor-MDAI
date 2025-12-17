@@ -75,8 +75,13 @@ class InmuebleTest {
     @Test
     void testPriceBetweenInclusivity() {
         Inmueble a = new Inmueble("Test", 100_000f, "A");
+        a.setDireccion("Calle Falsa 1");
+
         Inmueble b = new Inmueble("Test", 200_000f, "B");
+        b.setDireccion("Calle Falsa 2");
+
         Inmueble c = new Inmueble("Test", 300_000f, "C");
+        c.setDireccion("Calle Falsa 3");
 
         inmuebleRepository.save(a);
         inmuebleRepository.save(b);
@@ -99,8 +104,9 @@ class InmuebleTest {
         // 1. Crear Cliente (Usamos setters por si el constructor no existe en tu versión de Cliente)
         Cliente c = new Cliente();
         c.setDni("12345678A");
-        c.setNombre("Juan Perez");
+        c.setNombre("Juan");
         c.setEmail("juan@example.com");
+        c.setPassword("password123");
         clienteRepository.save(c);
 
         // 2. Crear Inmuebles

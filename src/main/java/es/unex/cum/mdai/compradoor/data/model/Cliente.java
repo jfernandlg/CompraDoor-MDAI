@@ -20,8 +20,8 @@ public class Cliente {
     @Pattern(regexp = "^\\d{8}[A-Z]$", message = "El DNI debe tener 8 nÚmeros y 1 letra mayúscula")
     private String dni;
     @NotBlank(message = "El nombre es obligatorio")
-    @Pattern(regexp = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(?:['\\\\-][a-zA-ZñÑáéíóúÁÉÍÓÚ]+)?(?:\\\\s+[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(?:['\\\\-][a-zA-ZñÑáéíóúÁÉÍÓÚ]+)?)*$",
-            message = "El nombre contiene caracteres no válidos o un formato incorrecto")
+    @Pattern(regexp = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s'-]+$",
+            message = "El nombre contiene caracteres no válidos")
     private String nombre;
     @NotBlank(message = "El email es obligatorio")
     @Email(regexp = ".+@.+\\..+", message = "El formato del email no es válido")
